@@ -1,0 +1,62 @@
+# =========================
+# Node.js / npm
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# =========================
+# Build outputs
+# =========================
+dist/
+dist-ssr/
+build/
+
+# =========================
+# Environment files
+# =========================
+.env
+.env.local
+.env.*.local
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# =========================
+# Local files
+# =========================
+*.local
+
+# =========================
+# Logs & caches
+# =========================
+logs/
+*.log
+.cache/
+.tmp/
+
+# =========================
+# Testing & coverage
+# =========================
+coverage/
+.nyc_output/
+
+# =========================
+# Node.js / TypeScript specific
+# =========================
+*.tsbuildinfo
