@@ -219,18 +219,21 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
           <div className={`flex items-center gap-2 ${
           column.key === 'actions' ? 'justify-end' : ''}`}>
             <button
+              type="button"
               onClick={() => handleEditClick(user)}
               className="px-3 py-1.5 text-xs font-medium text-safe-text-dark bg-safe-bg hover:bg-safe-border/50 rounded-lg transition-colors"
             >
               Edit
             </button>
             <button
+              type="button"
               onClick={() => handleDeactivate(user)}
               className="px-3 py-1.5 text-xs font-medium text-safe-text-dark bg-safe-bg hover:bg-safe-border/50 rounded-lg transition-colors min-w-[80px] text-center"
             >
               {user.isActive ? 'Deactivate' : 'Activate'}
             </button>
             <button
+              type="button"
               onClick={() => handleDelete(user)}
               className="px-3 py-1.5 text-xs font-medium text-white bg-safe-danger hover:bg-safe-danger/90 rounded-lg transition-colors"
             >

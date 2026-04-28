@@ -34,12 +34,12 @@ function UserManagementHeader({ title, description}) {
           </div>
 
           {/* Refresh Button */}
-          <button className="w-10 h-10 rounded-lg border border-safe-border flex items-center justify-center text-safe-text-gray hover:bg-safe-bg transition-colors">
+            <button type="button" className="w-10 h-10 rounded-lg border border-safe-border flex items-center justify-center text-safe-text-gray hover:bg-safe-bg transition-colors">
             <FontAwesomeIcon icon="rotate" className="text-sm" />
           </button>
 
           {/* Notifications */}
-          <button className="relative w-10 h-10 rounded-lg border border-safe-border flex items-center justify-center text-safe-text-gray hover:bg-safe-bg transition-colors">
+            <button type="button" className="relative w-10 h-10 rounded-lg border border-safe-border flex items-center justify-center text-safe-text-gray hover:bg-safe-bg transition-colors">
             <FontAwesomeIcon icon="bell" className="text-sm" />
             <span className="absolute -top-1 -right-1 w-5 h-5 bg-safe-danger rounded-full text-white text-[10px] font-semibold flex items-center justify-center">
               3

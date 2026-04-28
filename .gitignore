@@ -60,3 +60,25 @@ coverage/
 # Node.js / TypeScript specific
 # =========================
 *.tsbuildinfo
+
+
+# =========================
+# Misc
+*.bak
+*.tmp
+*.temp
+*.backup
+*.orig
+*.rej
+*.swo
+*.swp
+*.pid
+*.seed
+*.pid.lock  
+# ========================
+
+# =========================
+# AI Tools and Skills files
+.github/
+# =========================
+# End of .gitignore

@@ -164,9 +164,7 @@ function SignIn() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={handleEmailBlur}
-              className={`w-full pl-9 pr-3 py-2.5 text-sm rounded-lg border ${
-                emailError ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-safe-border focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn'
-              } bg-safe-bg/40 text-safe-text-dark placeholder:text-safe-text-gray-light focus:outline-none focus:ring-2`}
+              className={`w-full pl-9 pr-3 py-2.5 text-sm rounded-lg border ${emailError ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-safe-border focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn'} bg-safe-bg/40 text-safe-text-dark placeholder:text-safe-text-gray focus:outline-none focus:ring-2`}
               disabled={loading || isSubmitting}
             />
           </div>
@@ -190,16 +188,15 @@ function SignIn() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onBlur={handlePasswordBlur}
-              className={`w-full pl-9 pr-10 py-2.5 text-sm rounded-lg border ${
-                passwordError ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-safe-border focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn'
-              } bg-safe-bg/40 text-safe-text-dark placeholder:text-safe-text-gray-light focus:outline-none focus:ring-2`}
+              className={`w-full pl-9 pr-10 py-2.5 text-sm rounded-lg border ${passwordError ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-safe-border focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn'} bg-safe-bg/40 text-safe-text-dark placeholder:text-safe-text-gray focus:outline-none focus:ring-2`}
               disabled={loading || isSubmitting}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-safe-text-gray/70 text-xs hover:text-safe-text-gray"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center justify-center min-w-[44px] min-h-[44px] text-safe-text-gray/70 text-xs hover:text-safe-text-gray"
               disabled={loading || isSubmitting}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               <i className={`bi bi-eye${showPassword ? '-slash' : ''}`} />
             </button>
@@ -211,11 +208,13 @@ function SignIn() {
 
         {/* Remember + Forgot */}
         <div className="flex items-center justify-between text-xs">
-          <button
-            type="button"
-            className="flex items-center gap-2 text-safe-text-gray"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setRemember(!remember)}
-            disabled={loading || isSubmitting}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setRemember(!remember); } }}
+            className="flex items-center gap-2 text-safe-text-dark cursor-pointer"
+            aria-pressed={remember}
           >
             <Checkbox
               checked={remember}
@@ -223,7 +222,7 @@ function SignIn() {
               className="w-4 h-4 shadow-none"
             />
             <span>Remember me</span>
-          </button>
+          </div>
           <Link
             to="/forgot-password"
             className="text-safe-blue-btn hover:underline"
@@ -237,7 +236,7 @@ function SignIn() {
           <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
             <i className="bi bi-shield text-safe-blue-btn text-lg font-bold" />
           </div>
-          <div className="text-[11px] leading-relaxed text-safe-text-gray">
+          <div className="text-[11px] leading-relaxed text-safe-text-dark">
             <p className="font-semibold text-safe-text-dark mb-0.5">
               Multi-Factor Authentication
             </p>

@@ -35,7 +35,7 @@ function DashboardPage() {
                 <FontAwesomeIcon icon="circle" className="text-safe-success text-[10px]" />
                 Live
               </span>
-              <button className="px-4 py-2 rounded-lg bg-safe-blue hover:bg-safe-blue-light text-white font-medium text-xs transition-colors">
+              <button type="button" className="px-4 py-2 rounded-lg bg-safe-blue hover:bg-safe-blue-light text-white font-medium text-xs transition-colors">
                 Refresh Data
               </button>
             </div>

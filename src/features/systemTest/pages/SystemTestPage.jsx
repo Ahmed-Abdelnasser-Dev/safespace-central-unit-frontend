@@ -120,7 +120,7 @@ function SystemTestPage() {
                   <span className="text-gray-400">API Endpoint:</span>
                   <span className="font-mono">{testResults.apiTest}</span>
                 </div>
-                <button onClick={testBackendConnection} className="mt-4 w-full bg-safe-blue hover:bg-safe-blue-light text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                <button type="button" onClick={testBackendConnection} className="mt-4 w-full bg-safe-blue hover:bg-safe-blue-light text-white font-medium py-2 px-4 rounded-lg transition-colors">
                   Re-test Connection
                 </button>
               </div>

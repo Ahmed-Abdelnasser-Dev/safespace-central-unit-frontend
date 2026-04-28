@@ -5,7 +5,7 @@ import { userAPI } from '@/services/api';
 import CreateUserModal from './CreateUserModal';
 import { showSuccess, showError } from '@/utils/toast';
 
-/**
+            <button type="button" className="px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2.5 text-white shadow-sm bg-safe-blue">
  * Search Bar and filters for users management
  */
 
@@ -93,7 +93,7 @@ function UserManagementButtons({ onSearch, onRoleFilter, onStatusFilter, current
             <div className="flex items-center gap-4">
                 {/* Search Bar */}
                 <div className="relative">
-                    <FontAwesomeIcon 
+                <button type="button"
                         icon="magnifying-glass" 
                         className="absolute left-4 top-1/2 -translate-y-1/2 text-safe-text-gray text-sm"
                     />
@@ -109,6 +109,7 @@ function UserManagementButtons({ onSearch, onRoleFilter, onStatusFilter, current
                 {/* Role Dropdown */}
                 <div className="relative">
                     <button 
+                        type="button"
                         onClick={() => {
                             setShowRoleDropdown(!showRoleDropdown);
                             setShowStatusDropdown(false);
@@ -122,6 +123,7 @@ function UserManagementButtons({ onSearch, onRoleFilter, onStatusFilter, current
                         <div className="absolute top-full mt-1 w-[200px] bg-white border border-safe-border rounded-lg shadow-lg z-10">
                             {roles.map((role) => (
                                 <button
+                                    type="button"
                                     key={role.value}
                                     onClick={() => {
                                         onRoleFilter(role.value);
@@ -139,6 +141,7 @@ function UserManagementButtons({ onSearch, onRoleFilter, onStatusFilter, current
                 {/* Status Dropdown */}
                 <div className="relative">
                     <button 
+                        type="button"
                         onClick={() => {
                             setShowStatusDropdown(!showStatusDropdown);
                             setShowRoleDropdown(false);
@@ -152,6 +155,7 @@ function UserManagementButtons({ onSearch, onRoleFilter, onStatusFilter, current
                         <div className="absolute top-full mt-1 w-[150px] bg-white border border-safe-border rounded-lg shadow-lg z-10">
                             {statuses.map((status) => (
                                 <button
+                                    type="button"
                                     key={status.value}
                                     onClick={() => {
                                         onStatusFilter(status.value);

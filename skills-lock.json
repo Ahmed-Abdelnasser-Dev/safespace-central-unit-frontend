@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "skills": {
+    "davila7-ui-ux-pro-max": {
+      "source": "smithery.ai",
+      "sourceType": "well-known",
+      "computedHash": "c9564c4ff18ad8e61adf874b48556c7007428654785e4f6cbb0f0a071ac1c7d5"
+    },
+    "figma-implement-design": {
+      "source": "smithery.ai",
+      "sourceType": "well-known",
+      "computedHash": "3d5a363ef4414bcc5b3ec92138d18504fa8b89c1790e619ff1ade21929764a84"
+    },
+    "frontend-design": {
+      "source": "smithery.ai",
+      "sourceType": "well-known",
+      "computedHash": "e8118284a6365753790d44bb2758a6032b3af27fa84696428d9233f2be0f4e78"
+    },
+    "web-design-reviewer": {
+      "source": "smithery.ai",
+      "sourceType": "well-known",
+      "computedHash": "10c6fad8b4f01dbeae969009d81d6c306c8a96d56077cad9bfe2a73a38f5dcbe"
+    }
+  }
+}

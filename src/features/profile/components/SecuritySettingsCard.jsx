@@ -9,6 +9,7 @@ function SecuritySettingsCard({ onChangePassword, onLogout }) {
       <div className="space-y-3">
         {/* Change Password */}
         <button
+          type="button"
           onClick={onChangePassword}
           className="w-full flex items-center gap-4 p-4 border bg-safe-bg rounded-lg hover:bg-safe-bg transition-colors text-left group"
         >
@@ -24,6 +25,7 @@ function SecuritySettingsCard({ onChangePassword, onLogout }) {
 
         {/* Logout */}
         <button
+          type="button"
           onClick={onLogout}
           className="w-full flex items-center gap-4 p-4 border border-safe-danger/30 rounded-lg hover:bg-safe-danger/5 transition-colors text-left group"
         >
