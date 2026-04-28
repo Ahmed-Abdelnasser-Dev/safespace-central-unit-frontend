@@ -1,12 +1,38 @@
-import { useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useRef, useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { verifyMFACode } from '../authSlice';
 import LoginLayout from '../components/LoginLayout.jsx';
 import Button from '@/components/ui/Button.jsx';
 
 function TwoFactorAuth() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
   const inputsRef = useRef([]);
   const [codes, setCodes] = useState(Array(6).fill(''));
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { loading, error, mfaRequired, isAuthenticated } = useSelector((state) => state.auth);
+
+  // Get userId and rememberMe from location state or Redux state
+  const persistedMfaUserId = sessionStorage.getItem('pendingMfaUserId');
+  const persistedRememberMe = sessionStorage.getItem('pendingMfaRememberMe') === 'true';
+  const mfaUserId = location.state?.userId || persistedMfaUserId;
+  const rememberMe = location.state?.rememberMe ?? persistedRememberMe;
+
+  // Redirect if not in MFA flow
+  useEffect(() => {
+    if (!mfaUserId) {
+      navigate('/sign-in', { replace: true });
+      return;
+    }
+
+    if (!mfaRequired && isAuthenticated) {
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
+    }
+  }, [mfaRequired, mfaUserId, isAuthenticated, navigate, location]);
 
   const handleChange = (index, value) => {
     if (!/^\d?$/.test(value)) return; // allow single digit only
@@ -32,12 +58,42 @@ function TwoFactorAuth() {
     }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const code = codes.join('');
-    if (code.length === 6) {
-      navigate('/you-are-all-set');
+    if (code.length !== 6) return;
+    if (!mfaUserId) {
+      navigate('/sign-in', { replace: true });
+      return;
+    }
+    
+    if (isSubmitting || loading) return;
+    setIsSubmitting(true);
+
+    try {
+      const result = await dispatch(verifyMFACode({
+        userId: mfaUserId,
+        code,
+        rememberMe
+      })).unwrap();
+
+      // MFA verified, user is authenticated - redirect
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
+    } catch (err) {
+      console.error('MFA verification error:', err);
+      setIsSubmitting(false);
+      // Clear codes on error
+      setCodes(Array(6).fill(''));
+      inputsRef.current[0]?.focus();
     }
   };
+
+  // Auto-submit when 6 digits are filled
+  useEffect(() => {
+    if (codes.every(c => c !== '')) {
+      handleVerify();
+    }
+  }, [codes]);
 
   return (
     <LoginLayout
@@ -56,6 +112,19 @@ function TwoFactorAuth() {
         'Secure verification codes',
       ]}
     >
+      {/* Error message */}
+      {error && (
+        <div className="rounded-lg border border-safe-danger/30 bg-safe-danger/5 px-4 py-3 animate-slideUp mb-6">
+          <div className="flex items-start gap-3">
+            <i className="bi bi-exclamation-circle text-safe-danger text-lg mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-safe-danger/80 flex-1">
+              <p className="font-semibold mb-1">Verification Failed</p>
+              <p className="text-xs opacity-90">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Email under subtitle */}
       <div className="text-center mb-6">
         <p className="text-sm font-semibold text-safe-text-dark">
@@ -75,7 +144,8 @@ function TwoFactorAuth() {
             value={value}
             onChange={(e) => handleChange(idx, e.target.value)}
             onKeyDown={(e) => handleKeyDown(idx, e)}
-            className="w-12 h-12 text-center text-2xl font-bold rounded-lg border-2 border-safe-border/60 hover:border-safe-border bg-white text-safe-text-dark focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-safe-blue/20 focus:border-safe-blue transition-all duration-200"
+            disabled={loading || isSubmitting}
+            className="w-12 h-12 text-center text-2xl font-bold rounded-lg border-2 border-safe-border/60 hover:border-safe-border bg-white text-safe-text-dark focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-safe-blue/20 focus:border-safe-blue transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
           />
         ))}
       </div>
@@ -87,8 +157,10 @@ function TwoFactorAuth() {
         className="w-full font-semibold"
         type="button"
         onClick={handleVerify}
+        disabled={loading || isSubmitting || codes.some(c => c === '')}
+        isLoading={loading || isSubmitting}
       >
-        Verify Code
+        {!loading && !isSubmitting && 'Verify Code'}
       </Button>
 
       {/* Resend + back */}
@@ -97,7 +169,8 @@ function TwoFactorAuth() {
           Didn&apos;t receive the code?{' '}
           <button
             type="button"
-            className="text-safe-blue hover:text-safe-blue-light font-semibold transition-colors duration-150"
+            disabled={loading || isSubmitting}
+            className="text-safe-blue hover:text-safe-blue-light font-semibold transition-colors duration-150 disabled:opacity-60"
           >
             Resend Code
           </button>

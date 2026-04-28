@@ -12,11 +12,8 @@ let socket = null;
  */
 export function initSocket() {
   if (!socket) {
-    const accessToken = sessionStorage.getItem('accessToken');
     socket = io(SOCKET_URL, {
-      auth: {
-        token: accessToken
-      },
+      withCredentials: true,
       transports: ['polling'],
       reconnectionDelay: 1000,
       reconnection: true,

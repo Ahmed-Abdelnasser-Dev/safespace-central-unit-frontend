@@ -6,57 +6,55 @@
 import axios from 'axios';
 import { API_URL } from '../lib/apiConfig';
 
+const AUTH_ENDPOINTS = ['/auth/login', '/auth/refresh', '/auth/logout', '/auth/mfa/verify', '/auth/change-password'];
+
+const isAuthEndpoint = (url = '') => AUTH_ENDPOINTS.some((endpoint) => url.includes(endpoint));
+
 // Create axios instance
 const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Include cookies with every request
 });
 
-// Request interceptor to add auth token
+// Request interceptor (no longer adds Bearer token)
 api.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // Cookies are automatically included via withCredentials
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Response interceptor for token refresh
+// Response interceptor for cookie-based token refresh
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // If 401 and we haven't retried yet, try to refresh token
+    if (!originalRequest || isAuthEndpoint(originalRequest.url || '')) {
+      return Promise.reject(error);
+    }
+
+    // If 401 and we haven't retried yet, try to refresh session via cookie
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
-        const refreshToken = sessionStorage.getItem('refreshToken');
-        if (!refreshToken) {
-          throw new Error('No refresh token');
-        }
+        // Attempt refresh with credentials (cookies are sent automatically)
+        await axios.post(
+          `${API_URL}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
 
-        const { data } = await axios.post(`${API_URL}/auth/refresh`, {
-          refreshToken,
-        });
-
-        // Extract from wrapper
-        const tokens = data.data;
-        sessionStorage.setItem('accessToken', tokens.accessToken);
-        sessionStorage.setItem('refreshToken', tokens.refreshToken);
-
-        originalRequest.headers.Authorization = `Bearer ${tokens.accessToken}`;
+        // Backend sets new cookies, no need to extract tokens from response
+        // Retry original request
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, clear tokens and redirect to login
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('refreshToken');
+        // Refresh failed, clear user state and redirect to login
         sessionStorage.removeItem('user');
         window.location.href = '/sign-in';
         return Promise.reject(refreshError);
@@ -73,42 +71,45 @@ api.interceptors.response.use(
 
 export const authAPI = {
   /**
-   * Login with email and password
+   * Login with email, password, and rememberMe flag
+   * Backend sets HTTP-only cookies: safespace_access_token, safespace_refresh_token
    * @param {string} email
    * @param {string} password
-   * @returns {Promise} { accessToken, refreshToken } or { mustChangePassword, userId } or { mfaRequired, userId }
+   * @param {boolean} rememberMe - extends refresh session if true
+   * @returns {Promise} { user, mustChangePassword, userId } or { mfaRequired, userId }
    */
-  login: async (email, password) => {
-    const { data } = await api.post('/auth/login', { email, password });
+  login: async (email, password, rememberMe = false) => {
+    const { data } = await api.post('/auth/login', { email, password, rememberMe }, { withCredentials: true });
     return data.data; // Extract from wrapper
   },
 
   /**
-   * Refresh access token
-   * @param {string} refreshToken
-   * @returns {Promise} { accessToken, refreshToken }
+   * Refresh session using HTTP-only cookies
+   * No parameters needed - backend reads cookies automatically
+   * @returns {Promise} { user } or throws 401 on invalid session
    */
-  refresh: async (refreshToken) => {
-    const { data } = await api.post('/auth/refresh', { refreshToken });
+  refresh: async () => {
+    const { data } = await api.post('/auth/refresh', {}, { withCredentials: true });
     return data.data; // Extract from wrapper
   },
 
   /**
-   * Logout
-   * @param {string} refreshToken
+   * Logout - clears HTTP-only cookies server-side
+   * Credentials included automatically via withCredentials
    */
-  logout: async (refreshToken) => {
-    await api.post('/auth/logout', { refreshToken });
+  logout: async () => {
+    await api.post('/auth/logout', {}, { withCredentials: true });
   },
 
   /**
-   * Verify MFA code (ignored for now as per requirements)
+   * Verify MFA code
    * @param {string} userId
    * @param {string} code
-   * @returns {Promise} { accessToken, refreshToken }
+   * @param {boolean} rememberMe - same as login choice
+   * @returns {Promise} { user } - tokens set in cookies
    */
-  verifyMFA: async (userId, code) => {
-    const { data } = await api.post('/auth/mfa/verify', { userId, code });
+  verifyMFA: async (userId, code, rememberMe = false) => {
+    const { data } = await api.post('/auth/mfa/verify', { userId, code, rememberMe }, { withCredentials: true });
     return data.data; // Extract from wrapper
   },
 
@@ -119,7 +120,7 @@ export const authAPI = {
    * @param {string} newPassword
    */
   changePassword: async (userId, currentPassword, newPassword) => {
-    await api.post('/auth/change-password', { userId, currentPassword, newPassword });
+    await api.post('/auth/change-password', { userId, currentPassword, newPassword }, { withCredentials: true });
   },
 };
 
@@ -133,7 +134,7 @@ export const userAPI = {
    * @returns {Promise} User object
    */
   getMe: async () => {
-    const { data } = await api.get('/users/me');
+    const { data } = await api.get('/users/me', { withCredentials: true });
     return data.data; // Extract from wrapper
   },
 
@@ -143,7 +144,7 @@ export const userAPI = {
    * @returns {Promise} Updated user object
    */
   updateMe: async (updates) => {
-    const { data } = await api.patch('/users/me', updates);
+    const { data } = await api.patch('/users/me', updates, { withCredentials: true });
     return data.data; // Extract from wrapper
   },
 
@@ -157,6 +158,7 @@ export const userAPI = {
     formData.append('photo', photoFile);
     const { data } = await api.patch('/users/me/photo', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      withCredentials: true,
     });
     return data.data; // Extract from wrapper
   },
@@ -167,7 +169,7 @@ export const userAPI = {
    * @returns {Promise} { users, total, page, totalPages }
    */
   listUsers: async (params = {}) => {
-    const { data } = await api.get('/users', { params });
+    const { data } = await api.get('/users', { params, withCredentials: true });
     return data.data; // Extract from wrapper
   },
 
@@ -177,7 +179,7 @@ export const userAPI = {
    * @returns {Promise} User object
    */
   getUser: async (userId) => {
-    const { data } = await api.get(`/users/${userId}`);
+    const { data } = await api.get(`/users/${userId}`, { withCredentials: true });
     return data.data; // Extract from wrapper
   },
 
@@ -187,7 +189,7 @@ export const userAPI = {
    * @returns {Promise} Created user object
    */
   createUser: async (userData) => {
-    const { data } = await api.post('/users', userData);
+    const { data } = await api.post('/users', userData, { withCredentials: true });
     return data.data; // Extract from wrapper
   },
 
@@ -198,7 +200,7 @@ export const userAPI = {
    * @returns {Promise} Updated user object
    */
   updateUser: async (userId, updates) => {
-    const { data } = await api.patch(`/users/${userId}`, updates);
+    const { data } = await api.patch(`/users/${userId}`, updates, { withCredentials: true });
     return data.data;
   },
 
@@ -208,7 +210,7 @@ export const userAPI = {
    * @returns {Promise} Updated user object
    */
   deactivateUser: async (userId) => {
-    const { data } = await api.patch(`/users/${userId}/deactivate`);
+    const { data } = await api.patch(`/users/${userId}/deactivate`, {}, { withCredentials: true });
     return data.data; // Extract from wrapper
   },
 
@@ -218,12 +220,12 @@ export const userAPI = {
    * @returns {Promise} Updated user object
    */
   reactivateUser: async (userId) => {
-    const { data } = await api.patch(`/users/${userId}/reactivate`);
+    const { data } = await api.patch(`/users/${userId}/reactivate`, {}, { withCredentials: true });
     return data.data; // Extract from wrapper
   },
 
   deleteUser: async (userId) => {
-    const { data } = await api.delete(`/users/${userId}`);
+    const { data } = await api.delete(`/users/${userId}`, { withCredentials: true });
     return data;
   },
 };
@@ -239,7 +241,7 @@ export const activityLogsAPI = {
    * @returns {Promise} { logs, total, page, totalPages }
    */
   getLogs: async (params = {}) => {
-    const { data } = await api.get('/activity-logs', { params });
+    const { data } = await api.get('/activity-logs', { params, withCredentials: true });
     return data.data; // Extract from wrapper
   },
 };
@@ -261,7 +263,7 @@ export const metricsAPI = {
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
     if (unit) params.unit = unit; // e.g., 'hour' or 'minute'
-    const { data } = await api.get('/metrics/hourly', { params });
+    const { data } = await api.get('/metrics/hourly', { params, withCredentials: true });
     return data.data; // expected { labels: [], data: [] }
   }
 };

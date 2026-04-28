@@ -99,7 +99,7 @@ function SignIn() {
 
     // Attempt login
     try {
-      const result = await dispatch(loginUser({ email, password })).unwrap();
+      const result = await dispatch(loginUser({ email, password, rememberMe: remember })).unwrap();
       
       // Handle special cases
       if (result.mustChangePassword) {
@@ -109,8 +109,10 @@ function SignIn() {
       }
       
       if (result.mfaRequired) {
-        const from = location.state?.from?.pathname || '/';
-        navigate(from, { replace: true });
+        navigate('/two-factor', { 
+          replace: true, 
+          state: { userId: result.userId, rememberMe: remember, from: location.state?.from } 
+        });
         return;
       }
 

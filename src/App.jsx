@@ -10,14 +10,15 @@
  * @module App
  */
 
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import AppLayout from './components/layout/AppLayout.jsx';
 import { getDefaultPath } from './config/navigation';
 import { useNodeHeartbeat } from './hooks/useNodeHeartbeat';
 import { useHeartbeatTimeout } from './hooks/useHeartbeatTimeout';
+import { refreshSession } from './features/auth/authSlice';
 
 // -- Lazy-loaded pages --------------------------------------------------------
 const MapOverviewPage = lazy(() => import('./features/map/pages/MapOverviewPage.jsx'));
@@ -65,10 +66,34 @@ function RoleRedirect() {
 const ALL_ROLES = ['admin', 'emergency_dispatcher', 'road_observer', 'node_maintenance_crew'];
 
 function App() {
+  const dispatch = useDispatch();
+  const { loadingRefresh } = useSelector((state) => state.auth);
+
+  // Rehydrate session on app startup
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      dispatch(refreshSession());
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [dispatch]);
+
   useNodeHeartbeat();
   useHeartbeatTimeout();
 
   const { isAuthenticated } = useSelector((state) => state.auth);
+
+  // Show loading while checking session
+  if (loadingRefresh) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-safe-dark">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-safe-blue mx-auto mb-3" />
+          <p className="text-gray-400 text-sm">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>

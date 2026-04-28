@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux';
 
 function ProtectedRoute({ children, allowedRoles = null }) {
   const location = useLocation();
-  const { isAuthenticated, user, loading, mustChangePassword } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, loading, loadingRefresh, mustChangePassword } = useSelector((state) => state.auth);
 
-  // Show loading state while checking authentication
-  if (loading) {
+  // Show loading state while checking authentication (both loading and loadingRefresh)
+  if (loading || loadingRefresh) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-safe-bg">
         <div className="text-center">
