@@ -41,14 +41,14 @@ function TwoFactorAuth() {
 
   return (
     <LoginLayout
-      title="Two-Factor Authentication"
-      subtitle="Enter the 6-digit code sent to"
+      title="Verify Your Account"
+      subtitle="Enter the 6-digit code sent to your email"
       icon={
-        <div className="w-16 h-16 rounded-full bg-safe-blue-btn/5 flex items-center justify-center">
-          <i className="bi bi-shield text-safe-blue-btn text-3xl" />
+        <div className="w-16 h-16 rounded-full bg-safe-blue/10 flex items-center justify-center">
+          <i className="bi bi-shield-check text-safe-blue text-3xl" />
         </div>
       }
-      leftTitle={'Enhanced Security'}
+      leftTitle={'Two-Factor\nAuthentication'}
       leftDescription="Multi-factor authentication adds an extra layer of security to your account, ensuring that only you can access critical system functions."
       leftBullets={[
         'Time-based one-time passwords',
@@ -57,14 +57,14 @@ function TwoFactorAuth() {
       ]}
     >
       {/* Email under subtitle */}
-      <div className="text-center mb-3">
+      <div className="text-center mb-6">
         <p className="text-sm font-semibold text-safe-text-dark">
           example@gmail.com
         </p>
       </div>
 
       {/* Code boxes */}
-      <div className="flex justify-center gap-3 mb-5">
+      <div className="flex justify-center gap-3 mb-8">
         {codes.map((value, idx) => (
           <input
             key={idx}
@@ -75,7 +75,7 @@ function TwoFactorAuth() {
             value={value}
             onChange={(e) => handleChange(idx, e.target.value)}
             onKeyDown={(e) => handleKeyDown(idx, e)}
-            className="w-11 h-11 text-center text-lg font-semibold rounded-lg border border-safe-border bg-safe-bg/40 text-safe-text-dark focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/30 focus:border-safe-blue-btn"
+            className="w-12 h-12 text-center text-2xl font-bold rounded-lg border-2 border-safe-border/60 hover:border-safe-border bg-white text-safe-text-dark focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-safe-blue/20 focus:border-safe-blue transition-all duration-200"
           />
         ))}
       </div>
@@ -84,7 +84,7 @@ function TwoFactorAuth() {
       <Button
         variant="primary"
         size="md"
-        className="w-full"
+        className="w-full font-semibold"
         type="button"
         onClick={handleVerify}
       >
@@ -92,25 +92,25 @@ function TwoFactorAuth() {
       </Button>
 
       {/* Resend + back */}
-      <div className="mt-4 space-y-2 text-md text-safe-text-gray text-center">
-        <p>
+      <div className="mt-8 space-y-4 text-center">
+        <p className="text-sm text-safe-text-gray font-light">
           Didn&apos;t receive the code?{' '}
           <button
             type="button"
-            className="text-safe-blue-btn font-medium underline"
+            className="text-safe-blue hover:text-safe-blue-light font-semibold transition-colors duration-150"
           >
-            Resend
+            Resend Code
           </button>
         </p>
-        <p>
+        <div className="border-t border-safe-border/30 pt-4">
           <Link
             to="/sign-in"
-            className="inline-flex items-center gap-1 hover:underline"
+            className="inline-flex items-center gap-2 text-xs font-medium text-safe-text-gray hover:text-safe-text-dark transition-colors duration-150"
           >
-            <span className="text-xs text-safe-text-gray">←</span>
+            <span>←</span>
             <span>Back to Sign In</span>
           </Link>
-        </p>
+        </div>
       </div>
     </LoginLayout>
   );

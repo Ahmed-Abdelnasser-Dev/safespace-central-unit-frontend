@@ -135,52 +135,53 @@ function SignIn() {
         'Smart city infrastructure integration.',
       ]}
     >
-      <form className="space-y-5" onSubmit={handleSubmit}>
+      <form className="space-y-6" onSubmit={handleSubmit}>
         {/* Global error message */}
         {error && (
-          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+          <div className="rounded-lg border border-safe-danger/30 bg-safe-danger/5 px-4 py-3 animate-slideUp">
             <div className="flex items-start gap-3">
-              <i className="bi bi-exclamation-circle text-red-600 text-lg mt-0.5" />
-              <div className="text-sm text-red-800">
-                <p className="font-semibold mb-1">Login Failed</p>
-                <p>{error}</p>
+              <i className="bi bi-exclamation-circle text-safe-danger text-lg mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-safe-danger/80 flex-1">
+                <p className="font-semibold mb-1">Sign In Failed</p>
+                <p className="text-xs opacity-90">{error}</p>
               </div>
             </div>
           </div>
         )}
 
         {/* Email */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-medium text-safe-text-dark">
-            Email
+        <div className="space-y-2">
+          <label className="font-display text-sm font-semibold text-safe-text-dark">
+            Email Address
           </label>
           <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-safe-text-gray/60">
-              <i className="bi bi-envelope text-xs" />
+            <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-safe-text-gray/50">
+              <i className="bi bi-envelope text-sm" />
             </span>
             <input
               type="email"
-              placeholder="Enter your email"
+              placeholder="name@company.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={handleEmailBlur}
-              className={`w-full pl-9 pr-3 py-2.5 text-sm rounded-lg border ${emailError ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-safe-border focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn'} bg-safe-bg/40 text-safe-text-dark placeholder:text-safe-text-gray focus:outline-none focus:ring-2`}
+              className={`w-full pl-11 pr-4 py-3 text-sm rounded-lg border bg-white text-safe-text-dark placeholder:text-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all duration-200 ${emailError ? 'border-safe-danger focus:ring-safe-danger/20 focus:border-safe-danger' : 'border-safe-border/60 hover:border-safe-border focus:ring-safe-blue/20 focus:border-safe-blue'} disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-safe-gray-light`}
               disabled={loading || isSubmitting}
+              autoComplete="email"
             />
           </div>
           {emailError && (
-            <p className="text-xs text-red-600 mt-1">{emailError}</p>
+            <p className="text-xs text-safe-danger font-medium animate-slideUp">{emailError}</p>
           )}
         </div>
 
         {/* Password */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-medium text-safe-text-dark">
+        <div className="space-y-2">
+          <label className="font-display text-sm font-semibold text-safe-text-dark">
             Password
           </label>
           <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-safe-text-gray/60">
-              <i className="bi bi-lock text-xs" />
+            <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-safe-text-gray/50">
+              <i className="bi bi-lock text-sm" />
             </span>
             <input
               type={showPassword ? 'text' : 'password'}
@@ -188,21 +189,22 @@ function SignIn() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onBlur={handlePasswordBlur}
-              className={`w-full pl-9 pr-10 py-2.5 text-sm rounded-lg border ${passwordError ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-safe-border focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn'} bg-safe-bg/40 text-safe-text-dark placeholder:text-safe-text-gray focus:outline-none focus:ring-2`}
+              className={`w-full pl-11 pr-12 py-3 text-sm rounded-lg border bg-white text-safe-text-dark placeholder:text-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all duration-200 ${passwordError ? 'border-safe-danger focus:ring-safe-danger/20 focus:border-safe-danger' : 'border-safe-border/60 hover:border-safe-border focus:ring-safe-blue/20 focus:border-safe-blue'} disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-safe-gray-light`}
               disabled={loading || isSubmitting}
+              autoComplete="current-password"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center justify-center min-w-[44px] min-h-[44px] text-safe-text-gray/70 text-xs hover:text-safe-text-gray"
+              className="absolute inset-y-0 right-0 pr-4 flex items-center justify-center text-safe-text-gray/60 hover:text-safe-text-dark transition-colors duration-150"
               disabled={loading || isSubmitting}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              <i className={`bi bi-eye${showPassword ? '-slash' : ''}`} />
+              <i className={`bi bi-eye${showPassword ? '-slash' : ''} text-sm`} />
             </button>
           </div>
           {passwordError && (
-            <p className="text-xs text-red-600 mt-1">{passwordError}</p>
+            <p className="text-xs text-safe-danger font-medium animate-slideUp">{passwordError}</p>
           )}
         </div>
 
@@ -213,35 +215,35 @@ function SignIn() {
             tabIndex={0}
             onClick={() => setRemember(!remember)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setRemember(!remember); } }}
-            className="flex items-center gap-2 text-safe-text-dark cursor-pointer"
+            className="flex items-center gap-2.5 text-safe-text-dark cursor-pointer hover:text-safe-text-dark/70 transition-colors"
             aria-pressed={remember}
           >
             <Checkbox
               checked={remember}
               onChange={setRemember}
-              className="w-4 h-4 shadow-none"
+              className="w-4 h-4"
             />
-            <span>Remember me</span>
+            <span className="font-medium">Remember me</span>
           </div>
           <Link
             to="/forgot-password"
-            className="text-safe-blue-btn hover:underline"
+            className="text-safe-blue hover:text-safe-blue-light font-medium transition-colors duration-150"
           >
-            Forgot Password?
+            Forgot password?
           </Link>
         </div>
 
-        {/* MFA info row */}
-        <div className="flex items-start gap-3 rounded-lg border border-safe-border bg-safe-bg/60 px-3 py-3">
-          <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
-            <i className="bi bi-shield text-safe-blue-btn text-lg font-bold" />
+        {/* Security info */}
+        <div className="flex items-start gap-3 rounded-lg border border-safe-info/20 bg-safe-info/5 px-4 py-3">
+          <div className="w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <i className="bi bi-shield-check text-safe-info text-sm font-bold" />
           </div>
-          <div className="text-[11px] leading-relaxed text-safe-text-dark">
-            <p className="font-semibold text-safe-text-dark mb-0.5">
-              Multi-Factor Authentication
+          <div className="text-xs leading-relaxed text-safe-text-dark">
+            <p className="font-semibold text-safe-text-dark/90 mb-1">
+              Enhanced Security
             </p>
-            <p>
-              For enhanced security, MFA will be required after sign in.
+            <p className="text-safe-text-gray/80">
+              Multi-factor authentication will be required after sign in.
             </p>
           </div>
         </div>
@@ -250,18 +252,12 @@ function SignIn() {
         <Button
           variant="primary"
           size="md"
-          className="w-full"
+          className="w-full font-semibold"
           type="submit"
           disabled={loading || isSubmitting}
+          isLoading={loading || isSubmitting}
         >
-          {loading || isSubmitting ? (
-            <span className="flex items-center justify-center gap-2">
-              <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
-              Signing In...
-            </span>
-          ) : (
-            'Sign In'
-          )}
+          {!loading && !isSubmitting && 'Sign In'}
         </Button>
       </form>
     </LoginLayout>

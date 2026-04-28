@@ -3,28 +3,53 @@
  * All buttons across the app must use this component to ensure consistency.
  *
  * @param {object} props
- * @param {string} [props.variant] - visual style variant (primary | secondary | danger | ghost)
- * @param {string} [props.size] - size variant (sm | md)
+ * @param {string} [props.variant] - visual style variant (primary | secondary | danger | ghost | accent)
+ * @param {string} [props.size] - size variant (sm | md | lg)
  * @param {string} [props.type] - button type (button | submit | reset)
  * @param {boolean} [props.disabled]
+ * @param {boolean} [props.isLoading]
  * @param {function} [props.onClick]
  * @param {React.ReactNode} props.children
  */
-function Button({ variant = 'primary', size = 'md', type = 'button', disabled = false, onClick, children, className = '' }) {
-  const base = 'inline-flex items-center justify-center font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed';
+function Button({ 
+  variant = 'primary', 
+  size = 'md', 
+  type = 'button', 
+  disabled = false, 
+  isLoading = false,
+  onClick, 
+  children, 
+  className = '' 
+}) {
+  const base = 'inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]';
   const sizes = {
-    sm: 'text-sm px-3 py-2',
-    md: 'text-base px-6 py-3'
+    sm: 'text-xs px-3 py-1.5',
+    md: 'text-sm px-4 py-2.5',
+    lg: 'text-base px-6 py-3'
   };
   const variants = {
-    primary: 'bg-safe-blue-btn text-white hover:bg-safe-blue-btn/90 hover:shadow-md active:scale-[0.98] focus:ring-safe-blue-btn/30',
-    secondary: 'bg-white text-safe-text-dark border border-safe-border hover:bg-safe-bg hover:border-safe-text-gray/30 active:scale-[0.98] focus:ring-safe-blue-btn/30',
-    danger: 'bg-safe-danger text-white hover:bg-safe-danger/90 hover:shadow-md active:scale-[0.98] focus:ring-safe-danger/30',
-    ghost: 'bg-transparent text-safe-text-gray hover:bg-safe-bg active:scale-[0.98] focus:ring-safe-blue-btn/20'
+    primary: 'bg-safe-blue text-white hover:bg-safe-blue-light shadow-sm hover:shadow-lg focus:ring-safe-blue/30 disabled:bg-safe-gray disabled:text-safe-text-gray',
+    secondary: 'bg-safe-gray text-white hover:bg-safe-gray-light border border-safe-gray-light focus:ring-safe-blue/30',
+    danger: 'bg-safe-danger text-white hover:bg-safe-danger/90 shadow-sm hover:shadow-lg focus:ring-safe-danger/30',
+    ghost: 'bg-transparent text-safe-blue hover:bg-safe-blue/10 focus:ring-safe-blue/20',
+    accent: 'bg-safe-accent text-white hover:bg-safe-accent/90 shadow-sm hover:shadow-lg focus:ring-safe-accent/30',
   };
+
   return (
-    <button type={type} onClick={onClick} disabled={disabled} className={`${base} ${sizes[size]} ${variants[variant]} ${className}`}>
-      {children}
+    <button 
+      type={type} 
+      onClick={onClick} 
+      disabled={disabled || isLoading} 
+      className={`${base} ${sizes[size]} ${variants[variant]} ${className}`}
+    >
+      {isLoading ? (
+        <>
+          <span className="animate-spin mr-2 w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+          Loading...
+        </>
+      ) : (
+        children
+      )}
     </button>
   );
 }

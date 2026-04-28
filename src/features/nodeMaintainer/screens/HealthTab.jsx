@@ -46,12 +46,12 @@ function HealthTab() {
     return () => clearInterval(interval);
   }, [node]);
 
-  if (!node) return <div className="p-[16px] text-[#6a7282]" style={{ fontFamily: 'Arimo, sans-serif' }}>Select a node</div>;
+  if (!node) return <div className="p-4 text-safe-text-gray">Select a node</div>;
 
   return (
-    <div className="p-[20px] space-y-[20px]">
+    <div className="p-6 space-y-6 animate-slideUp">
       {/* Health Metrics Cards with Progress Bars */}
-      <div className="grid grid-cols-2 gap-[14px]">
+      <div className="grid grid-cols-2 gap-4">
         <MetricCard
           label="CPU"
           value={node.health.cpu}

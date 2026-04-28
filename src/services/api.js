@@ -244,4 +244,26 @@ export const activityLogsAPI = {
   },
 };
 
+// ============================================================================
+// Metrics APIs
+// ============================================================================
+
+export const metricsAPI = {
+  /**
+   * Fetch aggregated hourly metrics for a given metric type and date range.
+   * @param {string} type - e.g. 'user_activity' or 'alerts'
+   * @param {string} startDate - ISO date string (inclusive)
+   * @param {string} endDate - ISO date string (inclusive)
+   * @returns {Promise} { labels: string[], data: number[] }
+   */
+  getHourly: async (type, startDate, endDate, unit) => {
+    const params = { type };
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    if (unit) params.unit = unit; // e.g., 'hour' or 'minute'
+    const { data } = await api.get('/metrics/hourly', { params });
+    return data.data; // expected { labels: [], data: [] }
+  }
+};
+
 export default api;
