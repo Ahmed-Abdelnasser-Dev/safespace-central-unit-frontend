@@ -19,36 +19,23 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await authAPI.login(email, password);
       
-      // Handle mustChangePassword — backend returns tokens alongside the flag
+      // Handle mustChangePassword — tokens are in HttpOnly cookies, response only has the flag
       if (response.mustChangePassword) {
-        // Store tokens so ProtectedRoute lets the user through
-        if (response.accessToken && response.refreshToken) {
-          sessionStorage.setItem('accessToken', response.accessToken);
-          sessionStorage.setItem('refreshToken', response.refreshToken);
-          const user = await userAPI.getMe();
-          sessionStorage.setItem('user', JSON.stringify(user));
-          return { mustChangePassword: true, user, tokens: response };
-        }
-        // Fallback: no tokens returned — userId only
-        return { mustChangePassword: true, userId: response.userId };
+        const user = await userAPI.getMe();
+        sessionStorage.setItem('user', JSON.stringify(user));
+        return { mustChangePassword: true, user };
       }
       
       if (response.mfaRequired) {
         return { mfaRequired: true, userId: response.userId };
       }
 
-      // Successful login with tokens
-      if (response.accessToken && response.refreshToken) {
-        sessionStorage.setItem('accessToken', response.accessToken);
-        sessionStorage.setItem('refreshToken', response.refreshToken);
-
-        const user = await userAPI.getMe();
-        sessionStorage.setItem('user', JSON.stringify(user));
-
-        return { user, tokens: response };
-      }
-
-      throw new Error('Unexpected login response');
+      // Successful full login — tokens are in HttpOnly cookies (set by backend),
+      // NOT in the response body (controller strips them before sending JSON).
+      // We just need to fetch the user profile using the cookie that was just set.
+      const user = await userAPI.getMe();
+      sessionStorage.setItem('user', JSON.stringify(user));
+      return { user };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || error.message || 'Login failed. Please check your credentials.'
@@ -171,11 +158,8 @@ const authSlice = createSlice({
         
         if (action.payload.mustChangePassword) {
           state.mustChangePassword = true;
-          // If we got tokens+user, set authenticated so ProtectedRoute passes
-          if (action.payload.user) {
-            state.user = action.payload.user;
-            state.isAuthenticated = true;
-          }
+          state.user = action.payload.user;
+          state.isAuthenticated = true;
         } else if (action.payload.mfaRequired) {
           state.mfaRequired = true;
         } else {

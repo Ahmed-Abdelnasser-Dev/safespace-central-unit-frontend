@@ -9,6 +9,7 @@ import { API_URL } from '../lib/apiConfig';
 // Create axios instance
 const api = axios.create({
   baseURL: API_URL,
+  withCredentials: true, // Required: backend uses HttpOnly cookies for auth tokens
   headers: {
     'Content-Type': 'application/json',
   },
@@ -44,7 +45,7 @@ api.interceptors.response.use(
 
         const { data } = await axios.post(`${API_URL}/auth/refresh`, {
           refreshToken,
-        });
+        }, { withCredentials: true });
 
         // Extract from wrapper
         const tokens = data.data;

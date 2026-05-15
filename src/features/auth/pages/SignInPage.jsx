@@ -20,15 +20,16 @@ function SignIn() {
   const location = useLocation();
   const dispatch = useDispatch();
   
-  const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
+  const { loading, error, isAuthenticated, mustChangePassword } = useSelector((state) => state.auth);
 
-  // Redirect if already authenticated - ONLY ONCE
+  // Redirect if already authenticated
+  // IMPORTANT: skip when mustChangePassword is true — handleSubmit owns that redirect
   useEffect(() => {
-    if (isAuthenticated && !isSubmitting) {
+    if (isAuthenticated && !isSubmitting && !mustChangePassword) {
       const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     }
-  }, [isAuthenticated, navigate, location, isSubmitting]);
+  }, [isAuthenticated, mustChangePassword, navigate, location, isSubmitting]);
 
   // Validate email on blur
   const handleEmailBlur = () => {
@@ -103,7 +104,8 @@ function SignIn() {
       
       // Handle special cases
       if (result.mustChangePassword) {
-        // Navigate to profile — ProtectedRoute will let us through since isAuthenticated is now true
+        // Navigate to profile — ProtectedRoute allows through since isAuthenticated is now true
+        setIsSubmitting(false);
         navigate('/profile', { replace: true, state: { mustChangePassword: true } });
         return;
       }

@@ -74,7 +74,7 @@ function ChangePasswordModal({ isOpen, onClose, isMandatory = false }) {
       await dispatch(fetchCurrentUser()).unwrap();
       showSuccess('Password changed successfully! Redirecting...');
       handleClose();
-      navigate('/map-overview', { replace: true });
+      navigate('/map', { replace: true });
     } catch (error) {
       console.error('Password change error:', error);
       if (error.response?.status === 401) {

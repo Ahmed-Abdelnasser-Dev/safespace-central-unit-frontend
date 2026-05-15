@@ -1,37 +1,22 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-
 /**
  * Create New User Modal
- * Security: All inputs validated, passwords handled securely
+ *
+ * The backend auto-generates a secure temporary password on user creation.
+ * We do NOT send a password from here — that was the bug causing a mismatch
+ * between what was shown in the modal and what was actually set by the backend.
  */
 function CreateUserModal({ isOpen, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
     email: '',
     nationalId: '',
     roleId: '',
-    password: ''
   });
 
   const [errors, setErrors] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
 
-  // Security: Generate secure random password
-  const generatePassword = () => {
-    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
-    let password = '';
-    const array = new Uint8Array(16);
-    window.crypto.getRandomValues(array);
-    
-    for (let i = 0; i < 16; i++) {
-      password += charset[array[i] % charset.length];
-    }
-    
-    setFormData(prev => ({ ...prev, password }));
-  };
-
-  // Security: Validate email format
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -44,7 +29,6 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
     }
   };
 
-  // Security: Comprehensive form validation
   const validateForm = () => {
     const newErrors = {};
 
@@ -66,44 +50,32 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
       newErrors.roleId = 'Role is required';
     }
 
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 12) {
-      newErrors.password = 'Password must be at least 12 characters';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       const submitData = {
         email: formData.email,
         nationalId: formData.nationalId,
         roleId: parseInt(formData.roleId, 10),
-        password: formData.password,
+        // No password — backend generates it and returns it as tempPassword
       };
-      
+
       if (onSubmit) {
         onSubmit(submitData);
       }
-      
+
       handleClose();
     }
   };
 
   const handleClose = () => {
-    setFormData({
-      email: '',
-      nationalId: '',
-      roleId: '',
-      password: ''
-    });
+    setFormData({ email: '', nationalId: '', roleId: '' });
     setErrors({});
-    setShowPassword(false);
     onClose();
   };
 
@@ -115,7 +87,9 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
         {/* Modal Header */}
         <div className="px-8 py-6 border-b border-safe-border">
           <h2 className="text-xl font-bold text-safe-text-dark">Create New User</h2>
-          <p className="text-sm text-safe-text-gray mt-1">Employee ID will be auto-generated based on role</p>
+          <p className="text-sm text-safe-text-gray mt-1">
+            A secure temporary password will be auto-generated and shown once after creation.
+          </p>
         </div>
 
         {/* Modal Body */}
@@ -127,19 +101,17 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
               <label className="block text-sm font-medium text-safe-text-dark mb-2">
                 Email Address <span className="text-safe-danger">*</span>
               </label>
-              <div className="relative">
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  placeholder="user@agency.safeg.gov"
-                  aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? 'email-error' : undefined}
-                  className={`w-full px-4 py-2.5 bg-safe-bg border rounded-lg text-safe-text-dark placeholder-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/30 transition-colors ${
-                    errors.email ? 'border-safe-danger' : 'border-safe-border'
-                  }`}
-                />
-              </div>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                placeholder="user@agency.safeg.gov"
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'email-error' : undefined}
+                className={`w-full px-4 py-2.5 bg-safe-bg border rounded-lg text-safe-text-dark placeholder-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/30 transition-colors ${
+                  errors.email ? 'border-safe-danger' : 'border-safe-border'
+                }`}
+              />
               {errors.email && (
                 <p id="email-error" className="mt-1.5 text-xs text-safe-danger flex items-center gap-1">
                   <FontAwesomeIcon icon="exclamation-triangle" className="text-[10px]" />
@@ -201,62 +173,15 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
               )}
             </div>
 
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-safe-text-dark mb-2">
-                Temporary Password <span className="text-safe-danger">*</span>
-              </label>
-              <div className="flex gap-3">
-                <div className="flex-1 relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={formData.password}
-                    readOnly
-                    placeholder="Click Generate to create secure password"
-                    aria-invalid={!!errors.password}
-                    aria-describedby={errors.password ? 'password-error' : undefined}
-                    className={`w-full pl-4 pr-10 py-2.5 bg-safe-bg border rounded-lg text-safe-text-dark focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/30 transition-colors ${
-                      errors.password ? 'border-safe-danger' : 'border-safe-border'
-                    }`}
-                  />
-                  {formData.password && (
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-safe-text-gray hover:text-safe-text-dark transition-colors"
-                    >
-                      <FontAwesomeIcon icon={showPassword ? 'eye-slash' : 'eye'} className="text-sm" />
-                    </button>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  onClick={generatePassword}
-                  className="px-4 py-2.5 bg-safe-bg border border-safe-border text-safe-text-dark font-medium rounded-lg hover:bg-safe-bg/80 transition-colors whitespace-nowrap"
-                >
-                  Generate
-                </button>
-              </div>
-              {errors.password && (
-                <p id="password-error" className="mt-1.5 text-xs text-safe-danger flex items-center gap-1">
-                  <FontAwesomeIcon icon="exclamation-triangle" className="text-[10px]" />
-                  {errors.password}
-                </p>
-              )}
-              {formData.password && !errors.password && (
-                <div className="mt-3 p-3 bg-safe-green/10 border border-safe-green/30 rounded-lg">
-                  <div className="flex items-start gap-2">
-                    <FontAwesomeIcon icon="shield-halved" className="text-safe-green mt-0.5" />
-                    <div className="flex-1">
-                      <p className="text-xs font-medium text-safe-green mb-1">Secure Password Generated</p>
-                      <p className="text-xs text-safe-text-gray">
-                        Send this password securely to the user. They will be required to change it on first login.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
+            {/* Password info notice */}
+            <div className="p-3 bg-safe-blue-btn/5 border border-safe-blue-btn/20 rounded-lg flex items-start gap-2">
+              <FontAwesomeIcon icon="shield-halved" className="text-safe-blue-btn mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-safe-text-gray">
+                A cryptographically secure temporary password will be generated automatically by the system.
+                It will be shown to you <strong className="text-safe-text-dark">once</strong> after the user is created — copy and share it securely with the user.
+              </p>
             </div>
+
           </div>
 
           {/* Modal Footer */}
