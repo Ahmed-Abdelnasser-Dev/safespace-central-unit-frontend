@@ -8,6 +8,10 @@ export default defineConfig(({ mode }) => {
   const proxyTarget = env.VITE_DEV_PROXY_TARGET || 'http://localhost:5000';
   const enableProxy = env.VITE_ENABLE_DEV_PROXY === 'true';
 
+  const streamHttpUrl = env.VITE_NODE_VIDEO_WS_URL 
+    ? env.VITE_NODE_VIDEO_WS_URL.replace('ws://', 'http://').replace('wss://', 'https://')
+    : 'http://localhost:4001';
+
   const server = { port: 4000 };
 
   if (enableProxy) {
@@ -24,6 +28,27 @@ export default defineConfig(({ mode }) => {
         target: proxyTarget,
         changeOrigin: true,
       },
+      '/stream-service': {
+        target: streamHttpUrl,
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/stream-service/, ''),
+        headers: {
+          Origin: streamHttpUrl,
+        }
+      }
+    };
+  } else {
+    server.proxy = {
+      '/stream-service': {
+        target: streamHttpUrl,
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/stream-service/, ''),
+        headers: {
+          Origin: streamHttpUrl,
+        }
+      }
     };
   }
 

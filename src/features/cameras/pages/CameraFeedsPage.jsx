@@ -1,32 +1,39 @@
-import PageHeader from '@/components/layout/PageHeader';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PageHeader from '@/components/layout/PageHeader';
+import CameraGrid from '../components/CameraGrid';
+import { fetchCameras } from '../cameraSlice';
 
 function CameraFeedsPage() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCameras());
+  }, [dispatch]);
+
+  const handleRefresh = () => {
+    dispatch(fetchCameras());
+  };
+
   return (
     <div className="min-h-full bg-safe-dark text-white p-8">
-      <PageHeader
-        title="Camera Feeds"
-        description="Live camera monitoring from detection nodes across your network"
-        icon="video"
-      />
-      
-      <div className="flex items-center justify-center min-h-[calc(100vh-300px)]">
-        <div className="text-center max-w-md animate-slideUp">
-          <div className="w-20 h-20 bg-gradient-to-br from-safe-blue/20 to-safe-blue/5 rounded-2xl flex items-center justify-center mx-auto mb-8 border border-safe-blue/30">
-            <FontAwesomeIcon icon="video" className="text-4xl text-safe-blue/60" />
-          </div>
-          <h2 className="font-display text-2xl font-bold text-white mb-3">Coming Soon</h2>
-          <p className="text-base text-safe-text-gray/80 font-light leading-relaxed">
-            Live camera feeds from all detection nodes will be available here. Real-time monitoring and recording.
-          </p>
-          
-          <div className="mt-8 space-y-2 text-sm text-safe-text-gray/70 font-light">
-            <p>✓ Live video streams</p>
-            <p>✓ Multi-camera viewing</p>
-            <p>✓ Recording playback</p>
-          </div>
-        </div>
+      <div className="flex justify-between items-start mb-8">
+        <PageHeader
+          title="Camera Feeds"
+          description="Live camera monitoring from detection nodes across your network"
+          icon="video"
+        />
+        <button 
+          onClick={handleRefresh}
+          className="flex items-center gap-2 px-4 py-2 bg-safe-gray hover:bg-safe-gray-light text-white rounded-lg transition-colors border border-safe-gray-light"
+        >
+          <FontAwesomeIcon icon="sync-alt" />
+          <span>Refresh</span>
+        </button>
       </div>
+      
+      <CameraGrid />
     </div>
   );
 }
