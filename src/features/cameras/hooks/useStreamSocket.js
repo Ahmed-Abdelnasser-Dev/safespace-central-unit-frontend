@@ -8,8 +8,14 @@ import { useEffect, useRef, useState } from 'react';
 export function useStreamSocket(cameraId, canvasRef) {
   const wsRef = useRef(null);
   const [status, setStatus] = useState('connecting');
+  const statusRef = useRef('connecting');
   const [fps, setFps] = useState(0);
   const [lastFrameAt, setLastFrameAt] = useState(null);
+
+  const updateStatus = (newStatus) => {
+    statusRef.current = newStatus;
+    setStatus(newStatus);
+  };
 
   const frameCountRef = useRef(0);
   const lastSecRef = useRef(Date.now());
@@ -34,7 +40,7 @@ export function useStreamSocket(cameraId, canvasRef) {
       ws.binaryType = 'blob';
 
       ws.onopen = () => {
-        if (isMounted) setStatus('connecting'); // wait for first frame
+        if (isMounted) updateStatus('connecting'); // wait for first frame
       };
 
       ws.onmessage = async (event) => {
@@ -44,11 +50,11 @@ export function useStreamSocket(cameraId, canvasRef) {
           try {
             const data = JSON.parse(event.data);
             if (data.type === 'connected') {
-              setStatus('connecting');
+              updateStatus('connecting');
             } else if (data.type === 'error') {
-              setStatus('error');
+              updateStatus('error');
             } else if (data.type === 'stopped') {
-              setStatus('stopped');
+              updateStatus('stopped');
             }
           } catch (e) {
             console.error('Failed to parse WS text message', e);
@@ -58,7 +64,7 @@ export function useStreamSocket(cameraId, canvasRef) {
 
         // Draw binary frame data
         if (event.data instanceof Blob) {
-          if (status !== 'live') setStatus('live');
+          if (statusRef.current !== 'live') updateStatus('live');
           setLastFrameAt(new Date());
 
           try {
@@ -92,14 +98,14 @@ export function useStreamSocket(cameraId, canvasRef) {
 
       ws.onclose = () => {
         if (isMounted) {
-          setStatus('stopped');
+          updateStatus('stopped');
           setFps(0);
         }
       };
 
       ws.onerror = (err) => {
         if (isMounted) {
-          setStatus('error');
+          updateStatus('error');
           setFps(0);
         }
       };
@@ -120,7 +126,7 @@ export function useStreamSocket(cameraId, canvasRef) {
     const interval = setInterval(() => {
       if (lastFrameAt && status === 'live') {
         if (Date.now() - lastFrameAt.getTime() > 5000) {
-          setStatus('error');
+          updateStatus('error');
           setFps(0);
         }
       }

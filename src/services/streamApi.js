@@ -23,6 +23,22 @@ export const streamApi = {
     const response = await api.get(`/cameras/${id}`);
     return response.data;
   },
+  getCamera: async (id) => {
+    const response = await api.get(`/cameras/${id}`);
+    return response.data;
+  },
+  createCamera: async (data) => {
+    const response = await api.post('/cameras', data);
+    return response.data;
+  },
+  updateCamera: async (id, data) => {
+    const response = await api.put(`/cameras/${id}`, data);
+    return response.data;
+  },
+  deleteCamera: async (id) => {
+    const response = await api.delete(`/cameras/${id}`);
+    return response.data;
+  },
   startCamera: async (id) => {
     const response = await api.post(`/cameras/${id}/start`);
     return response.data;

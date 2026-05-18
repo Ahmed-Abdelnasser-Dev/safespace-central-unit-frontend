@@ -13,11 +13,48 @@ export const fetchCameras = createAsyncThunk(
   }
 );
 
+export const createCamera = createAsyncThunk(
+  'cameras/createCamera',
+  async (cameraData, { rejectWithValue }) => {
+    try {
+      const data = await streamApi.createCamera(cameraData);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const updateCamera = createAsyncThunk(
+  'cameras/updateCamera',
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await streamApi.updateCamera(id, data);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const deleteCamera = createAsyncThunk(
+  'cameras/deleteCamera',
+  async (id, { rejectWithValue }) => {
+    try {
+      await streamApi.deleteCamera(id);
+      return id;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
 const cameraSlice = createSlice({
   name: 'cameras',
   initialState: {
     cameras: [],
     loading: false,
+    submitting: false,
     error: null,
   },
   reducers: {},
@@ -33,6 +70,45 @@ const cameraSlice = createSlice({
       })
       .addCase(fetchCameras.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(createCamera.pending, (state) => {
+        state.submitting = true;
+        state.error = null;
+      })
+      .addCase(createCamera.fulfilled, (state, action) => {
+        state.submitting = false;
+        state.cameras.push(action.payload);
+      })
+      .addCase(createCamera.rejected, (state, action) => {
+        state.submitting = false;
+        state.error = action.payload;
+      })
+      .addCase(updateCamera.pending, (state) => {
+        state.submitting = true;
+        state.error = null;
+      })
+      .addCase(updateCamera.fulfilled, (state, action) => {
+        state.submitting = false;
+        const index = state.cameras.findIndex((c) => c.id === action.payload.id);
+        if (index !== -1) {
+          state.cameras[index] = action.payload;
+        }
+      })
+      .addCase(updateCamera.rejected, (state, action) => {
+        state.submitting = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteCamera.pending, (state) => {
+        state.submitting = true;
+        state.error = null;
+      })
+      .addCase(deleteCamera.fulfilled, (state, action) => {
+        state.submitting = false;
+        state.cameras = state.cameras.filter((c) => c.id !== action.payload);
+      })
+      .addCase(deleteCamera.rejected, (state, action) => {
+        state.submitting = false;
         state.error = action.payload;
       });
   },

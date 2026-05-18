@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import CameraFeed from './CameraFeed';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export default function CameraGrid() {
+export default function CameraGrid({ onEdit, onDelete, canManage }) {
   const { cameras, loading, error } = useSelector(state => state.cameras);
 
   if (loading && cameras.length === 0) {
@@ -37,7 +37,19 @@ export default function CameraGrid() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
       {cameras.map(cam => (
-        <CameraFeed key={cam.id} camera={cam} />
+        <div key={cam.id} className="relative group">
+           <CameraFeed camera={cam} />
+           {canManage && (
+             <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 p-1 rounded">
+                <button onClick={() => onEdit(cam)} className="p-1.5 text-white hover:text-safe-blue">
+                  <FontAwesomeIcon icon="edit" />
+                </button>
+                <button onClick={() => onDelete(cam)} className="p-1.5 text-white hover:text-red-500">
+                  <FontAwesomeIcon icon="trash" />
+                </button>
+             </div>
+           )}
+        </div>
       ))}
     </div>
   );
