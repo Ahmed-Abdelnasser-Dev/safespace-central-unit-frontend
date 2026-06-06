@@ -100,7 +100,7 @@ function SignIn() {
 
     // Attempt login
     try {
-      const result = await dispatch(loginUser({ email, password })).unwrap();
+      const result = await dispatch(loginUser({ email, password, rememberMe: remember })).unwrap();
       
       // Handle special cases
       if (result.mustChangePassword) {
@@ -111,8 +111,11 @@ function SignIn() {
       }
       
       if (result.mfaRequired) {
-        const from = location.state?.from?.pathname || '/';
-        navigate(from, { replace: true });
+        // Pass userId AND rememberMe so TwoFactorAuthPage can call verifyMFA correctly
+        navigate('/two-factor', {
+          replace: true,
+          state: { userId: result.userId, rememberMe: result.rememberMe },
+        });
         return;
       }
 

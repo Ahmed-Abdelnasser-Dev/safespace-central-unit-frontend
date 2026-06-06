@@ -10,14 +10,15 @@
  * @module App
  */
 
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import AppLayout from './components/layout/AppLayout.jsx';
 import { getDefaultPath } from './config/navigation';
 import { useNodeHeartbeat } from './hooks/useNodeHeartbeat';
 import { useHeartbeatTimeout } from './hooks/useHeartbeatTimeout';
+import { fetchCurrentUser } from './features/auth/authSlice';
 
 // -- Lazy-loaded pages --------------------------------------------------------
 const MapOverviewPage = lazy(() => import('./features/map/pages/MapOverviewPage.jsx'));
@@ -33,6 +34,7 @@ const SignInPage = lazy(() => import('./features/auth/pages/SignInPage.jsx'));
 const TwoFactorAuthPage = lazy(() => import('./features/auth/pages/TwoFactorAuthPage.jsx'));
 const ForgotPasswordPage = lazy(() => import('./features/auth/pages/ForgotPasswordPage.jsx'));
 const CheckYourEmailPage = lazy(() => import('./features/auth/pages/CheckYourEmailPage.jsx'));
+const ResetPasswordPage = lazy(() => import('./features/auth/pages/ResetPasswordPage.jsx'));
 const YouAreAllSetPage = lazy(() => import('./features/auth/pages/YouAreAllSetPage.jsx'));
 
 // Placeholder pages
@@ -68,7 +70,18 @@ function App() {
   useNodeHeartbeat();
   useHeartbeatTimeout();
 
+  const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
+
+  // On every page load/refresh, silently re-validate the session cookie.
+  // If the cookie is still valid, this refreshes the user object in Redux.
+  // If not, fetchCurrentUser.rejected clears isAuthenticated → redirect to /sign-in.
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchCurrentUser());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // run once on mount only
 
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
@@ -79,6 +92,7 @@ function App() {
           <Route path="/two-factor" element={<TwoFactorAuthPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/check-email" element={<CheckYourEmailPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/all-set" element={<YouAreAllSetPage />} />
 
           {/* ── Authenticated routes (with AppLayout) ────────────── */}
