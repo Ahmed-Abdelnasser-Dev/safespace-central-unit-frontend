@@ -3,15 +3,49 @@
  * Redux slice for authentication state management
  *
  * Auth model: tokens are in HttpOnly cookies — never stored in sessionStorage.
- * sessionStorage only holds the serialised user profile so the Redux store
- * can be re-hydrated on a page reload without an extra /users/me round-trip.
  *
- * isAuthenticated is initialised from the presence of a cached user object,
- * NOT from an 'accessToken' key (which was never written to sessionStorage).
+ * Remember Me storage:
+ *   rememberMe=true  → user profile in localStorage  (survives browser close)
+ *   rememberMe=false → user profile in sessionStorage (wiped on browser close)
+ *
+ * On boot, App.jsx always calls fetchCurrentUser to re-validate the cookie.
+ * If the cookie is gone/expired, fetchCurrentUser rejects and clears auth.
+ * If the cookie is still valid (30-day remember-me), the user stays logged in.
  */
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authAPI, userAPI } from '@/services/api';
+
+// ─── Storage helpers ──────────────────────────────────────────────────────────
+// Use localStorage for remember-me, sessionStorage for normal sessions.
+
+function saveUser(user, rememberMe) {
+  const serialised = JSON.stringify(user);
+  if (rememberMe) {
+    localStorage.setItem('user', serialised);
+    sessionStorage.removeItem('user');
+  } else {
+    sessionStorage.setItem('user', serialised);
+    localStorage.removeItem('user');
+  }
+}
+
+function loadUser() {
+  try {
+    const fromSession = sessionStorage.getItem('user');
+    if (fromSession) return { user: JSON.parse(fromSession), rememberMe: false };
+    const fromLocal = localStorage.getItem('user');
+    if (fromLocal) return { user: JSON.parse(fromLocal), rememberMe: true };
+  } catch {
+    // corrupted storage — ignore
+  }
+  return { user: null, rememberMe: false };
+}
+
+function clearStoredUser() {
+  sessionStorage.removeItem('user');
+  localStorage.removeItem('user');
+}
 
 // ============================================================================
 // Async Thunks
@@ -31,7 +65,7 @@ export const loginUser = createAsyncThunk(
       // mustChangePassword — tokens are already in HttpOnly cookies
       if (response.mustChangePassword) {
         const user = await userAPI.getMe();
-        sessionStorage.setItem('user', JSON.stringify(user));
+        saveUser(user, rememberMe);
         return { mustChangePassword: true, user };
       }
 
@@ -43,8 +77,8 @@ export const loginUser = createAsyncThunk(
       // Full login — tokens are in HttpOnly cookies set by backend.
       // Fetch the user profile using the cookie that was just set.
       const user = await userAPI.getMe();
-      sessionStorage.setItem('user', JSON.stringify(user));
-      return { user };
+      saveUser(user, rememberMe);
+      return { user, rememberMe };
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || error.message || 'Login failed. Please check your credentials.'
@@ -61,7 +95,9 @@ export const fetchCurrentUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const user = await userAPI.getMe();
-      sessionStorage.setItem('user', JSON.stringify(user));
+      // Preserve whichever storage the user is currently in
+      const { rememberMe } = loadUser();
+      saveUser(user, rememberMe);
       return user;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch user profile');
@@ -82,10 +118,10 @@ export const logoutUser = createAsyncThunk(
 
       await authAPI.logout(); // Cookie is sent automatically
 
-      sessionStorage.removeItem('user');
+      clearStoredUser();
       return { userId, email: userEmail };
     } catch (error) {
-      sessionStorage.removeItem('user');
+      clearStoredUser();
       return rejectWithValue(error.response?.data?.message || 'Logout failed');
     }
   }
@@ -99,7 +135,8 @@ export const updateUserProfile = createAsyncThunk(
   async (updates, { rejectWithValue }) => {
     try {
       const updatedUser = await userAPI.updateMe(updates);
-      sessionStorage.setItem('user', JSON.stringify(updatedUser));
+      const { rememberMe } = loadUser();
+      saveUser(updatedUser, rememberMe);
       return updatedUser;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to update profile');
@@ -150,22 +187,15 @@ export const resetPassword = createAsyncThunk(
 // Initial State
 // ============================================================================
 
-const storedUser = (() => {
-  try {
-    return JSON.parse(sessionStorage.getItem('user')) || null;
-  } catch {
-    return null;
-  }
-})();
+const { user: storedUser } = loadUser();
 
 const initialState = {
   user: storedUser,
-  // Tokens are in HttpOnly cookies — use cached user object as auth proxy.
-  // On page load, App.jsx re-validates by calling fetchCurrentUser.
+  // If we have a cached user, optimistically set authenticated.
+  // App.jsx always calls fetchCurrentUser on boot to re-validate with the server.
   isAuthenticated: !!storedUser,
   loading: false,
   error: null,
-  // Restore mustChangePassword so page refresh doesn't lose the lock
   mustChangePassword: storedUser?.mustChangePassword === true,
   mfaRequired: false,
 
@@ -249,7 +279,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = false;
         state.user = null;
-        sessionStorage.removeItem('user');
+        clearStoredUser();
       });
 
     // ── Logout ────────────────────────────────────────────────────────────────

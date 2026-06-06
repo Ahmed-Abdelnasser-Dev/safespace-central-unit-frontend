@@ -219,12 +219,12 @@ function SignIn() {
           <button
             type="button"
             className="flex items-center gap-2 text-safe-text-gray"
-            onClick={() => setRemember(!remember)}
+            onClick={() => setRemember((prev) => !prev)}
             disabled={loading || isSubmitting}
           >
             <Checkbox
               checked={remember}
-              onChange={setRemember}
+              onChange={() => {}} 
               className="w-4 h-4 shadow-none"
             />
             <span>Remember me</span>
