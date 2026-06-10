@@ -36,8 +36,13 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Never try to refresh if the failing request is itself an auth call.
+    // /auth/login, /auth/refresh, /auth/mfa/verify etc. should fail normally
+    // so the UI can show the error message to the user.
+    const isAuthRoute = originalRequest?.url?.includes('/auth/');
+
     // If 401 and haven't retried yet, ask backend to rotate the refresh cookie
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthRoute) {
       originalRequest._retry = true;
 
       try {
@@ -54,6 +59,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         // Refresh failed — wipe the cached user profile and go to login
         sessionStorage.removeItem('user');
+        localStorage.removeItem('user');
         window.location.href = '/sign-in';
         return Promise.reject(refreshError);
       }
@@ -104,6 +110,31 @@ export const authAPI = {
   verifyMFA: async (userId, code, rememberMe = false) => {
     const { data } = await api.post('/auth/mfa/verify', { userId, code, rememberMe });
     return data.data;
+  },
+
+  /**
+   * Generate a new TOTP secret + QR code (call once per setup flow)
+   * User must be logged in.
+   */
+  setupMFA: async () => {
+    const { data } = await api.post('/auth/mfa/setup');
+    return data.data; // { qrCode, secret }
+  },
+
+  /**
+   * Confirm MFA setup by verifying the first TOTP code.
+   * Returns { backupCodes } — show these to the user exactly once.
+   */
+  enableMFA: async (code) => {
+    const { data } = await api.post('/auth/mfa/enable', { code });
+    return data.data; // { backupCodes: string[] }
+  },
+
+  /**
+   * Disable MFA — requires password + current TOTP code.
+   */
+  disableMFA: async (password, code) => {
+    await api.post('/auth/mfa/disable', { password, code });
   },
 
   /**

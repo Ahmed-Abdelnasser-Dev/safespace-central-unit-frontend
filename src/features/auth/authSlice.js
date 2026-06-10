@@ -183,6 +183,61 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
+// ─── MFA Thunks ───────────────────────────────────────────────────────────────
+
+/**
+ * Step 1 of setup: generate secret + QR code from backend.
+ */
+export const setupMFA = createAsyncThunk(
+  'auth/setupMFA',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await authAPI.setupMFA(); // { qrCode, secret }
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to start MFA setup.');
+    }
+  }
+);
+
+/**
+ * Step 2 of setup: confirm with first TOTP code, receive backup codes.
+ */
+export const enableMFA = createAsyncThunk(
+  'auth/enableMFA',
+  async ({ code }, { getState, rejectWithValue }) => {
+    try {
+      const result = await authAPI.enableMFA(code); // { backupCodes }
+      // Update cached user so mfaEnabled reflects the change
+      const state = getState();
+      const updatedUser = { ...state.auth.user, mfaEnabled: true };
+      const { rememberMe } = loadUser();
+      saveUser(updatedUser, rememberMe);
+      return { backupCodes: result.backupCodes, user: updatedUser };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Invalid code. Please try again.');
+    }
+  }
+);
+
+/**
+ * Disable MFA (requires password + TOTP).
+ */
+export const disableMFA = createAsyncThunk(
+  'auth/disableMFA',
+  async ({ password, code }, { getState, rejectWithValue }) => {
+    try {
+      await authAPI.disableMFA(password, code);
+      const state = getState();
+      const updatedUser = { ...state.auth.user, mfaEnabled: false };
+      const { rememberMe } = loadUser();
+      saveUser(updatedUser, rememberMe);
+      return { user: updatedUser };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to disable MFA.');
+    }
+  }
+);
+
 // ============================================================================
 // Initial State
 // ============================================================================
@@ -191,18 +246,24 @@ const { user: storedUser } = loadUser();
 
 const initialState = {
   user: storedUser,
-  // If we have a cached user, optimistically set authenticated.
-  // App.jsx always calls fetchCurrentUser on boot to re-validate with the server.
   isAuthenticated: !!storedUser,
   loading: false,
   error: null,
   mustChangePassword: storedUser?.mustChangePassword === true,
   mfaRequired: false,
 
-  // Forgot / Reset password state (separate from main auth loading/error)
+  // Forgot / Reset password state
   passwordResetLoading: false,
   passwordResetError:   null,
   passwordResetSuccess: false,
+
+  // MFA setup state
+  mfaSetupLoading:  false,
+  mfaSetupError:    null,
+  mfaSetupQrCode:   null,   // data URL for QR image
+  mfaSetupSecret:   null,   // plain-text secret for manual entry
+  mfaSetupStep:     null,   // null | 'scan' | 'backup'
+  mfaBackupCodes:   [],     // shown once after enableMFA
 };
 
 // ============================================================================
@@ -233,6 +294,15 @@ const authSlice = createSlice({
       state.passwordResetLoading = false;
       state.passwordResetError   = null;
       state.passwordResetSuccess = false;
+    },
+    // Reset MFA setup wizard state (cancel button)
+    resetMfaSetup: (state) => {
+      state.mfaSetupLoading = false;
+      state.mfaSetupError   = null;
+      state.mfaSetupQrCode  = null;
+      state.mfaSetupSecret  = null;
+      state.mfaSetupStep    = null;
+      state.mfaBackupCodes  = [];
     },
   },
   extraReducers: (builder) => {
@@ -339,8 +409,62 @@ const authSlice = createSlice({
         state.passwordResetLoading = false;
         state.passwordResetError   = action.payload;
       });
+
+    // ── MFA Setup ─────────────────────────────────────────────────────────────
+    builder
+      .addCase(setupMFA.pending, (state) => {
+        state.mfaSetupLoading = true;
+        state.mfaSetupError   = null;
+      })
+      .addCase(setupMFA.fulfilled, (state, action) => {
+        state.mfaSetupLoading = false;
+        state.mfaSetupQrCode  = action.payload.qrCode;
+        state.mfaSetupSecret  = action.payload.secret;
+        state.mfaSetupStep    = 'scan';
+      })
+      .addCase(setupMFA.rejected, (state, action) => {
+        state.mfaSetupLoading = false;
+        state.mfaSetupError   = action.payload;
+      });
+
+    // ── MFA Enable ────────────────────────────────────────────────────────────
+    builder
+      .addCase(enableMFA.pending, (state) => {
+        state.mfaSetupLoading = true;
+        state.mfaSetupError   = null;
+      })
+      .addCase(enableMFA.fulfilled, (state, action) => {
+        state.mfaSetupLoading = false;
+        state.mfaSetupStep    = 'backup';
+        state.mfaBackupCodes  = action.payload.backupCodes;
+        state.user            = action.payload.user;
+      })
+      .addCase(enableMFA.rejected, (state, action) => {
+        state.mfaSetupLoading = false;
+        state.mfaSetupError   = action.payload;
+      });
+
+    // ── MFA Disable ───────────────────────────────────────────────────────────
+    builder
+      .addCase(disableMFA.pending, (state) => {
+        state.mfaSetupLoading = true;
+        state.mfaSetupError   = null;
+      })
+      .addCase(disableMFA.fulfilled, (state, action) => {
+        state.mfaSetupLoading = false;
+        state.user            = action.payload.user;
+        // Reset all MFA setup state
+        state.mfaSetupQrCode  = null;
+        state.mfaSetupSecret  = null;
+        state.mfaSetupStep    = null;
+        state.mfaBackupCodes  = [];
+      })
+      .addCase(disableMFA.rejected, (state, action) => {
+        state.mfaSetupLoading = false;
+        state.mfaSetupError   = action.payload;
+      });
   },
 });
 
-export const { clearError, setUser, clearAuth, clearPasswordResetState } = authSlice.actions;
+export const { clearError, setUser, clearAuth, clearPasswordResetState, resetMfaSetup } = authSlice.actions;
 export default authSlice.reducer;

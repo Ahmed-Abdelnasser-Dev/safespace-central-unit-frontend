@@ -73,11 +73,14 @@ function App() {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
 
-  // On every page load/refresh, silently re-validate the session cookie.
-  // If the cookie is still valid, this refreshes the user object in Redux.
-  // If not, fetchCurrentUser.rejected clears isAuthenticated → redirect to /sign-in.
+  // On every page load/refresh, always try to validate the session cookie.
+  // - If cookie valid: user stays logged in (works for 30-day remember-me too)
+  // - If cookie expired/missing: fetchCurrentUser rejects → clears auth → /sign-in
+  // Skip on auth pages — there's no session to validate and it would cause noisy 401s
   useEffect(() => {
-    if (isAuthenticated) {
+    const authPages = ['/sign-in', '/forgot-password', '/reset-password', '/two-factor'];
+    const onAuthPage = authPages.some(p => window.location.pathname.startsWith(p));
+    if (!onAuthPage) {
       dispatch(fetchCurrentUser());
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
