@@ -26,6 +26,8 @@ export const colors = {
   orange: 'safe-orange',
   info: 'safe-info',
   green: 'safe-green',
+  purple: 'safe-purple',
+  teal: 'safe-teal',
 
   // Text
   textDark: 'safe-text-dark',
@@ -47,13 +49,16 @@ export const spacing = {
 
 // -- Typography (Tailwind class strings) ------------------------------------
 export const typography = {
-  h1: 'text-2xl font-bold',
-  h2: 'text-xl font-semibold',
-  h3: 'text-lg font-semibold',
-  subtitle: 'text-sm font-medium',
-  body: 'text-sm',
-  caption: 'text-xs text-gray-400',
-  tiny: 'text-[11px] tracking-wide',
+  h1: 'font-display text-4xl font-bold tracking-tight',
+  h2: 'font-display text-3xl font-bold tracking-tight',
+  h3: 'font-display text-2xl font-semibold tracking-tight',
+  h4: 'font-display text-xl font-semibold tracking-tight',
+  subtitle: 'text-base font-medium tracking-wide',
+  body: 'text-sm font-normal',
+  bodySmall: 'text-xs font-normal',
+  caption: 'text-xs text-safe-text-gray font-medium tracking-wide',
+  tiny: 'text-[11px] tracking-widest font-mono',
+  label: 'text-sm font-semibold uppercase tracking-wider',
 };
 
 // -- Radii (Tailwind class strings) -----------------------------------------

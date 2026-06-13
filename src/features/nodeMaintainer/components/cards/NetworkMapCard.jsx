@@ -47,13 +47,12 @@ export default function NetworkMapCard() {
   useMapAutoCenter(mapRef, nodes, selectedNodeId);
 
   return (
-    <Card className="border-[#e5e7eb] rounded-[8px] sm:rounded-[10px] lg:rounded-[13.684px] shadow-sm overflow-hidden flex flex-col flex-1 w-full h-full">
+    <Card className="border-safe-border/50 rounded-xl shadow-card overflow-hidden flex flex-col flex-1 w-full h-full">
       {/* Header */}
-      <div className="border-b border-[#e5e7eb] flex items-center justify-between px-[12px] sm:px-[14px] md:px-[16px] h-[40px] sm:h-[44px] md:h-[48px] bg-gradient-to-r from-[#f7f8f9] to-white flex-shrink-0">
+      <div className="border-b border-safe-border/30 flex items-center justify-between px-6 py-4 bg-white flex-shrink-0">
         <div className="flex items-center gap-3">
           <h3 
-            className="font-bold text-[#101828]"
-            style={{ fontSize: 'clamp(12px, 1.3vw, 13px)', lineHeight: '18.642px', fontFamily: 'Arimo, sans-serif' }}
+            className="font-semibold text-safe-text-dark"
           >
             Network Map
           </h3>

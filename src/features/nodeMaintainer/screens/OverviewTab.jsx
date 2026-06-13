@@ -97,22 +97,14 @@ export default function OverviewTab() {
   }));
 
   return (
-    <div className="p-[12px] sm:p-[14px] md:p-[16px] lg:p-[18px] xl:p-[20px] space-y-[14px] sm:space-y-[16px] md:space-y-[18px] lg:space-y-[20px] h-full overflow-y-auto">
+    <div className="p-6 space-y-6 h-full overflow-y-auto animate-slideUp">
       {/* ===== SECTION 1: CAMERA FEED ===== */}
       <div className="space-y-[8px] sm:space-y-[10px] md:space-y-[12px]">
-        <h4
-          className="font-bold text-[#101828]"
-          style={{
-            fontSize: 'clamp(14px, 1.5vw, 18px)',
-            fontFamily,
-          }}
-        >
-          Live Camera Feed
-        </h4>
+        <h4 className="font-semibold text-safe-text-dark text-lg">Live Camera Feed</h4>
 
         <div
           ref={feedRef}
-          className="relative bg-[#1a1a1a] rounded-[6px] sm:rounded-[7px] md:rounded-[8px] overflow-hidden w-full max-w-[640px] mx-auto"
+          className="relative bg-safe-gray/5 rounded-xl overflow-hidden w-full max-w-[640px] mx-auto"
           style={{ aspectRatio: '1 / 1', minHeight: '320px', maxHeight: '640px' }}
         >
           {displayImage ? (
@@ -122,63 +114,28 @@ export default function OverviewTab() {
               className="absolute inset-0 w-full h-full object-cover"
             />
           ) : (
-            <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-[#111827]">
-              <span
-                className="text-white/70"
-                style={{ fontSize: 'clamp(12px, 1.2vw, 14px)', fontFamily }}
-              >
-                {isConnected ? 'Waiting for video feed...' : 'Live stream not connected'}
-              </span>
+            <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-safe-dark">
+              <span className="text-safe-text-gray">{isConnected ? 'Waiting for video feed...' : 'Live stream not connected'}</span>
             </div>
           )}
 
           {/* LIVE Badge */}
-          <div
-            className="absolute bg-[#fb2c36] rounded-[3px] flex items-center gap-[6px] px-[8px] py-[4px] shadow-md"
-            style={{ top: "12px", left: "12px" }}
-          >
-            <div
-              className={`bg-white rounded-full ${isConnected && node.status === 'online' ? 'animate-pulse' : 'opacity-40'}`}
-              style={{ width: "4px", height: "4px" }}
-            />
-            <span
-              className="text-white font-bold"
-              style={{
-                ...typography.labelSmall,
-                fontFamily,
-              }}
-            >
-              {isConnected && node.status === 'online' ? 'LIVE' : 'OFFLINE'}
-            </span>
+          <div className="absolute bg-safe-danger rounded-md flex items-center gap-2 px-3 py-1 shadow-sm" style={{ top: 12, left: 12 }}>
+            <div className={`w-2 h-2 rounded-full bg-white ${isConnected && node.status === 'online' ? 'animate-pulse' : 'opacity-40'}`} />
+            <span className="text-white text-xs font-bold">{isConnected && node.status === 'online' ? 'LIVE' : 'OFFLINE'}</span>
           </div>
 
           {/* Resolution Info */}
           {displayImage && (
-            <div
-              className="absolute bg-black bg-opacity-80 rounded-[3px] px-[8px] py-[4px] shadow-md"
-              style={{ bottom: "12px", left: "12px" }}
-            >
-              <span
-                className="text-white font-normal"
-                style={{
-                  ...typography.caption,
-                  fontFamily,
-                }}
-              >
-                {node.nodeSpecs.cameraResolution || '1920×1080'} @ {node.health.currentFps?.toFixed(1) || 0} FPS
-              </span>
+            <div className="absolute bg-black bg-opacity-80 rounded-md px-3 py-1 shadow-sm" style={{ bottom: 12, left: 12 }}>
+              <span className="text-white text-xs">{node.nodeSpecs.cameraResolution || '1920×1080'} @ {node.health.currentFps?.toFixed(1) || 0} FPS</span>
             </div>
           )}
 
           {/* Incident Overlay (when snapshot is from incident) */}
           {lastSnapshot && lastSnapshot.incidentType && (
-            <div
-              className="absolute bg-red-600 bg-opacity-90 rounded-[3px] px-[10px] py-[6px] shadow-lg"
-              style={{ top: "12px", right: "12px" }}
-            >
-              <span className="text-white font-bold text-xs uppercase">
-                {lastSnapshot.incidentType} - {(lastSnapshot.confidence * 100).toFixed(0)}%
-              </span>
+            <div className="absolute bg-safe-danger rounded-md px-3 py-1 shadow-lg" style={{ top: 12, right: 12 }}>
+              <span className="text-white text-xs font-bold uppercase">{lastSnapshot.incidentType} - {(lastSnapshot.confidence * 100).toFixed(0)}%</span>
             </div>
           )}
 
@@ -225,7 +182,7 @@ export default function OverviewTab() {
       {/* ===== SECTION 2: HEALTH METRICS ===== */}
       <SectionHeader title="Health Metrics" showDivider={true} />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-[8px] sm:gap-[10px] md:gap-[12px] lg:gap-[14px]">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
           label="CPU"
           value={node.health.cpu}
@@ -259,45 +216,37 @@ export default function OverviewTab() {
       {/* ===== SECTION 3: ROAD STATUS ===== */}
       <SectionHeader title="Road Status" showDivider={true} />
 
-      <RoadStatusDisplay
-        roadName={node.location?.address || node.name}
-        speedLimit={speedLimit}
-        lanes={lanes}
-        laneStatusOptions={laneStatusOptions}
-      />
+      <RoadStatusDisplay roadName={node.location?.address || node.name} speedLimit={speedLimit} lanes={lanes} laneStatusOptions={laneStatusOptions} />
 
       {/* ===== SECTION 4: NODE INFORMATION ===== */}
       <SectionHeader title="Node Information" showDivider={true} />
 
-      <div className="bg-[#f7f8f9] rounded-[6px] sm:rounded-[7px] md:rounded-[8px] p-[12px] sm:p-[14px] md:p-[16px] border border-[#e5e7eb] space-y-[8px] sm:space-y-[10px] md:space-y-[12px]">
-          <div style={{ borderBottom: '1px solid #e5e7eb' }}>
-            <NodeInfoRow label="Install Date" value={node.createdAt ? new Date(node.createdAt).toLocaleDateString() : 'Not available'} />
-          </div>
+      <div className="bg-white rounded-xl p-6 border border-safe-border space-y-3">
+        <div className="border-b border-safe-border/30 pb-3">
+          <NodeInfoRow label="Install Date" value={node.createdAt ? new Date(node.createdAt).toLocaleDateString() : 'Not available'} />
+        </div>
 
-          <div style={{ borderBottom: '1px solid #e5e7eb' }}>
-            <NodeInfoRow label="Last Heartbeat" value={node.lastHeartbeat ? new Date(node.lastHeartbeat).toLocaleString() : 'Not available'} />
-          </div>
+        <div className="border-b border-safe-border/30 pb-3">
+          <NodeInfoRow label="Last Heartbeat" value={node.lastHeartbeat ? new Date(node.lastHeartbeat).toLocaleString() : 'Not available'} />
+        </div>
 
-          <div style={{ borderBottom: '1px solid #e5e7eb' }}>
-            <NodeInfoRow label="Uptime" value={formatUptime(node.uptimeSec || 0)} />
-          </div>
+        <div className="border-b border-safe-border/30 pb-3">
+          <NodeInfoRow label="Uptime" value={formatUptime(node.uptimeSec || 0)} />
+        </div>
 
-        <div style={{ borderBottom: '1px solid #e5e7eb' }}>
+        <div className="border-b border-safe-border/30 pb-3">
           <NodeInfoRow label="IP Address" value={node.nodeSpecs.ipAddress} />
         </div>
 
-        <div style={{ borderBottom: '1px solid #e5e7eb' }}>
+        <div className="border-b border-safe-border/30 pb-3">
           <NodeInfoRow label="Firmware Version" value={node.firmwareVersion || 'unknown'} />
         </div>
 
-        <div style={{ borderBottom: '1px solid #e5e7eb' }}>
+        <div className="border-b border-safe-border/30 pb-3">
           <NodeInfoRow label="AI Model Version" value={node.modelVersion || 'unknown'} />
         </div>
 
-        <NodeInfoRow 
-          label="Coordinates" 
-          value={`${node.location.latitude?.toFixed(4)}, ${node.location.longitude?.toFixed(4)}`} 
-        />
+        <NodeInfoRow label="Coordinates" value={`${node.location.latitude?.toFixed(4)}, ${node.location.longitude?.toFixed(4)}`} />
       </div>
     </div>
   );

@@ -16,99 +16,68 @@ import Button from '@/components/ui/Button.jsx';
 
 export default function NodeMaintainerHeader({ onAddNode }) {
   return (
-    <div className="bg-white border-b border-[#e5e7eb] w-full">
-      <div className="flex items-center justify-between py-[10px] px-[20px]">
+    <div className="bg-safe-dark border-b border-safe-border/50 w-full">
+      <div className="flex items-center justify-between py-8 px-8 gap-6 animate-slideUp">
         {/* Page Title & Description */}
-        <div>
-          <h1 
-            className="font-bold text-[#101828] mb-[4px]"
-            style={{ fontSize: '20.645px', lineHeight: '28.903px', fontFamily: 'Arimo, sans-serif' }}
-          >
-            Node Maintainer
-          </h1>
-          <p 
-            className="font-normal text-[#6a7282]"
-            style={{ fontSize: '12.387px', lineHeight: '16.516px', fontFamily: 'Arimo, sans-serif' }}
-          >
-            Manage, Monitor and update Nodes
-          </p>
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-safe-blue/20 to-safe-blue/5 rounded-lg flex items-center justify-center border border-safe-blue/30 flex-shrink-0">
+            <FontAwesomeIcon icon="diagram-project" className="text-safe-blue text-xl" />
+          </div>
+          <div>
+            <h1 className="font-display text-2xl font-bold text-white">Node Maintainer</h1>
+            <p className="text-sm text-safe-text-gray/80 font-light mt-1">Manage, monitor and update network nodes</p>
+          </div>
         </div>
 
         {/* Controls */}
-        <div className="flex items-center gap-[20px]">
+        <div className="flex items-center gap-4 stagger-1">
           <Button
             variant="primary"
             size="sm"
             onClick={onAddNode}
-            className="h-[41.29px] px-[14px]"
+            className="flex items-center gap-2"
           >
-            <span className="flex items-center gap-[8px]">
-              <FontAwesomeIcon icon="plus" style={{ width: '14px', height: '14px' }} />
-              Add Node
-            </span>
+            <FontAwesomeIcon icon="plus" className="w-4 h-4" />
+            Add Node
           </Button>
           {/* Search Bar */}
           <div className="relative group">
-            <div 
-              className="bg-[#f7f7f7] border border-[#e5e7eb] rounded-[8.258px] flex items-center pl-[41.29px] pr-[12.387px] py-[4.129px] transition-all duration-200 group-focus-within:border-[#247cff] group-focus-within:bg-white group-hover:border-[#d0d5dd]"
-              style={{ width: '396.387px', height: '41.29px' }}
-            >
-              <input
-                type="text"
-                placeholder="Search locations, units, incidents..."
-                className="bg-transparent w-full text-[#99a1af] outline-none font-normal placeholder-[#99a1af] focus:text-[#101828]"
-                style={{ fontSize: '14.452px', fontFamily: 'Arimo, sans-serif' }}
-              />
-            </div>
-            <div className="absolute left-[12.39px] top-[12.39px] pointer-events-none group-focus-within:text-[#247cff] transition-colors duration-200">
+            <div className="relative flex items-center">
               <FontAwesomeIcon 
                 icon="magnifying-glass" 
-                className="text-[#99a1af]" 
-                style={{ width: '16.516px', height: '16.516px' }}
+                className="absolute left-3 text-safe-text-gray/60 group-focus-within:text-safe-blue transition-colors duration-200"
+              />
+              <input
+                type="text"
+                placeholder="Search nodes..."
+                className="bg-safe-gray/10 border border-safe-border/50 rounded-lg pl-10 pr-4 py-2.5 w-60 text-safe-text-dark placeholder-safe-text-gray/50 outline-none transition-all duration-200 focus:bg-white focus:border-safe-blue/50 focus:shadow-sm font-light text-sm"
               />
             </div>
           </div>
 
           {/* Refresh Button */}
           <button 
-            className="bg-[#f7f7f7] border border-[#e5e7eb] rounded-[8.258px] flex items-center justify-center hover:bg-[#e8e9ea] hover:border-[#d0d5dd] transition-all duration-200 active:bg-[#dde0e5]"
-            style={{ width: '41.29px', height: '41.29px' }}
+            className="p-2.5 bg-safe-gray/10 hover:bg-safe-blue/10 border border-safe-border/50 rounded-lg transition-all duration-200 text-safe-text-gray hover:text-safe-blue"
             title="Refresh data"
           >
             <FontAwesomeIcon 
               icon="arrows-rotate" 
-              className="text-[#6a7282]" 
-              style={{ width: '16.516px', height: '16.516px' }}
+              className="w-5 h-5" 
             />
           </button>
 
-          {/* Notification Button with Badge */}
-          <div className="relative group">
+          {/* Notification Button */}
+          <div className="relative">
             <button 
-              className="bg-[#f7f7f7] border border-[#e5e7eb] rounded-[8.258px] flex items-center justify-center hover:bg-[#e8e9ea] hover:border-[#d0d5dd] transition-all duration-200 active:bg-[#dde0e5]"
-              style={{ width: '41.29px', height: '41.29px' }}
-              title="View notifications"
+              className="p-2.5 bg-safe-gray/10 hover:bg-safe-blue/10 border border-safe-border/50 rounded-lg transition-all duration-200 text-safe-text-gray hover:text-safe-blue"
+              title="Notifications"
             >
               <FontAwesomeIcon 
                 icon="bell" 
-                className="text-[#6a7282]" 
-                style={{ width: '16.516px', height: '16.516px' }}
+                className="w-5 h-5" 
               />
             </button>
-            <div 
-              className="absolute bg-[#d63e4d] rounded-[8.258px] flex items-center justify-center text-white font-bold shadow-sm"
-              style={{ 
-                width: '20.645px', 
-                height: '20.645px',
-                top: '-2.06px',
-                right: '-2.06px',
-                fontSize: '11px',
-                lineHeight: '16.516px',
-                fontFamily: 'Arimo, sans-serif'
-              }}
-            >
-              3
-            </div>
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-safe-danger rounded-full flex items-center justify-center text-white text-xs font-bold">3</span>
           </div>
         </div>
       </div>

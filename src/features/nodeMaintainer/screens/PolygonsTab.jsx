@@ -17,7 +17,7 @@ import { typography, fontFamily } from '../styles/typography';
 function PolygonsTab({ onEditPolygon }) {
   const node = useSelector(selectSelectedNode);
 
-  if (!node) return <div className="p-[20px]">Select a node</div>;
+  if (!node) return <div className="p-4 text-safe-text-gray">Select a node</div>;
 
   const lanes = node?.roadRules?.lanes || [];
   
@@ -34,48 +34,28 @@ function PolygonsTab({ onEditPolygon }) {
   const definedCount = lanePolygonPairs.filter(p => !p.isEmpty).length;
 
   return (
-    <div className="p-[20px] space-y-[20px]">
+    <div className="p-6 space-y-6 animate-slideUp">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-bold text-[#101828]" style={{ ...typography.heading2, fontFamily }}>
-            Lane Polygons
-          </h3>
-          <p className="text-[#6a7282] text-sm mt-1" style={{ fontFamily }}>
-            {definedCount} of {lanes.length} polygons defined
-            {lanes.length === 0 && ' • Add lanes in Road Configuration first'}
-          </p>
+          <h3 className="font-semibold text-safe-text-dark text-lg">Lane Polygons</h3>
+          <p className="text-safe-text-gray text-sm mt-1">{definedCount} of {lanes.length} polygons defined{lanes.length === 0 && ' • Add lanes in Road Configuration first'}</p>
         </div>
       </div>
 
       {lanes.length === 0 ? (
-        <EmptyState
-          icon="road"
-          title="No lanes configured"
-          message="Go to Road Configuration tab and add lanes first. Each lane will automatically get a polygon."
-        />
+        <EmptyState icon="road" title="No lanes configured" message="Go to Road Configuration tab and add lanes first. Each lane will automatically get a polygon." />
       ) : (
-        <div className="space-y-[8px]">
+        <div className="space-y-3">
           {lanePolygonPairs.map(({ lane, polygon, isEmpty }) => (
             <ListItem
               key={lane.id}
               title={lane.name}
-              subtitle={
-                isEmpty 
-                  ? <span className="text-[#f59e0b] font-medium">⚠ Polygon not defined</span>
-                  : <span className="text-[#22c55e]">✓ {polygon.points?.length || 0} points</span>
-              }
+              subtitle={isEmpty ? <span className="text-safe-warning font-medium">⚠ Polygon not defined</span> : <span className="text-safe-success">✓ {polygon.points?.length || 0} points</span>}
               actions={[
                 {
                   label: isEmpty ? 'Define Polygon' : 'Edit Polygon',
                   icon: <FontAwesomeIcon icon={isEmpty ? 'plus' : 'pen'} style={{ width: '12px', height: '12px' }} />,
-                  onClick: () => onEditPolygon(polygon || {
-                    id: `poly-${Date.now()}-${lane.id}`,
-                    name: lane.name,
-                    laneNumber: lane.id,
-                    type: 'lane',
-                    points: [],
-                    isEmpty: true,
-                  }),
+                  onClick: () => onEditPolygon(polygon || { id: `poly-${Date.now()}-${lane.id}`, name: lane.name, laneNumber: lane.id, type: 'lane', points: [], isEmpty: true }),
                   variant: isEmpty ? 'primary' : 'default'
                 }
               ]}

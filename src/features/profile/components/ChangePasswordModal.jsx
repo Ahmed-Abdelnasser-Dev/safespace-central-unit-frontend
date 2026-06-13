@@ -118,7 +118,7 @@ function ChangePasswordModal({ isOpen, onClose, isMandatory = false }) {
             </p>
           </div>
           {!isMandatory && (
-            <button onClick={handleClose} className="text-safe-text-gray hover:text-safe-text-dark transition-colors">
+            <button type="button" onClick={handleClose} className="text-safe-text-gray hover:text-safe-text-dark transition-colors">
               <FontAwesomeIcon icon="xmark" className="text-xl" />
             </button>
           )}

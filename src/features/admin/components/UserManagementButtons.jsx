@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { userAPI } from '@/services/api';
 import CreateUserModal from './CreateUserModal';
 import { showSuccess, showError } from '@/utils/toast';
@@ -72,62 +72,76 @@ function UserManagementButtons({ onSearch, onRoleFilter, onStatusFilter, current
     };
 
     return (
-        <div>
-          {/* navigation buttons */}
-          <div>
-              {/* Buttons */}
-              <div className="mt-6 flex gap-2">
-                <button className="px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2.5 text-white shadow-sm bg-safe-blue">
-                    User Management
-                </button>
-                <Link 
-                    to="/activity-logs"
-                    className="px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2.5 text-safe-text-gray shadow-sm bg-safe-white hover:bg-safe-bg transition-colors"
-                >
-                    Activity Logs
-                </Link>
-              </div>
+        <div className="mb-8">
+          {/* Navigation Tabs */}
+          <div className="flex gap-2 mb-6 border-b border-safe-border/40">
+              <NavLink 
+                to="/user-management"
+                className={({ isActive }) => `px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  isActive 
+                    ? 'border-safe-blue text-safe-blue'
+                    : 'border-transparent text-safe-text-gray hover:text-safe-text-dark'
+                }`}
+              >
+                User Management
+              </NavLink>
+              <NavLink 
+                to="/activity-logs"
+                className={({ isActive }) => `px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  isActive 
+                    ? 'border-safe-blue text-safe-blue'
+                    : 'border-transparent text-safe-text-gray hover:text-safe-text-dark'
+                }`}
+              >
+                Activity Logs
+              </NavLink>
           </div>
           
-          <div className='flex pt-6 '>
-            <div className="flex items-center gap-4">
+          <div className='flex items-center gap-4 animate-slideUp'>
+            <div className="flex items-center gap-3 flex-1">
                 {/* Search Bar */}
-                <div className="relative">
+                <div className="relative flex-1 max-w-sm">
                     <FontAwesomeIcon 
                         icon="magnifying-glass" 
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-safe-text-gray text-sm"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-safe-text-gray/50 text-sm"
                     />
                     <input
                         type="text"
                         placeholder="Search by name, email or ID..."
                         value={searchTerm}
                         onChange={handleSearchChange}
-                        className="pl-11 pr-4 py-2.5 w-[340px] rounded-lg border border-safe-border text-sm text-safe-text-dark placeholder:text-safe-text-gray focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn"
+                        className="w-full pl-11 pr-4 py-2.5 rounded-lg border border-safe-border/60 hover:border-safe-border text-sm text-safe-text-dark placeholder:text-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-safe-blue/20 focus:border-safe-blue transition-all duration-200"
                     />
                 </div>
 
                 {/* Role Dropdown */}
                 <div className="relative">
                     <button 
+                        type="button"
                         onClick={() => {
                             setShowRoleDropdown(!showRoleDropdown);
                             setShowStatusDropdown(false);
                         }}
-                        className="text-sm pl-3 pr-3 py-2.5 w-[150px] rounded-lg border bg-safe-white border-safe-border flex items-center justify-between gap-2 text-safe-text-gray hover:bg-safe-bg transition-colors"
+                        className="px-4 py-2.5 rounded-lg border border-safe-border/60 hover:border-safe-border bg-white flex items-center justify-between gap-3 text-sm text-safe-text-dark hover:bg-safe-gray/5 transition-all duration-200 min-w-[160px]"
                     >
-                        <span className="truncate">{getRoleLabel()}</span>
-                        <FontAwesomeIcon icon="angle-down" className="text-xs flex-shrink-0" />
+                        <span className="truncate font-medium">{getRoleLabel()}</span>
+                        <FontAwesomeIcon icon={showRoleDropdown ? "angle-up" : "angle-down"} className="text-xs flex-shrink-0 text-safe-text-gray/50" />
                     </button>
                     {showRoleDropdown && (
-                        <div className="absolute top-full mt-1 w-[200px] bg-white border border-safe-border rounded-lg shadow-lg z-10">
+                        <div className="absolute top-full mt-2 w-[220px] bg-white border border-safe-border rounded-lg shadow-lg z-10 animate-slideUp">
                             {roles.map((role) => (
                                 <button
+                                    type="button"
                                     key={role.value}
                                     onClick={() => {
                                         onRoleFilter(role.value);
                                         setShowRoleDropdown(false);
                                     }}
-                                    className="w-full px-3 py-2 text-left text-sm text-safe-text-gray hover:bg-safe-bg transition-colors first:rounded-t-lg last:rounded-b-lg"
+                                    className={`w-full px-4 py-2.5 text-left text-sm transition-colors ${
+                                      currentFilters.role === role.value 
+                                        ? 'bg-safe-blue/10 text-safe-blue font-medium'
+                                        : 'text-safe-text-gray hover:bg-safe-gray/5'
+                                    } first:rounded-t-lg last:rounded-b-lg`}
                                 >
                                     {role.label}
                                 </button>
@@ -139,25 +153,31 @@ function UserManagementButtons({ onSearch, onRoleFilter, onStatusFilter, current
                 {/* Status Dropdown */}
                 <div className="relative">
                     <button 
+                        type="button"
                         onClick={() => {
                             setShowStatusDropdown(!showStatusDropdown);
                             setShowRoleDropdown(false);
                         }}
-                        className="text-sm pl-3 pr-3 py-2.5 w-[150px] rounded-lg border bg-safe-white border-safe-border flex items-center justify-between gap-2 text-safe-text-gray hover:bg-safe-bg transition-colors"
+                        className="px-4 py-2.5 rounded-lg border border-safe-border/60 hover:border-safe-border bg-white flex items-center justify-between gap-3 text-sm text-safe-text-dark hover:bg-safe-gray/5 transition-all duration-200 min-w-[160px]"
                     >
-                        <span className="truncate">{getStatusLabel()}</span>
-                        <FontAwesomeIcon icon="angle-down" className="text-xs flex-shrink-0" />
+                        <span className="truncate font-medium">{getStatusLabel()}</span>
+                        <FontAwesomeIcon icon={showStatusDropdown ? "angle-up" : "angle-down"} className="text-xs flex-shrink-0 text-safe-text-gray/50" />
                     </button>
                     {showStatusDropdown && (
-                        <div className="absolute top-full mt-1 w-[150px] bg-white border border-safe-border rounded-lg shadow-lg z-10">
+                        <div className="absolute top-full mt-2 w-[180px] bg-white border border-safe-border rounded-lg shadow-lg z-10 animate-slideUp">
                             {statuses.map((status) => (
                                 <button
+                                    type="button"
                                     key={status.value}
                                     onClick={() => {
                                         onStatusFilter(status.value);
                                         setShowStatusDropdown(false);
                                     }}
-                                    className="w-full px-3 py-2 text-left text-sm text-safe-text-gray hover:bg-safe-bg transition-colors first:rounded-t-lg last:rounded-b-lg"
+                                    className={`w-full px-4 py-2.5 text-left text-sm transition-colors ${
+                                      currentFilters.status === status.value 
+                                        ? 'bg-safe-blue/10 text-safe-blue font-medium'
+                                        : 'text-safe-text-gray hover:bg-safe-gray/5'
+                                    } first:rounded-t-lg last:rounded-b-lg`}
                                 >
                                     {status.label}
                                 </button>
@@ -167,14 +187,14 @@ function UserManagementButtons({ onSearch, onRoleFilter, onStatusFilter, current
                 </div>
             </div>
             
-            <div className='ml-auto'>
-                {/* Create new Account */}
+            <div className=''>
+                {/* Create new Account Button */}
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="relative px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2.5 text-white shadow-sm bg-safe-blue hover:bg-safe-blue/90 transition-colors"
+                    className="relative px-5 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2.5 text-white bg-safe-blue hover:bg-safe-blue/90 shadow-md hover:shadow-lg transition-all duration-200 group"
                 >
-                    <FontAwesomeIcon icon="user-plus" />
-                    Create New Account
+                    <FontAwesomeIcon icon="user-plus" className="group-hover:scale-110 transition-transform" />
+                    <span>Create Account</span>
                 </button>
             </div>
           </div>

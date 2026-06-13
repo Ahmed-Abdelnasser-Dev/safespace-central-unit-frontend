@@ -170,7 +170,7 @@ function Profile({ onLogout }) {
             <p className="text-sm font-semibold text-yellow-800">Password Change Required</p>
             <p className="text-xs text-yellow-700 mt-0.5">You must change your password before continuing.</p>
           </div>
-          <button onClick={() => setIsPasswordModalOpen(true)} className="px-4 py-2 text-xs font-semibold text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg transition-colors flex-shrink-0">
+          <button type="button" onClick={() => setIsPasswordModalOpen(true)} className="px-4 py-2 text-xs font-semibold text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg transition-colors flex-shrink-0">
             Change Now
           </button>
         </div>
@@ -183,7 +183,7 @@ function Profile({ onLogout }) {
             <h4 className="font-semibold text-blue-900">Password Updated Successfully!</h4>
             <p className="text-sm text-blue-700 mt-1">Please continue and complete your profile details below.</p>
           </div>
-          <button onClick={() => setPasswordJustChanged(false)} className="text-blue-600 hover:text-blue-800 transition-colors">
+          <button type="button" onClick={() => setPasswordJustChanged(false)} className="text-blue-600 hover:text-blue-800 transition-colors">
             <FontAwesomeIcon icon="xmark" className="text-lg" />
           </button>
         </div>

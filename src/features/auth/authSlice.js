@@ -6,52 +6,85 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authAPI, userAPI } from '@/services/api';
 
+const PENDING_MFA_USER_ID_KEY = 'pendingMfaUserId';
+const PENDING_MFA_REMEMBER_ME_KEY = 'pendingMfaRememberMe';
+
+const setPendingMfaSession = (userId, rememberMe) => {
+  sessionStorage.setItem(PENDING_MFA_USER_ID_KEY, userId);
+  sessionStorage.setItem(PENDING_MFA_REMEMBER_ME_KEY, String(rememberMe));
+};
+
+const clearPendingMfaSession = () => {
+  sessionStorage.removeItem(PENDING_MFA_USER_ID_KEY);
+  sessionStorage.removeItem(PENDING_MFA_REMEMBER_ME_KEY);
+};
+
 // ============================================================================
 // Async Thunks
 // ============================================================================
 
 /**
- * Login user
+ * Login user with email, password, and rememberMe
  */
 export const loginUser = createAsyncThunk(
   'auth/login',
-  async ({ email, password }, { rejectWithValue }) => {
+  async ({ email, password, rememberMe }, { rejectWithValue }) => {
     try {
-      const response = await authAPI.login(email, password);
+      const response = await authAPI.login(email, password, rememberMe);
       
-      // Handle mustChangePassword — backend returns tokens alongside the flag
+      // Handle mustChangePassword — backend sets cookies, we just store user profile
       if (response.mustChangePassword) {
-        // Store tokens so ProtectedRoute lets the user through
-        if (response.accessToken && response.refreshToken) {
-          sessionStorage.setItem('accessToken', response.accessToken);
-          sessionStorage.setItem('refreshToken', response.refreshToken);
-          const user = await userAPI.getMe();
+        const user = response.user || await userAPI.getMe();
+        if (user) {
+          clearPendingMfaSession();
           sessionStorage.setItem('user', JSON.stringify(user));
-          return { mustChangePassword: true, user, tokens: response };
+          return { mustChangePassword: true, user };
         }
-        // Fallback: no tokens returned — userId only
-        return { mustChangePassword: true, userId: response.userId };
+        throw new Error('Unable to load user profile for password change');
       }
       
       if (response.mfaRequired) {
+        setPendingMfaSession(response.userId, rememberMe);
         return { mfaRequired: true, userId: response.userId };
       }
 
-      // Successful login with tokens
-      if (response.accessToken && response.refreshToken) {
-        sessionStorage.setItem('accessToken', response.accessToken);
-        sessionStorage.setItem('refreshToken', response.refreshToken);
-
-        const user = await userAPI.getMe();
+      // Successful login with user profile
+      const user = response.user || await userAPI.getMe();
+      if (user) {
+        clearPendingMfaSession();
         sessionStorage.setItem('user', JSON.stringify(user));
-
-        return { user, tokens: response };
+        return { user };
       }
 
       throw new Error('Unexpected login response');
     } catch (error) {
+      clearPendingMfaSession();
       return rejectWithValue(
         error.response?.data?.message || error.message || 'Login failed. Please check your credentials.'
+      );
+    }
+  }
+);
+
+/**
+ * Refresh session on app startup
+ * Checks if cookies still valid, rehydrates user state
+ */
+export const refreshSession = createAsyncThunk(
+  'auth/refreshSession',
+  async (_, { rejectWithValue }) => {
+    try {
+      // Backend validates cookies, then fetch the current user profile from the cookie session
+      await authAPI.refresh();
+      const user = await userAPI.getMe();
+      clearPendingMfaSession();
+      sessionStorage.setItem('user', JSON.stringify(user));
+      return { user };
+    } catch (error) {
+      // 401 means cookies are invalid or expired - redirect to login
+      sessionStorage.removeItem('user');
+      return rejectWithValue(
+        error.response?.data?.message || 'Session expired. Please log in again.'
       );
     }
   }
@@ -80,25 +113,49 @@ export const logoutUser = createAsyncThunk(
   'auth/logout',
   async (_, { getState, rejectWithValue }) => {
     try {
-      const refreshToken = sessionStorage.getItem('refreshToken');
       const state = getState();
       const userId = state.auth.user?.id;
       const userEmail = state.auth.user?.email;
       
-      if (refreshToken) {
-        await authAPI.logout(refreshToken);
-      }
+      // Call logout endpoint with credentials (cookies sent automatically)
+      await authAPI.logout();
 
-      sessionStorage.removeItem('accessToken');
-      sessionStorage.removeItem('refreshToken');
+      // Clear frontend state
+      clearPendingMfaSession();
       sessionStorage.removeItem('user');
       
       return { userId, email: userEmail };
     } catch (error) {
-      sessionStorage.removeItem('accessToken');
-      sessionStorage.removeItem('refreshToken');
+      // Even if logout fails, clear local state
+      clearPendingMfaSession();
       sessionStorage.removeItem('user');
       return rejectWithValue(error.response?.data?.message || 'Logout failed');
+    }
+  }
+);
+
+/**
+ * Verify MFA code
+ */
+export const verifyMFACode = createAsyncThunk(
+  'auth/verifyMFA',
+  async ({ userId, code, rememberMe }, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.verifyMFA(userId, code, rememberMe);
+      const user = response.user || await userAPI.getMe();
+      
+      // Backend sets cookies and returns user
+      if (user) {
+        clearPendingMfaSession();
+        sessionStorage.setItem('user', JSON.stringify(user));
+        return { user };
+      }
+
+      throw new Error('Unable to load user profile after MFA verification');
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || error.message || 'MFA verification failed'
+      );
     }
   }
 );
@@ -127,8 +184,9 @@ const storedUser = JSON.parse(sessionStorage.getItem('user')) || null;
 
 const initialState = {
   user: storedUser,
-  isAuthenticated: !!sessionStorage.getItem('accessToken'),
+  isAuthenticated: !!storedUser, // User presence determines auth state, not tokens
   loading: false,
+  loadingRefresh: true, // Start as true so initial refresh is in progress
   error: null,
   // Restore mustChangePassword from stored user so page refresh doesn't lose the lock
   mustChangePassword: storedUser?.mustChangePassword === true,
@@ -160,6 +218,28 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    // Refresh session (app startup)
+    builder
+      .addCase(refreshSession.pending, (state) => {
+        state.loadingRefresh = true;
+        state.error = null;
+      })
+      .addCase(refreshSession.fulfilled, (state, action) => {
+        state.loadingRefresh = false;
+        state.user = action.payload.user;
+        state.isAuthenticated = true;
+        state.mustChangePassword = action.payload.user?.mustChangePassword === true;
+        state.mfaRequired = false;
+      })
+      .addCase(refreshSession.rejected, (state, action) => {
+        state.loadingRefresh = false;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.mustChangePassword = false;
+        state.mfaRequired = false;
+        state.error = action.payload;
+      });
+
     // Login
     builder
       .addCase(loginUser.pending, (state) => {
@@ -171,22 +251,28 @@ const authSlice = createSlice({
         
         if (action.payload.mustChangePassword) {
           state.mustChangePassword = true;
+          state.mfaRequired = false;
           // If we got tokens+user, set authenticated so ProtectedRoute passes
           if (action.payload.user) {
             state.user = action.payload.user;
             state.isAuthenticated = true;
           }
         } else if (action.payload.mfaRequired) {
+          state.mustChangePassword = false;
           state.mfaRequired = true;
         } else {
           state.user = action.payload.user;
           state.isAuthenticated = true;
+          state.mustChangePassword = false;
+          state.mfaRequired = false;
         }
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.isAuthenticated = false;
+        state.mustChangePassword = false;
+        state.mfaRequired = false;
       });
 
     // Fetch current user
@@ -219,6 +305,32 @@ const authSlice = createSlice({
         state.error = null;
         state.mustChangePassword = false;
         state.mfaRequired = false;
+      });
+    builder
+      .addCase(logoutUser.rejected, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.loading = false;
+        state.error = null;
+        state.mustChangePassword = false;
+        state.mfaRequired = false;
+      });
+
+    // Verify MFA
+    builder
+      .addCase(verifyMFACode.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(verifyMFACode.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.isAuthenticated = true;
+        state.mfaRequired = false;
+      })
+      .addCase(verifyMFACode.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
 
     // Update profile

@@ -19,31 +19,38 @@ function ForgotPassword() {
         'Guided recovery steps',
       ]}
     >
-      <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+      <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
         {/* Email field */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-medium text-safe-text-dark">
+        <div className="space-y-2">
+          <label className="font-display text-sm font-semibold text-safe-text-dark">
             Email Address
           </label>
           <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-safe-text-gray/60">
-              <i className="bi bi-envelope text-xs" />
+            <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-safe-text-gray/50">
+              <i className="bi bi-envelope text-sm" />
             </span>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="w-full pl-9 pr-3 py-2.5 text-sm rounded-lg border border-safe-border bg-safe-bg/40 text-safe-text-dark placeholder:text-safe-text-gray-light focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn"
+              placeholder="name@company.com"
+              className="w-full pl-11 pr-4 py-3 text-sm rounded-lg border border-safe-border/60 hover:border-safe-border bg-white text-safe-text-dark placeholder:text-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-safe-blue/20 focus:border-safe-blue transition-all duration-200 disabled:opacity-60 disabled:bg-safe-gray-light"
             />
           </div>
+        </div>
+
+        {/* Info box */}
+        <div className="rounded-lg border border-safe-info/20 bg-safe-info/5 px-4 py-3">
+          <p className="text-xs text-safe-text-dark/80 leading-relaxed font-light">
+            We'll send you an email with a secure link to reset your password. The link will expire in 24 hours.
+          </p>
         </div>
 
         {/* Primary button */}
         <Button
           variant="primary"
           size="md"
-          className="w-full"
+          className="w-full font-semibold"
           type="button"
           onClick={() => navigate('/check-email')}
         >
@@ -52,12 +59,12 @@ function ForgotPassword() {
       </form>
 
       {/* Back link */}
-      <div className="mt-4 text-[11px] text-safe-text-gray text-center">
+      <div className="mt-6 text-xs text-safe-text-gray text-center">
         <Link
           to="/sign-in"
-          className="inline-flex items-center gap-1 hover:underline"
+          className="inline-flex items-center gap-2 hover:text-safe-text-dark transition-colors duration-150 font-medium"
         >
-          <span className="text-xs text-safe-text-gray">←</span>
+          <span>←</span>
           <span>Back to Sign In</span>
         </Link>
       </div>

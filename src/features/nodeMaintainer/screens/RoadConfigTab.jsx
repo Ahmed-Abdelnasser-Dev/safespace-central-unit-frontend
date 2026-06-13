@@ -92,12 +92,10 @@ function RoadConfigTab() {
   };
 
   return (
-    <div className="p-[12px] sm:p-[14px] md:p-[16px] lg:p-[18px] xl:p-[20px] space-y-[14px] sm:space-y-[16px] md:space-y-[18px] lg:space-y-[20px] h-full overflow-y-auto">
+    <div className="p-6 space-y-6 h-full overflow-y-auto animate-slideUp">
       {/* Node Display Output */}
       <div className="space-y-[8px] sm:space-y-[10px] md:space-y-[12px]">
-        <h4 className="font-bold text-[#101828]" style={{ fontSize: "clamp(14px, 1.5vw, 18px)", fontFamily }}>
-          Node Display Output
-        </h4>
+        <h4 className="font-semibold text-safe-text-dark text-lg">Node Display Output</h4>
         <RoadStatusDisplay
           roadName={node.location?.address || node.name}
           speedLimit={speedLimit}
@@ -109,15 +107,15 @@ function RoadConfigTab() {
       <SectionHeader title="Lane Configuration" showDivider={true} />
 
       {/* Lane Configuration */}
-      <div className="space-y-[8px] sm:space-y-[10px] md:space-y-[12px] mt-[12px] sm:mt-[14px] lg:mt-[16px]">
+      <div className="space-y-4 mt-3">
         <div className="flex justify-between items-center">
-          <span></span>
-          <Button variant="ghost" onClick={() => setIsAddLaneOpen(true)} className="!text-[#247cff] hover:!bg-blue-50">
+          <span />
+          <Button variant="ghost" onClick={() => setIsAddLaneOpen(true)} className="!text-safe-accent hover:!bg-safe-accent/10">
             + Add Lane
           </Button>
         </div>
 
-        <div className="space-y-[6px] sm:space-y-[7px] md:space-y-[8px]">
+        <div className="space-y-3">
           {lanes.length > 0 ? (
             lanes.map((lane) => (
               <ListItem
@@ -141,10 +139,8 @@ function RoadConfigTab() {
               />
             ))
           ) : (
-            <div className="p-[10px] sm:p-[12px] md:p-[14px] bg-[#f7f8f9] border border-[#e5e7eb] rounded-[6px] sm:rounded-[7px] md:rounded-[8px] text-center">
-              <p className="text-[#6a7282] text-center" style={{ fontSize: "clamp(13px, 1.2vw, 16px)", fontFamily }}>
-                No lanes configured
-              </p>
+            <div className="p-4 bg-white border border-safe-border rounded-xl text-center">
+              <p className="text-safe-text-gray">No lanes configured</p>
             </div>
           )}
         </div>
@@ -152,7 +148,9 @@ function RoadConfigTab() {
 
       <SpeedLimitConfig speedLimit={speedLimit} onChange={handleSpeedLimitChange} />
 
-      <PrimaryButton onClick={handleSaveConfig} disabled={!hasChanges} icon="floppy-disk" text="Save Road Configuration" />
+      <div className="pt-2">
+        <PrimaryButton onClick={handleSaveConfig} disabled={!hasChanges} icon="floppy-disk" text="Save Road Configuration" />
+      </div>
 
       <AddLaneModal
         isOpen={isAddLaneOpen}

@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { API_BASE_URL } from '@/lib/apiConfig';
+import logoSrc from '@/assets/icons/logo.svg';
 
 function Sidebar({ navItems = [] }) {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ function Sidebar({ navItems = [] }) {
     <aside className="w-[74px] min-h-screen bg-safe-sidebar flex flex-col items-center py-6 gap-6 flex-shrink-0">
       {/* Logo */}
       <div className="w-12 h-12 bg-safe-blue-btn rounded-xl flex items-center justify-center mb-4">
-        <img src="/src/assets/icons/logo.svg" alt="SafeSpace" className="w-16 h-16 object-contain" />
+        <img src={logoSrc} alt="SafeSpace" className="w-16 h-16 object-contain" />
       </div>
 
       {/* Navigation */}
@@ -41,7 +42,7 @@ function Sidebar({ navItems = [] }) {
       </nav>
 
       {/* Profile Avatar */}
-      <button
+        <button type="button"
         onClick={() => navigate('/profile')}
         className="w-12 h-12 rounded-xl bg-safe-gray flex items-center justify-center text-gray-300 hover:bg-safe-gray-light transition-colors overflow-hidden"
         title="Profile"

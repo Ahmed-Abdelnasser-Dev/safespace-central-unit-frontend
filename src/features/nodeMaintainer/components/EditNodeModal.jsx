@@ -71,23 +71,19 @@ function EditNodeModal({ isOpen, onClose, onSave, node, isLoading = false, error
 
   return (
     <Modal open={isOpen} onClose={onClose}>
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-auto">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-auto border border-safe-border">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">Edit Node Configuration</h2>
-          <button
-            onClick={onClose}
-            disabled={isLoading}
-            className="text-gray-500 hover:text-gray-700 disabled:opacity-50"
-          >
-            <span className="text-lg font-semibold">x</span>
+        <div className="flex items-center justify-between p-6 border-b border-safe-border/30">
+          <h2 className="text-xl font-bold text-safe-text-dark">Edit Node Configuration</h2>
+          <button onClick={onClose} disabled={isLoading} className="text-safe-text-gray hover:text-safe-text-dark disabled:opacity-50">
+            <span className="text-lg font-semibold">×</span>
           </button>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="mx-6 mt-6 p-4 bg-red-50 border border-red-200 rounded-lg flex gap-3">
-            <p className="text-sm text-red-700">{error}</p>
+          <div className="mx-6 mt-6 p-4 bg-safe-danger/10 border border-safe-danger/20 rounded-lg flex gap-3">
+            <p className="text-sm text-safe-danger">{error}</p>
           </div>
         )}
 
@@ -95,7 +91,7 @@ function EditNodeModal({ isOpen, onClose, onSave, node, isLoading = false, error
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Basic Information */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-4">Basic Information</h3>
+            <h3 className="text-sm font-semibold text-safe-text-dark mb-4">Basic Information</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -107,7 +103,7 @@ function EditNodeModal({ isOpen, onClose, onSave, node, isLoading = false, error
                   value={formData.name}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                  className="w-full px-3 py-2 border border-safe-border rounded-lg focus:outline-none focus:ring-2 focus:ring-safe-accent disabled:bg-safe-gray/5"
                   placeholder="e.g., Highway-01"
                 />
               </div>
@@ -122,7 +118,7 @@ function EditNodeModal({ isOpen, onClose, onSave, node, isLoading = false, error
                   value={formData.nodeId}
                   onChange={handleChange}
                   disabled
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                  className="w-full px-3 py-2 border border-safe-border rounded-lg focus:outline-none focus:ring-2 focus:ring-safe-accent disabled:bg-safe-gray/5"
                   placeholder="safe-space-node-001"
                 />
               </div>
@@ -146,7 +142,7 @@ function EditNodeModal({ isOpen, onClose, onSave, node, isLoading = false, error
 
           {/* Location & Network */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-4">Location & Network</h3>
+            <h3 className="text-sm font-semibold text-safe-text-dark mb-4">Location & Network</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -158,7 +154,7 @@ function EditNodeModal({ isOpen, onClose, onSave, node, isLoading = false, error
                   value={formData.ipAddress}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                  className="w-full px-3 py-2 border border-safe-border rounded-lg focus:outline-none focus:ring-2 focus:ring-safe-accent disabled:bg-safe-gray/5"
                   placeholder="192.168.1.100"
                 />
               </div>
@@ -173,7 +169,7 @@ function EditNodeModal({ isOpen, onClose, onSave, node, isLoading = false, error
                   value={formData.videoFeedUrl}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                  className="w-full px-3 py-2 border border-safe-border rounded-lg focus:outline-none focus:ring-2 focus:ring-safe-accent disabled:bg-safe-gray/5"
                   placeholder="http://192.168.1.100:8080/mjpeg"
                 />
               </div>
@@ -217,7 +213,7 @@ function EditNodeModal({ isOpen, onClose, onSave, node, isLoading = false, error
 
 
           {/* Actions */}
-          <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
+          <div className="flex gap-3 justify-end pt-4 border-t border-safe-border/30">
             <Button
               onClick={onClose}
               variant="outline"
