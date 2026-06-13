@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { userAPI } from '@/services/api';
 import UsersTable from '@/components/ui/UsersTable';
 import EditAccountInfoModal from './EditAccountInfoModal';
+import ResetPasswordModal from './ResetPasswordModal';
 import { showSuccess, showError } from '@/utils/toast';
 import { API_BASE_URL } from '@/lib/apiConfig';
 
@@ -14,6 +15,7 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [resetTarget, setResetTarget] = useState(null);
 
   const getPhotoUrl = (user) => {
     if (!user.profilePhotoUrl) return null;
@@ -225,6 +227,13 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
               Edit
             </button>
             <button
+              onClick={() => setResetTarget(user)}
+              title="Reset password"
+              className="px-3 py-1.5 text-xs font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors"
+            >
+              Reset Password
+            </button>
+            <button
               onClick={() => handleDeactivate(user)}
               className="px-3 py-1.5 text-xs font-medium text-safe-text-dark bg-safe-bg hover:bg-safe-border/50 rounded-lg transition-colors min-w-[80px] text-center"
             >
@@ -285,9 +294,14 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
         onClose={handleModalClose}
         onSubmit={handleModalSubmit}
         isAdmin={true}
-      />  
-    </>
+      />
 
+      <ResetPasswordModal
+        isOpen={!!resetTarget}
+        user={resetTarget}
+        onClose={() => setResetTarget(null)}
+      />
+    </>
   );
 }
 

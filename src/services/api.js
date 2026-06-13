@@ -246,6 +246,16 @@ export const userAPI = {
     return data.data;
   },
 
+  /**
+   * Admin reset a user's password.
+   * sendEmail=true  → backend emails reset link to user (preferred)
+   * sendEmail=false → backend returns a temp password to the admin
+   */
+  adminResetPassword: async (userId, { sendEmail = true } = {}) => {
+    const { data } = await api.post(`/users/${userId}/reset-password`, { sendEmail });
+    return data.data;
+  },
+
   deleteUser: async (userId) => {
     const { data } = await api.delete(`/users/${userId}`);
     return data;
