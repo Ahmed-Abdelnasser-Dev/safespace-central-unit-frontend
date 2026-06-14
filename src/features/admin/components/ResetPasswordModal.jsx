@@ -1,33 +1,66 @@
-/**
- * ResetPasswordModal
- *
- * Admin confirms how to reset a user's password:
- *   Option A (default): Send the user a reset link via email — user sets their own new password.
- *   Option B: Generate a temp password — shown to admin once to share securely.
- */
-
 import { useState } from 'react';
 import { userAPI } from '@/services/api';
 import { showSuccess, showError } from '@/utils/toast';
 
+// ── Inline SVG icons (no library dependency, clean strokes) ──────────────────
+const IconEnvelope = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="4" width="20" height="16" rx="2"/>
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+  </svg>
+);
+
+const IconShield = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+  </svg>
+);
+
+const IconCopy = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+    <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+  </svg>
+);
+
+const IconCheck = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 6 9 17l-5-5"/>
+  </svg>
+);
+
+const IconSpinner = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="animate-spin">
+    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+  </svg>
+);
+
+const IconClose = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 6 6 18M6 6l12 12"/>
+  </svg>
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 function ResetPasswordModal({ user, isOpen, onClose }) {
-  const [mode,       setMode]       = useState('email');  // 'email' | 'manual'
+  const [mode,       setMode]       = useState('email');
   const [loading,    setLoading]    = useState(false);
-  const [tempResult, setTempResult] = useState(null);     // { tempPassword, email }
+  const [tempResult, setTempResult] = useState(null);
   const [copied,     setCopied]     = useState(false);
 
   if (!isOpen || !user) return null;
+
+  const displayName = user.fullName || user.username || user.email;
 
   const handleReset = async () => {
     setLoading(true);
     try {
       const result = await userAPI.adminResetPassword(user.id, { sendEmail: mode === 'email' });
-
       if (mode === 'email') {
         showSuccess(`Reset link sent to ${user.email}`);
-        onClose();
+        handleClose();
       } else {
-        // Show temp password to admin — never shown again after this
         setTempResult(result);
       }
     } catch (err) {
@@ -37,10 +70,10 @@ function ResetPasswordModal({ user, isOpen, onClose }) {
     }
   };
 
-  const copyTemp = () => {
+  const handleCopy = () => {
     navigator.clipboard.writeText(tempResult.tempPassword).then(() => {
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(false), 2500);
     });
   };
 
@@ -52,157 +85,174 @@ function ResetPasswordModal({ user, isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleClose} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 animate-slideUp">
 
-      {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-
-        {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-safe-border">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
-                <i className="bi bi-key text-amber-600 text-lg" />
-              </div>
-              <div>
-                <h2 className="text-base font-semibold text-safe-text-dark">Reset Password</h2>
-                <p className="text-xs text-safe-text-gray mt-0.5">
-                  {user.fullName || user.username || user.email}
-                </p>
-              </div>
-            </div>
-            <button onClick={handleClose} className="text-safe-text-gray hover:text-safe-text-dark p-1">
-              <i className="bi bi-x-lg text-sm" />
-            </button>
+        {/* ── Header ── */}
+        <div className="px-7 pt-6 pb-5 flex items-start justify-between">
+          <div>
+            <h2 className="text-[15px] font-semibold text-safe-text-dark tracking-tight">Reset User Password</h2>
+            <p className="text-[13px] text-safe-text-gray mt-0.5">{displayName} · {user.email}</p>
           </div>
+          <button
+            onClick={handleClose}
+            className="text-safe-text-gray hover:text-safe-text-dark transition-colors mt-0.5 p-1 -mr-1 rounded-md hover:bg-safe-bg"
+          >
+            <IconClose />
+          </button>
         </div>
 
-        <div className="px-6 py-5 space-y-4">
+        {/* ── Divider ── */}
+        <div className="h-px bg-safe-border mx-7" />
 
-          {/* Temp password result screen */}
+        {/* ── Body ── */}
+        <div className="px-7 py-5 space-y-4">
+
           {tempResult ? (
-            <div className="space-y-4">
-              <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-                <div className="flex items-start gap-2 text-sm text-amber-800">
-                  <i className="bi bi-exclamation-triangle mt-0.5 shrink-0" />
-                  <span>This temporary password is shown <strong>once only</strong>. Copy it now and share with the user via a secure channel. They must change it on next login.</span>
-                </div>
-              </div>
+            /* ── Temp password result ── */
+            <>
+              <p className="text-[13px] text-safe-text-gray leading-relaxed border-l-2 border-amber-400 pl-3">
+                This password is shown <strong className="text-safe-text-dark font-medium">once only</strong> and cannot be retrieved again.
+                Share it with the user through a secure channel.
+              </p>
 
               <div>
-                <p className="text-xs text-safe-text-gray mb-1.5">Temporary password for <span className="font-medium text-safe-text-dark">{tempResult.email}</span></p>
-                <div className="flex items-center gap-2 p-3 bg-gray-50 border border-safe-border rounded-xl">
-                  <code className="flex-1 font-mono text-sm text-safe-text-dark tracking-wider select-all">
+                <label className="block text-[11px] font-semibold text-safe-text-gray uppercase tracking-wider mb-2">
+                  Temporary password for {tempResult.email}
+                </label>
+                <div className="flex items-center gap-3 px-4 py-3 bg-safe-bg border border-safe-border rounded-lg">
+                  <code className="flex-1 font-mono text-[15px] font-semibold text-safe-text-dark tracking-[0.18em] select-all">
                     {tempResult.tempPassword}
                   </code>
                   <button
-                    onClick={copyTemp}
-                    className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg border border-safe-border bg-white hover:bg-gray-50 text-safe-text-dark transition-colors"
+                    onClick={handleCopy}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-md border transition-colors ${
+                      copied
+                        ? 'bg-safe-success/10 text-safe-success border-safe-success/30'
+                        : 'bg-white border-safe-border text-safe-text-dark hover:bg-safe-bg'
+                    }`}
                   >
-                    {copied ? '✓ Copied' : 'Copy'}
+                    {copied ? <IconCheck /> : <IconCopy />}
+                    {copied ? 'Copied' : 'Copy'}
                   </button>
                 </div>
               </div>
 
-              <button
-                onClick={handleClose}
-                className="w-full py-2.5 rounded-xl bg-safe-blue-btn text-white text-sm font-medium hover:bg-safe-blue-btn/90 transition-colors"
-              >
-                Done
-              </button>
-            </div>
-          ) : (
-            <>
-              {/* Mode selection */}
-              <p className="text-sm text-safe-text-gray">
-                Choose how to reset the password for <span className="font-medium text-safe-text-dark">{user.email}</span>:
+              <p className="text-[12px] text-safe-text-gray leading-relaxed border-l-2 border-safe-blue-btn/40 pl-3">
+                The user has been signed out of all devices and must change this password on next sign-in.
               </p>
+            </>
 
+          ) : (
+            /* ── Mode selection ── */
+            <>
               <div className="space-y-2">
-                {/* Option A: email */}
+
+                {/* Option A — email link */}
                 <button
                   type="button"
                   onClick={() => setMode('email')}
-                  className={`w-full text-left p-4 rounded-xl border-2 transition-colors ${
+                  className={`w-full text-left px-4 py-3.5 border rounded-lg transition-all ${
                     mode === 'email'
-                      ? 'border-safe-blue-btn bg-safe-blue-btn/5'
-                      : 'border-safe-border bg-white hover:border-safe-blue-btn/40'
+                      ? 'border-safe-blue-btn border-l-[3px] bg-safe-blue-btn/[0.03]'
+                      : 'border-safe-border hover:border-safe-blue-btn/40 bg-white'
                   }`}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className={`w-4 h-4 mt-0.5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
                       mode === 'email' ? 'border-safe-blue-btn' : 'border-safe-border'
                     }`}>
-                      {mode === 'email' && <div className="w-2 h-2 rounded-full bg-safe-blue-btn" />}
+                      {mode === 'email' && <div className="w-1.5 h-1.5 rounded-full bg-safe-blue-btn" />}
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-safe-text-dark">Send reset link via email</p>
-                      <p className="text-xs text-safe-text-gray mt-0.5">
-                        The user receives a secure link to set their own new password. Expires in 1 hour. <span className="text-green-600 font-medium">Recommended.</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[13px] font-medium transition-colors ${mode === 'email' ? 'text-safe-text-dark' : 'text-safe-text-dark'}`}>
+                          Send reset link via email
+                        </span>
+                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-safe-success/10 text-safe-success tracking-wide">
+                          Recommended
+                        </span>
+                      </div>
+                      <p className="text-[12px] text-safe-text-gray mt-0.5">
+                        User receives a secure link to set their own password. Expires in 1 hour.
                       </p>
                     </div>
+                    <span className={`flex-shrink-0 transition-colors ${mode === 'email' ? 'text-safe-blue-btn' : 'text-safe-text-gray'}`}>
+                      <IconEnvelope />
+                    </span>
                   </div>
                 </button>
 
-                {/* Option B: manual */}
+                {/* Option B — temp password */}
                 <button
                   type="button"
                   onClick={() => setMode('manual')}
-                  className={`w-full text-left p-4 rounded-xl border-2 transition-colors ${
+                  className={`w-full text-left px-4 py-3.5 border rounded-lg transition-all ${
                     mode === 'manual'
-                      ? 'border-safe-blue-btn bg-safe-blue-btn/5'
-                      : 'border-safe-border bg-white hover:border-safe-blue-btn/40'
+                      ? 'border-safe-blue-btn border-l-[3px] bg-safe-blue-btn/[0.03]'
+                      : 'border-safe-border hover:border-safe-blue-btn/40 bg-white'
                   }`}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className={`w-4 h-4 mt-0.5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
                       mode === 'manual' ? 'border-safe-blue-btn' : 'border-safe-border'
                     }`}>
-                      {mode === 'manual' && <div className="w-2 h-2 rounded-full bg-safe-blue-btn" />}
+                      {mode === 'manual' && <div className="w-1.5 h-1.5 rounded-full bg-safe-blue-btn" />}
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-safe-text-dark">Generate a temporary password</p>
-                      <p className="text-xs text-safe-text-gray mt-0.5">
-                        A random password is shown to you once. You share it with the user securely. They must change it on next login.
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-[13px] font-medium transition-colors ${mode === 'manual' ? 'text-safe-text-dark' : 'text-safe-text-dark'}`}>
+                        Generate a temporary password
+                      </p>
+                      <p className="text-[12px] text-safe-text-gray mt-0.5">
+                        A one-time password shown to you. Share through a secure channel.
                       </p>
                     </div>
+                    <span className={`flex-shrink-0 transition-colors ${mode === 'manual' ? 'text-amber-500' : 'text-safe-text-gray'}`}>
+                      <IconShield />
+                    </span>
                   </div>
                 </button>
+
               </div>
 
-              <div className="rounded-xl border border-safe-border bg-safe-bg/40 px-4 py-3">
-                <div className="flex items-start gap-2 text-xs text-safe-text-gray">
-                  <i className="bi bi-info-circle mt-0.5 shrink-0" />
-                  <span>Either option will <strong>log the user out of all devices</strong> and require them to change their password on next sign-in.</span>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex gap-3 pt-1">
-                <button
-                  onClick={handleClose}
-                  className="flex-1 py-2.5 rounded-xl border border-safe-border text-sm text-safe-text-gray hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleReset}
-                  disabled={loading}
-                  className="flex-1 py-2.5 rounded-xl bg-safe-blue-btn text-white text-sm font-medium hover:bg-safe-blue-btn/90 disabled:opacity-50 transition-colors"
-                >
-                  {loading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                      Processing...
-                    </span>
-                  ) : mode === 'email' ? 'Send Reset Link' : 'Generate Password'}
-                </button>
-              </div>
+              {/* Info notice */}
+              <p className="text-[12px] text-safe-text-gray leading-relaxed border-l-2 border-safe-border pl-3">
+                Either option will <strong className="text-safe-text-dark font-medium">sign the user out of all devices</strong> and
+                require a password change on next sign-in.
+              </p>
             </>
           )}
         </div>
+
+        {/* ── Footer ── */}
+        <div className="px-7 py-4 border-t border-safe-border flex items-center justify-end gap-2.5">
+          <button
+            type="button"
+            onClick={handleClose}
+            className="px-4 py-2 text-[13px] font-medium text-safe-text-dark bg-white border border-safe-border hover:bg-safe-bg rounded-lg transition-colors"
+          >
+            {tempResult ? 'Done' : 'Cancel'}
+          </button>
+
+          {!tempResult && (
+            <button
+              type="button"
+              onClick={handleReset}
+              disabled={loading}
+              className="px-4 py-2 text-[13px] font-medium text-white bg-safe-blue-btn hover:bg-safe-blue-btn/90 rounded-lg shadow-sm transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <IconSpinner />
+                  {mode === 'email' ? 'Sending…' : 'Generating…'}
+                </>
+              ) : (
+                mode === 'email' ? 'Send Reset Link' : 'Generate Password'
+              )}
+            </button>
+          )}
+        </div>
+
       </div>
     </div>
   );
