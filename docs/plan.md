@@ -29,6 +29,7 @@ Status as of 2026-06-09. Update this file as work lands.
 - [x] **map** — `MapOverviewPage` with MapLibre, node markers, KPI cards, incident dialog trigger
 - [x] **node-maintainer** — Full node management: map, detail tabs (Overview/Health/Road Config/Node Config/Polygons), CRUD, lane polygon editor, video feed player
 - [x] **profile** — Profile view, change password, edit personal info, photo upload, recent activity
+- [x] **emergency-dispatcher** — Case list (SOS + incidents, tabs, unread badges), case detail (3-col map/info/dispatch layout), nearest-units panel with Haversine ranking, dispatch confirm modal, live assignment tracking, notes timeline, callback modal, escalate/close actions. Mock-data UI shell — backend seam ready for swap (see `docs/features/emergencyDispatcher.md`)
 
 ---
 

@@ -11,14 +11,16 @@ export const ROLE_NAV_CONFIG = {
       { label: 'Activity Logs', icon: 'clipboard-list', path: '/activity-logs' },
       { label: 'Dashboard', icon: 'chart-line', path: '/dashboard' },
       { label: 'Map Overview', icon: 'map', path: '/map' },
+      { label: 'Cases', icon: 'headset', path: '/cases' },
       { label: 'Camera Feeds', icon: 'video', path: '/cameras' },
       { label: 'Reports', icon: 'file-lines', path: '/reports' },
       { label: 'Settings', icon: 'gear', path: '/settings' },
     ],
   },
   emergency_dispatcher: {
-    defaultPath: '/map',
+    defaultPath: '/cases',
     navItems: [
+      { label: 'Dispatch', icon: 'headset', path: '/cases' },
       { label: 'Map Overview', icon: 'map', path: '/map' },
       { label: 'Dashboard', icon: 'chart-line', path: '/dashboard' },
       { label: 'Alerts', icon: 'bell', path: '/alerts' },

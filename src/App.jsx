@@ -15,6 +15,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import AppLayout from './components/layout/AppLayout.jsx';
+import DispatcherLayout from './features/emergencyDispatcher/DispatcherLayout.jsx';
 import { getDefaultPath } from './config/navigation';
 import { useNodeHeartbeat } from './hooks/useNodeHeartbeat';
 import { useHeartbeatTimeout } from './hooks/useHeartbeatTimeout';
@@ -28,6 +29,8 @@ const ActivityLogsPage = lazy(() => import('./features/admin/pages/ActivityLogsP
 const ProfilePage = lazy(() => import('./features/profile/pages/ProfilePage.jsx'));
 const NodeMaintainerPage = lazy(() => import('./features/nodeMaintainer/pages/NodeMaintainerPage.jsx'));
 const SystemTestPage = lazy(() => import('./features/systemTest/pages/SystemTestPage.jsx'));
+const DispatchConsolePage = lazy(() => import('./features/emergencyDispatcher/pages/DispatchConsolePage.jsx'));
+const CaseDetailPage = lazy(() => import('./features/emergencyDispatcher/pages/CaseDetailPage.jsx'));
 
 // Auth pages
 const SignInPage = lazy(() => import('./features/auth/pages/SignInPage.jsx'));
@@ -129,6 +132,18 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* Cases — Dispatch Console + Case Detail, sharing one DispatcherProvider */}
+            <Route
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'emergency_dispatcher']}>
+                  <DispatcherLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="cases" element={<DispatchConsolePage />} />
+              <Route path="cases/:caseType/:caseId" element={<CaseDetailPage />} />
+            </Route>
 
             {/* Dashboard — admin + dispatcher */}
             <Route

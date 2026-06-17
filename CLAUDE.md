@@ -123,3 +123,9 @@ GitHub Actions on push to `main` → SSH into EC2, `docker compose up --build`. 
 - No hardcoded secrets — all secrets via env vars
 - Add new API methods in `src/services/api.js` under the relevant namespace
 - Add new Redux state as a new slice in `src/features/<name>/<name>Slice.js` and register in `src/app/store.js`
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+at specs/001-emergency-dispatcher/plan.md
+<!-- SPECKIT END -->

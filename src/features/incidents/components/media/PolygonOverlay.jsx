@@ -1,12 +1,8 @@
+import { polygonToPercentPoints } from '../../utils/polygonScaling.js';
+
 function PolygonOverlay({ accidentPolygon, nodePolygons = [], overlayRect }) {
-  const toPoints = (polygon) => {
-    if (!polygon?.points?.length) return '';
-    const baseWidth = polygon?.baseWidth || 100;
-    const baseHeight = polygon?.baseHeight || 100;
-    return polygon.points
-      .map(point => `${(point.x / baseWidth) * 100},${(point.y / baseHeight) * 100}`)
-      .join(' ');
-  };
+  // Nothing to draw until the rendered image rect has been measured.
+  if (!overlayRect || !overlayRect.width || !overlayRect.height) return null;
 
   return (
     <svg
@@ -23,7 +19,7 @@ function PolygonOverlay({ accidentPolygon, nodePolygons = [], overlayRect }) {
       {Array.isArray(nodePolygons) && nodePolygons.map((polygon, index) => (
         <polygon
           key={`lane-${index}`}
-          points={toPoints(polygon)}
+          points={polygonToPercentPoints(polygon)}
           fill="rgba(96, 165, 250, 0.08)"
           stroke="#60A5FA"
           strokeWidth="0.8"
@@ -31,7 +27,7 @@ function PolygonOverlay({ accidentPolygon, nodePolygons = [], overlayRect }) {
       ))}
       {accidentPolygon?.points?.length > 0 && (
         <polygon
-          points={toPoints(accidentPolygon)}
+          points={polygonToPercentPoints(accidentPolygon)}
           fill="rgba(239, 68, 68, 0.18)"
           stroke="#EF4444"
           strokeWidth="1.1"

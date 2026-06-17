@@ -18,6 +18,7 @@ export default {
         'safe-white': '#ffffff',
         'safe-text-dark': '#0f1419',
         'safe-text-gray': '#64748b',
+        'safe-text-muted': '#8b99b5',
         'safe-accent': '#ff6b35',
         'safe-orange': '#fb923c',
         'safe-danger': '#ef4444',

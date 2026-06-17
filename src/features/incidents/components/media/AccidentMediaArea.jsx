@@ -16,7 +16,6 @@ export default function AccidentMediaArea({ incident }) {
     >
       <MediaCarousel
         mediaList={incident?.mediaList || []}
-        accidentPolygon={incident?.accidentPolygon}
         nodePolygons={incident?.nodePolygons || []}
       />
       <button

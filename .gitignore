@@ -80,5 +80,8 @@ coverage/
 # =========================
 # AI Tools and Skills files
 .github/
+.claude/
+.impeccable/
+.specify/
 # =========================
 # End of .gitignore
