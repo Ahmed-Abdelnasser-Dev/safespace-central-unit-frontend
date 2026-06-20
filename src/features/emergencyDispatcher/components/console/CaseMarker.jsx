@@ -60,7 +60,7 @@ export default function CaseMarker({ caseRecord, isSelected, isMapHighlighted, o
           className="relative flex items-center justify-center rounded-full border-2 border-white shadow-lg transition-transform duration-150 group-hover:scale-110 motion-reduce:group-hover:scale-100"
           style={{ width: size, height: size, backgroundColor: cfg.bgColor }}
         >
-          <FontAwesomeIcon icon={cfg.icon} className="text-white" style={{ fontSize: size * 0.4 }} />
+          <FontAwesomeIcon icon={cfg.icon} className="text-safe-text-primary" style={{ fontSize: size * 0.4 }} />
         </div>
 
         {/* Pin stem */}

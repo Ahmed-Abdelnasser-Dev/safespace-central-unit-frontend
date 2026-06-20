@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { API_BASE_URL } from '@/lib/apiConfig';
 
-function MediaCarousel({ mediaList = [], nodePolygons = [] }) {
+function MediaCarousel({ mediaList = [], accidentPolygon = null, nodePolygons = [] }) {
   const [index, setIndex] = useState(0);
   const containerRef = useRef(null);
   const imageRef = useRef(null);
@@ -11,12 +12,41 @@ function MediaCarousel({ mediaList = [], nodePolygons = [] }) {
   const hasMedia = mediaList && mediaList.length > 0;
   const current = hasMedia ? mediaList[index] : null;
 
-  const currentUrl = current?.url
-    ? (current.url.startsWith('http') ? current.url : current.url)
+  const currentUrl = current?.url 
+    ? (current.url.startsWith('http') ? current.url : current.url) 
     : '';
 
   const next = () => setIndex((i) => (i + 1) % mediaList.length);
   const prev = () => setIndex((i) => (i - 1 + mediaList.length) % mediaList.length);
+
+  const updateOverlayRect = () => {
+    if (!containerRef.current || !imageRef.current) return;
+    const container = containerRef.current.getBoundingClientRect();
+    const naturalWidth = imageRef.current.naturalWidth || container.width;
+    const naturalHeight = imageRef.current.naturalHeight || container.height;
+    const imageRatio = naturalWidth / naturalHeight;
+    const containerRatio = container.width / container.height;
+
+    let width = container.width;
+    let height = container.height;
+    let left = 0;
+    let top = 0;
+
+    if (imageRatio > containerRatio) {
+      height = container.width / imageRatio;
+      top = (container.height - height) / 2;
+    } else {
+      width = container.height * imageRatio;
+      left = (container.width - width) / 2;
+    }
+
+  };
+
+  useEffect(() => {
+    updateOverlayRect();
+    window.addEventListener('resize', updateOverlayRect);
+    return () => window.removeEventListener('resize', updateOverlayRect);
+  }, [index]);
 
   return (
     <div ref={containerRef} className="w-full h-full flex items-center justify-center bg-gray-200 relative overflow-hidden">
@@ -26,12 +56,16 @@ function MediaCarousel({ mediaList = [], nodePolygons = [] }) {
             {current.type === 'video' ? (
               <video src={currentUrl} className="object-cover w-full h-full" controls autoPlay muted />
             ) : (
-              <img
-                src={currentUrl}
-                alt={`Accident media ${index + 1}`}
-                className="object-contain w-full h-full bg-black/10"
-                ref={imageRef}
-              />
+              <>
+                <img
+                  src={currentUrl}
+                  alt={`Accident media ${index + 1}`}
+                  className="object-contain w-full h-full bg-black/10"
+                  ref={imageRef}
+                  onLoad={updateOverlayRect}
+                />
+                {/* Polygon overlay removed as per new requirements */}
+              </>
             )}
           </div>
         </>

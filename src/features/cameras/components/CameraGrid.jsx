@@ -28,7 +28,7 @@ export default function CameraGrid({ onEdit, onDelete, canManage }) {
     return (
       <div className="bg-safe-gray rounded-xl p-12 text-center border border-safe-gray-light">
         <FontAwesomeIcon icon="video-slash" className="text-4xl text-gray-500 mb-3" />
-        <h3 className="text-white text-lg font-medium mb-1">No Cameras found</h3>
+        <h3 className="text-safe-text-primary text-lg font-medium mb-1">No Cameras found</h3>
         <p className="text-gray-400 text-sm">No cameras are currently configured in the stream service.</p>
       </div>
     );
@@ -41,10 +41,10 @@ export default function CameraGrid({ onEdit, onDelete, canManage }) {
            <CameraFeed camera={cam} />
            {canManage && (
              <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 p-1 rounded">
-                <button onClick={() => onEdit(cam)} className="p-1.5 text-white hover:text-safe-blue">
+                <button onClick={() => onEdit(cam)} className="p-1.5 text-safe-text-primary hover:text-safe-blue">
                   <FontAwesomeIcon icon="edit" />
                 </button>
-                <button onClick={() => onDelete(cam)} className="p-1.5 text-white hover:text-red-500">
+                <button onClick={() => onDelete(cam)} className="p-1.5 text-safe-text-primary hover:text-red-500">
                   <FontAwesomeIcon icon="trash" />
                 </button>
              </div>

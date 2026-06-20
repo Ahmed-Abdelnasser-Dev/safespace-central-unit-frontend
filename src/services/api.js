@@ -395,4 +395,64 @@ export const dispatcherAPI = {
   },
 };
 
+// ============================================================================
+// Road Observer APIs
+// ============================================================================
+
+export const observerAPI = {
+  /**
+   * Get observer's session stats: reviewed today, avg review time, pending count.
+   * @returns {Promise<{reviewedToday: number, avgReviewTimeSec: number, pendingReview: number}>}
+   */
+  getStats: async () => {
+    const { data } = await api.get('/observer/me/stats', { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * Get paginated incident history for the authenticated observer.
+   * @param {Object} params - status, severity, page, limit
+   * @returns {Promise<{incidents: object[], meta: {total, page, limit, pages}}>}
+   */
+  getIncidentHistory: async (params = {}) => {
+    const { data } = await api.get('/incidents/history', { params, withCredentials: true });
+    return { incidents: data.data, meta: data.meta };
+  },
+
+  /**
+   * Get full detail for a single incident by ID.
+   * @param {string} id
+   * @returns {Promise<object>}
+   */
+  getIncident: async (id) => {
+    const { data } = await api.get(`/incidents/${id}`, { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * Get paginated notifications for the authenticated user.
+   * @param {Object} params - unread (boolean), page, limit
+   * @returns {Promise<{notifications: object[], meta: {total, page, limit, unreadCount}}>}
+   */
+  listNotifications: async (params = {}) => {
+    const { data } = await api.get('/notifications', { params, withCredentials: true });
+    return { notifications: data.data, meta: data.meta };
+  },
+
+  /**
+   * Mark a single notification as read.
+   * @param {string} id
+   */
+  markNotificationRead: async (id) => {
+    await api.patch(`/notifications/${id}/read`, {}, { withCredentials: true });
+  },
+
+  /**
+   * Mark all notifications as read.
+   */
+  markAllNotificationsRead: async () => {
+    await api.patch('/notifications/read-all', {}, { withCredentials: true });
+  },
+};
+
 export default api;

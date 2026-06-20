@@ -3,11 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function InfoRow({ label, value, mono = false }) {
   return (
-    <div className="flex items-start justify-between gap-4 py-2 border-b border-white/5 last:border-0">
+    <div className="flex items-start justify-between gap-4 py-2 border-b border-safe-gray-light last:border-0">
       <span className="text-[11px] font-medium text-safe-text-muted/70 uppercase tracking-wide flex-shrink-0 pt-0.5">
         {label}
       </span>
-      <span className={`text-sm text-white text-right ${mono ? 'font-mono' : ''}`}>{value}</span>
+      <span className={`text-sm text-safe-text-primary text-right ${mono ? 'font-mono' : ''}`}>{value}</span>
     </div>
   );
 }
@@ -60,8 +60,8 @@ function VictimProfilePanel({ victim, medicalProfile, emergencyContacts, loading
 
   if (!victim) {
     return (
-      <div className="bg-safe-gray rounded-xl border border-white/8 p-4">
-        <h3 className="text-sm font-semibold text-white mb-3">Victim</h3>
+      <div className="bg-safe-gray rounded-xl border border-safe-gray-light p-4">
+        <h3 className="text-sm font-semibold text-safe-text-primary mb-3">Victim</h3>
         <p className={`text-sm text-safe-text-muted/60 ${loading ? 'animate-pulse' : ''}`}>
           {loading ? 'Loading victim profile…' : 'No victim profile on file.'}
         </p>
@@ -70,10 +70,10 @@ function VictimProfilePanel({ victim, medicalProfile, emergencyContacts, loading
   }
 
   return (
-    <div className="bg-safe-gray rounded-xl border border-white/8 divide-y divide-white/5">
+    <div className="bg-safe-gray rounded-xl border border-safe-gray-light divide-y divide-safe-gray-light">
       {/* Identification */}
       <div className="p-4 space-y-0.5">
-        <h3 className="text-sm font-semibold text-white mb-3">Victim</h3>
+        <h3 className="text-sm font-semibold text-safe-text-primary mb-3">Victim</h3>
         <InfoRow label="Name" value={victim.fullName} />
         <InfoRow label="National ID" value={victim.nationalId ?? '—'} mono />
         <InfoRow label="Age" value={calcAge(victim.dob) !== null ? `${calcAge(victim.dob)} yrs` : '—'} />
@@ -115,7 +115,7 @@ function VictimProfilePanel({ victim, medicalProfile, emergencyContacts, loading
                   <span className="text-[11px] font-medium text-safe-text-muted/60 uppercase tracking-wide">Medications</span>
                   <PillList
                     items={medicalProfile.medications}
-                    variantClass="bg-white/8 text-white"
+                    variantClass="bg-safe-gray-light/40 text-safe-text-primary"
                   />
                 </div>
                 <div>
@@ -126,7 +126,7 @@ function VictimProfilePanel({ victim, medicalProfile, emergencyContacts, loading
                   />
                 </div>
                 {medicalProfile.notes && (
-                  <p className="text-sm text-safe-text-muted italic border-l-2 border-white/10 pl-3 mt-1">
+                  <p className="text-sm text-safe-text-muted italic border-l-2 border-safe-gray-light pl-3 mt-1">
                     {medicalProfile.notes}
                   </p>
                 )}
@@ -151,10 +151,10 @@ function VictimProfilePanel({ victim, medicalProfile, emergencyContacts, loading
               emergencyContacts.map((contact) => (
                 <div
                   key={contact.phone}
-                  className="flex items-center justify-between gap-3 py-2 px-3 rounded-lg bg-white/4 border border-white/6"
+                  className="flex items-center justify-between gap-3 py-2 px-3 rounded-lg bg-safe-gray-light/20 border border-safe-gray-light"
                 >
                   <div>
-                    <p className="text-sm font-medium text-white">{contact.name}</p>
+                    <p className="text-sm font-medium text-safe-text-primary">{contact.name}</p>
                     <p className="text-xs text-safe-text-muted/70">{contact.relationship}</p>
                   </div>
                   <a

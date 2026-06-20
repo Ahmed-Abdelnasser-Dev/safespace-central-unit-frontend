@@ -10,7 +10,7 @@ function Lightbox({ attachment, onClose }) {
       <button
         type="button"
         onClick={onClose}
-        className="absolute top-5 right-5 w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+        className="absolute top-5 right-5 w-9 h-9 flex items-center justify-center rounded-full bg-safe-gray-light/50 hover:bg-safe-gray-light/30 text-safe-text-primary transition-colors"
         aria-label="Close"
       >
         <FontAwesomeIcon icon="xmark" />
@@ -36,9 +36,9 @@ function CaseAttachmentsPanel({ attachments = [] }) {
   if (attachments.length === 0) return null;
 
   return (
-    <div className="bg-safe-gray rounded-xl border border-white/8 overflow-hidden">
-      <div className="px-4 py-3 border-b border-white/8 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white">Attached Media</h3>
+    <div className="bg-safe-gray rounded-xl border border-safe-gray-light overflow-hidden">
+      <div className="px-4 py-3 border-b border-safe-gray-light flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-safe-text-primary">Attached Media</h3>
         <span className="text-xs text-safe-text-muted">{attachments.length} file{attachments.length !== 1 ? 's' : ''}</span>
       </div>
 
@@ -48,7 +48,7 @@ function CaseAttachmentsPanel({ attachments = [] }) {
             key={att.id}
             type="button"
             onClick={() => setLightbox(att)}
-            className="relative group rounded-lg overflow-hidden aspect-[4/3] bg-safe-gray-light border border-white/6 hover:border-safe-blue/40 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-safe-blue/40"
+            className="relative group rounded-lg overflow-hidden aspect-[4/3] bg-safe-gray-light border border-safe-gray-light hover:border-safe-blue/40 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-safe-blue/40"
             aria-label={att.caption || 'View attachment'}
           >
             <img
@@ -60,7 +60,7 @@ function CaseAttachmentsPanel({ attachments = [] }) {
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-150 flex items-center justify-center">
               <FontAwesomeIcon
                 icon="magnifying-glass-plus"
-                className="text-white text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                className="text-safe-text-primary text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-150"
               />
             </div>
             {att.caption && (

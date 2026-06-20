@@ -26,7 +26,7 @@ function SectionLabel({
         />
       )}
       <label 
-        className="font-medium text-[#101828] uppercase tracking-wider" 
+        className="font-medium text-safe-text-primary uppercase tracking-wider"
         style={{ fontSize: 'clamp(11px, 1.2vw, 13px)', fontFamily }}
       >
         {text}

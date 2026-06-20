@@ -59,7 +59,7 @@ function CallbackModal({ open, caseRecord, onClose, onLogOutcome }) {
           </div>
         )}
 
-        <p className="text-sm font-medium text-white mb-2">Outcome</p>
+        <p className="text-sm font-medium text-safe-text-primary mb-2">Outcome</p>
         <div className="space-y-2 mb-5">
           {OUTCOME_OPTIONS.map((opt) => (
             <label key={opt.value} className="flex items-center gap-3 cursor-pointer group">
@@ -71,20 +71,20 @@ function CallbackModal({ open, caseRecord, onClose, onLogOutcome }) {
                 onChange={() => setOutcome(opt.value)}
                 className="w-4 h-4 accent-safe-blue flex-shrink-0"
               />
-              <span className="text-sm text-safe-text-gray group-hover:text-white transition-colors">
+              <span className="text-sm text-safe-text-gray group-hover:text-safe-text-primary transition-colors">
                 {opt.label}
               </span>
             </label>
           ))}
         </div>
 
-        <p className="text-sm font-medium text-white mb-1.5">Additional notes (optional)</p>
+        <p className="text-sm font-medium text-safe-text-primary mb-1.5">Additional notes (optional)</p>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="e.g. Victim confirmed location, injuries minor…"
           rows={3}
-          className="w-full px-3 py-2 rounded-lg border border-safe-border/30 bg-safe-gray text-white text-sm placeholder:text-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-safe-blue/30 focus:border-safe-blue/60 transition-all resize-none"
+          className="w-full px-3 py-2 rounded-lg border border-safe-border/30 bg-safe-gray text-safe-text-primary text-sm placeholder:text-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-safe-blue/30 focus:border-safe-blue/60 transition-all resize-none"
         />
       </Modal.Content>
 

@@ -108,17 +108,17 @@ function ChangePasswordModal({ isOpen, onClose, isMandatory = false }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-md w-full p-6">
+      <div className="bg-safe-sidebar rounded-xl border border-safe-gray-light max-w-md w-full p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-bold text-safe-text-dark">Change Password</h3>
-            <p className="text-xs text-safe-text-gray mt-1">
+            <h3 className="text-lg font-bold text-safe-text-primary">Change Password</h3>
+            <p className="text-xs text-safe-text-muted mt-1">
               {isMandatory ? 'You must set a new password to continue' : 'Update your account password'}
             </p>
           </div>
           {!isMandatory && (
-            <button type="button" onClick={handleClose} className="text-safe-text-gray hover:text-safe-text-dark transition-colors">
+            <button onClick={handleClose} className="text-safe-text-muted hover:text-safe-text-primary transition-colors">
               <FontAwesomeIcon icon="xmark" className="text-xl" />
             </button>
           )}
@@ -166,7 +166,7 @@ function ChangePasswordModal({ isOpen, onClose, isMandatory = false }) {
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex-1 px-4 py-2.5 text-sm font-medium text-safe-text-dark bg-safe-bg rounded-lg hover:bg-safe-border/50 transition-colors"
+                className="flex-1 px-4 py-2.5 text-sm font-medium text-safe-text-primary bg-safe-gray border border-safe-gray-light rounded-lg hover:bg-safe-gray-light/50 transition-colors"
                 disabled={isSubmitting}
               >
                 Cancel

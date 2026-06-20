@@ -25,11 +25,11 @@ function EmptyState({
           style={{ width: '32px', height: '32px' }} 
         />
       )}
-      <p className="text-[#6a7282]" style={{ ...typography.body, fontFamily }}>
+      <p className="text-safe-text-muted" style={{ ...typography.body, fontFamily }}>
         {title}
       </p>
       {message && (
-        <p className="text-[#99a1af]" style={{ ...typography.caption, fontFamily }}>
+        <p className="text-safe-text-muted" style={{ ...typography.caption, fontFamily }}>
           {message}
         </p>
       )}

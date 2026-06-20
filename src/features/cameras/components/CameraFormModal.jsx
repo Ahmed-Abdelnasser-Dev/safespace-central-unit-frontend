@@ -55,19 +55,19 @@ export default function CameraFormModal({ isOpen, onClose, mode, camera }) {
         {error && <div className="text-red-500 text-sm">{error}</div>}
         <div>
           <label className="block text-sm text-gray-400 mb-1">Name</label>
-          <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-safe-dark border border-safe-gray-light rounded p-2 text-white" />
+          <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-safe-dark border border-safe-gray-light rounded p-2 text-safe-text-primary" />
         </div>
         <div>
           <label className="block text-sm text-gray-400 mb-1">RTSP URL</label>
-          <input type="password" required={mode === 'create'} placeholder={mode === 'edit' ? 'Leave blank to keep existing URL' : ''} value={formData.rtspUrl} onChange={e => setFormData({...formData, rtspUrl: e.target.value})} className="w-full bg-safe-dark border border-safe-gray-light rounded p-2 text-white" />
+          <input type="password" required={mode === 'create'} placeholder={mode === 'edit' ? 'Leave blank to keep existing URL' : ''} value={formData.rtspUrl} onChange={e => setFormData({...formData, rtspUrl: e.target.value})} className="w-full bg-safe-dark border border-safe-gray-light rounded p-2 text-safe-text-primary" />
         </div>
         <div>
           <label className="block text-sm text-gray-400 mb-1">Location</label>
-          <input type="text" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="w-full bg-safe-dark border border-safe-gray-light rounded p-2 text-white" />
+          <input type="text" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="w-full bg-safe-dark border border-safe-gray-light rounded p-2 text-safe-text-primary" />
         </div>
         <div>
           <label className="block text-sm text-gray-400 mb-1">Node (Association)</label>
-          <select value={formData.nodeId} onChange={e => setFormData({...formData, nodeId: e.target.value})} className="w-full bg-safe-dark border border-safe-gray-light rounded p-2 text-white">
+          <select value={formData.nodeId} onChange={e => setFormData({...formData, nodeId: e.target.value})} className="w-full bg-safe-dark border border-safe-gray-light rounded p-2 text-safe-text-primary">
             <option value="">Unassigned</option>
             {nodes.map(node => (
               <option key={node.id} value={node.id}>
@@ -77,8 +77,8 @@ export default function CameraFormModal({ isOpen, onClose, mode, camera }) {
           </select>
         </div>
         <div className="flex justify-end gap-2 mt-6">
-          <button type="button" onClick={onClose} className="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
-          <button type="submit" disabled={submitting} className="px-4 py-2 bg-safe-blue text-white rounded hover:bg-blue-600 disabled:opacity-50">
+          <button type="button" onClick={onClose} className="px-4 py-2 text-gray-400 hover:text-safe-text-primary">Cancel</button>
+          <button type="submit" disabled={submitting} className="px-4 py-2 bg-safe-blue text-safe-text-primary rounded hover:bg-blue-600 disabled:opacity-50">
             {submitting ? 'Saving...' : 'Save'}
           </button>
         </div>

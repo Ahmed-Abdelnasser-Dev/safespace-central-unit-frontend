@@ -35,15 +35,15 @@ export default function NodesDisplay() {
   });
 
   return (
-    <div 
-      className="bg-white border border-[#e5e7eb] rounded-[13.684px] overflow-hidden flex flex-col flex-1 w-full"
+    <div
+      className="bg-safe-sidebar border border-safe-gray-light rounded-[13.684px] overflow-hidden flex flex-col flex-1 w-full"
     >
       {/* Header with Search and Filter Tabs */}
-      <div className="border-b border-[#e5e7eb] px-[13.255px] pt-[10px] pb-[8px]">
+      <div className="border-b border-safe-gray-light px-[13.255px] pt-[10px] pb-[8px]">
         {/* Search Input */}
         <div className="relative mb-[10px]">
-          <div 
-            className="border border-[#e5e7eb] rounded-[6.628px] flex items-center pl-[26.513px] pr-[8.285px] py-[8px]"
+          <div
+            className="bg-safe-gray border border-safe-gray-light rounded-[6.628px] flex items-center pl-[26.513px] pr-[8.285px] py-[8px]"
             style={{ height: '36px' }}
           >
             <input
@@ -51,11 +51,10 @@ export default function NodesDisplay() {
               placeholder="Search nodes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent w-full outline-none font-normal"
-              style={{ 
+              className="bg-transparent w-full outline-none font-normal text-safe-text-primary placeholder-safe-text-muted"
+              style={{
                 fontSize: 'clamp(11px, 1.2vw, 12px)',
                 fontFamily: 'Arimo, sans-serif',
-                color: 'rgba(16,24,40,0.5)'
               }}
             />
           </div>
@@ -68,13 +67,13 @@ export default function NodesDisplay() {
               key={filterType}
               onClick={() => setFilter(filterType)}
               className={`flex-1 rounded-[4.971px] flex items-center justify-center transition-all duration-200 font-medium ${
-                filter === filterType ? 'bg-[#247cff] shadow-sm' : 'bg-[#f7f8f9] hover:bg-[#e8e9ea]'
+                filter === filterType ? 'bg-safe-blue' : 'bg-safe-gray hover:bg-safe-gray-light/50'
               }`}
               style={{ height: '28px' }}
             >
-              <span 
-                className={`font-medium capitalize ${filter === filterType ? 'text-white' : 'text-[#6a7282]'}`}
-                style={{ 
+              <span
+                className={`font-medium capitalize ${filter === filterType ? 'text-white' : 'text-safe-text-muted'}`}
+                style={{
                   fontSize: 'clamp(10px, 1.1vw, 11px)',
                   lineHeight: '13.671px',
                   fontFamily: 'Arimo, sans-serif'
@@ -100,7 +99,7 @@ export default function NodesDisplay() {
               />
             ))
           ) : (
-            <div className="flex items-center justify-center py-[20px] text-[#6a7282]">
+            <div className="flex items-center justify-center py-[20px] text-safe-text-muted">
               <span style={{ fontSize: 'clamp(12px, 1.3vw, 14px)', fontFamily: 'Arimo, sans-serif' }}>
                 No nodes found
               </span>

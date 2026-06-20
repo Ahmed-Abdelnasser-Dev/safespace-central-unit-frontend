@@ -66,7 +66,7 @@ function CaseDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
         <FontAwesomeIcon icon="circle-xmark" className="text-4xl text-safe-danger/60 mb-4" />
-        <p className="text-white font-semibold text-lg mb-1">Case not found</p>
+        <p className="text-safe-text-primary font-semibold text-lg mb-1">Case not found</p>
         <p className="text-safe-text-gray text-sm mb-6">
           Case <span className="font-mono">{caseId}</span> does not exist.
         </p>
@@ -84,12 +84,12 @@ function CaseDetailPage() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Compact case header */}
-      <div className="px-5 py-3 border-b border-white/8 flex-shrink-0 flex items-center gap-4 bg-safe-sidebar/60">
+      <div className="px-5 py-3 border-b border-safe-gray-light flex-shrink-0 flex items-center gap-4 bg-safe-sidebar/60">
         <button
           type="button"
           onClick={() => navigate('/cases')}
           aria-label="Back to Dispatch Console"
-          className="flex items-center gap-1.5 text-safe-text-muted hover:text-white transition-colors text-sm flex-shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-safe-blue/40 rounded"
+          className="flex items-center gap-1.5 text-safe-text-muted hover:text-safe-text-primary transition-colors text-sm flex-shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-safe-blue/40 rounded"
         >
           <FontAwesomeIcon icon="arrow-left" className="text-xs" />
           Dispatch
@@ -108,7 +108,7 @@ function CaseDetailPage() {
                 ? 'bg-safe-success/15 text-safe-success'
                 : statusStyle.variant === 'info'
                 ? 'bg-safe-info/15 text-safe-info'
-                : 'bg-white/8 text-white/60'
+                : 'bg-safe-gray-light/40 text-white/60'
             }`}
           >
             {statusStyle.label}
@@ -116,7 +116,7 @@ function CaseDetailPage() {
           {victimName && (
             <>
               <span className="text-safe-text-muted/40 flex-shrink-0">·</span>
-              <span className="text-sm font-semibold text-white truncate">{victimName}</span>
+              <span className="text-sm font-semibold text-safe-text-primary truncate">{victimName}</span>
             </>
           )}
         </div>
@@ -133,7 +133,7 @@ function CaseDetailPage() {
       <div className="flex-1 overflow-hidden flex flex-col xl:grid xl:grid-cols-[minmax(300px,360px)_1fr_minmax(320px,380px)]">
 
         {/* Center / top on mobile: Live Map */}
-        <div className="order-1 xl:order-2 h-[300px] xl:h-full xl:border-x xl:border-white/8">
+        <div className="order-1 xl:order-2 h-[300px] xl:h-full xl:border-x xl:border-safe-gray-light">
           <DispatchMap
             caseRecord={caseRecord}
             units={units}
@@ -142,7 +142,7 @@ function CaseDetailPage() {
         </div>
 
         {/* Left Column: Case Info + Profile + Notes */}
-        <div className="order-2 xl:order-1 overflow-y-auto xl:border-r xl:border-white/8 p-4 space-y-4">
+        <div className="order-2 xl:order-1 overflow-y-auto xl:border-r xl:border-safe-gray-light p-4 space-y-4">
           <CaseInfoPanel caseRecord={caseRecord} />
           {isSOSCase ? (
             <VictimProfilePanel
@@ -159,8 +159,8 @@ function CaseDetailPage() {
         </div>
 
         {/* Right Column: Actions (sticky) + Dispatch + Assignments */}
-        <div className="order-3 xl:order-3 xl:flex xl:flex-col xl:overflow-hidden xl:border-l xl:border-white/8">
-          <div className="p-4 border-b border-white/8 flex-shrink-0">
+        <div className="order-3 xl:order-3 xl:flex xl:flex-col xl:overflow-hidden xl:border-l xl:border-safe-gray-light">
+          <div className="p-4 border-b border-safe-gray-light flex-shrink-0">
             <CaseActionsBar
               caseRecord={caseRecord}
               onEscalate={escalateCase}

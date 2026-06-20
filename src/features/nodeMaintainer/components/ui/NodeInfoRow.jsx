@@ -20,7 +20,7 @@ function NodeInfoRow({
       className={`flex justify-between items-center gap-2 pb-2 ${className}`}
     >
       <span
-        className="text-safe-text-gray font-normal"
+        className="text-safe-text-muted font-normal"
         style={{
           fontSize: 'clamp(12px, 1.2vw, 13px)',
           fontFamily,
@@ -29,7 +29,7 @@ function NodeInfoRow({
         {label}
       </span>
       <span
-        className="font-bold text-gray-900 text-right"
+        className="font-bold text-safe-text-primary text-right"
         style={{
           fontSize: 'clamp(13px, 1.3vw, 16px)',
           fontFamily,

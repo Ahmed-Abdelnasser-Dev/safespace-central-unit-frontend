@@ -12,7 +12,7 @@ export default function CameraFeed({ camera }) {
       <div className="px-4 py-3 flex items-center justify-between bg-safe-dark/50">
         <div className="flex items-center gap-3">
           <CameraStatusBadge status={status} />
-          <h3 className="text-white font-medium">{camera.name}</h3>
+          <h3 className="text-safe-text-primary font-medium">{camera.name}</h3>
         </div>
         <span className="text-xs text-gray-500 font-mono">{camera.id}</span>
       </div>

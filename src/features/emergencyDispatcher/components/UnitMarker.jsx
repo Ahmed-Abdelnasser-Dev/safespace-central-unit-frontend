@@ -43,7 +43,7 @@ function UnitMarker({ unit, isHomeBase = false, isSelected = false, onSelect }) 
         role="button"
         aria-label={`${unit.name}${isHomeBase ? ' home base' : ''}`}
       >
-        <FontAwesomeIcon icon={getUnitTypeIcon(unit.unitType)} className="text-white" style={{ fontSize: size * 0.45 }} />
+        <FontAwesomeIcon icon={getUnitTypeIcon(unit.unitType)} className="text-safe-text-primary" style={{ fontSize: size * 0.45 }} />
       </div>
     </Marker>
   );

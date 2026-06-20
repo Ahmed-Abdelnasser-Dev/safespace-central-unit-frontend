@@ -96,8 +96,8 @@ function VideoFeedPlayer({ videoFeedUrl, nodeId, status = 'offline' }) {
       ) : (
         /* No Video Feed */
         <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-black">
-          <p className="text-gray-400 text-sm mb-1">No Video Feed</p>
-          <p className="text-gray-600 text-xs">Camera URL not configured</p>
+          <p className="text-safe-text-muted text-sm mb-1">No Video Feed</p>
+          <p className="text-safe-text-muted/60 text-xs">Camera URL not configured</p>
         </div>
       )}
     </div>

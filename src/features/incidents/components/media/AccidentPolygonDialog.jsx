@@ -1,7 +1,6 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@/components/ui/Button.jsx';
-import { computeFitCanvasSize, scalePolygonPoints } from '../../utils/polygonScaling.js';
 
 /**
  * AccidentPolygonDialog - Styled dialog for viewing accident polygons
@@ -15,10 +14,6 @@ import { computeFitCanvasSize, scalePolygonPoints } from '../../utils/polygonSca
  */
 function AccidentPolygonDialog({ open, onClose, accidentPolygon, nodePolygons = [], imageUrl }) {
   const canvasRef = useRef();
-  // Aspect ratio of the canvas box, derived from the loaded image, so the
-  // wrapper div (and its border) follows the real image shape instead of
-  // being forced into a square.
-  const [canvasRatio, setCanvasRatio] = useState(1);
 
   useEffect(() => {
     if (!open) return;
@@ -28,14 +23,11 @@ function AccidentPolygonDialog({ open, onClose, accidentPolygon, nodePolygons = 
     const img = new window.Image();
     img.src = imageUrl;
     img.onload = () => {
-      // Preserve the image's natural aspect ratio instead of stretching it
-      // into a fixed 640x640 square.
-      const { width, height } = computeFitCanvasSize(img.naturalWidth, img.naturalHeight);
-      canvas.width = width;
-      canvas.height = height;
-      setCanvasRatio(width / height);
-      ctx.drawImage(img, 0, 0, width, height);
-      drawPolygons(ctx, width, height);
+      // Always use 640x640 for canvas and polygons
+      canvas.width = 640;
+      canvas.height = 640;
+      ctx.drawImage(img, 0, 0, 640, 640);
+      drawPolygons(ctx, 640, 640);
     };
     // eslint-disable-next-line
   }, [open, accidentPolygon, nodePolygons, imageUrl]);
@@ -43,12 +35,13 @@ function AccidentPolygonDialog({ open, onClose, accidentPolygon, nodePolygons = 
   const drawPolygons = (ctx, baseWidth, baseHeight) => {
     // Draw node polygons
     (nodePolygons || []).forEach((polygon) => {
-      const points = scalePolygonPoints(polygon, baseWidth, baseHeight);
-      if (!points.length) return;
+      if (!polygon?.points?.length) return;
       ctx.beginPath();
-      points.forEach((p, i) => {
-        if (i === 0) ctx.moveTo(p.x, p.y);
-        else ctx.lineTo(p.x, p.y);
+      polygon.points.forEach((p, i) => {
+        const x = (p.x / (polygon.baseWidth || baseWidth)) * baseWidth;
+        const y = (p.y / (polygon.baseHeight || baseHeight)) * baseHeight;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       });
       ctx.closePath();
       ctx.fillStyle = 'rgba(96, 165, 250, 0.08)';
@@ -58,12 +51,13 @@ function AccidentPolygonDialog({ open, onClose, accidentPolygon, nodePolygons = 
       ctx.stroke();
     });
     // Draw accident polygon
-    const accidentPoints = scalePolygonPoints(accidentPolygon, baseWidth, baseHeight);
-    if (accidentPoints.length) {
+    if (accidentPolygon?.points?.length) {
       ctx.beginPath();
-      accidentPoints.forEach((p, i) => {
-        if (i === 0) ctx.moveTo(p.x, p.y);
-        else ctx.lineTo(p.x, p.y);
+      accidentPolygon.points.forEach((p, i) => {
+        const x = (p.x / (accidentPolygon.baseWidth || baseWidth)) * baseWidth;
+        const y = (p.y / (accidentPolygon.baseHeight || baseHeight)) * baseHeight;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       });
       ctx.closePath();
       ctx.fillStyle = 'rgba(239, 68, 68, 0.18)';
@@ -93,8 +87,8 @@ function AccidentPolygonDialog({ open, onClose, accidentPolygon, nodePolygons = 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <div className="flex flex-col gap-4">
-            <div className="relative w-full max-w-[640px] mx-auto border-2 border-dashed border-safe-border rounded-lg bg-black" style={{ aspectRatio: `${canvasRatio} / 1`, minHeight: '320px', maxHeight: '640px' }}>
-              <canvas ref={canvasRef} className="absolute inset-0 w-full h-full rounded-lg" />
+            <div className="relative w-full max-w-[640px] mx-auto border-2 border-dashed border-safe-border rounded-lg bg-black" style={{ aspectRatio: '1 / 1', minHeight: '320px', maxHeight: '640px' }}>
+              <canvas ref={canvasRef} width={640} height={640} className="absolute inset-0 w-full h-full rounded-lg" />
             </div>
             <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
               <p className="font-medium mb-1">Polygon Info:</p>

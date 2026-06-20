@@ -59,8 +59,8 @@ function CaseActionsBar({
   if (isTerminal) {
     const terminalMeta = {
       resolved: { icon: 'circle-check', label: 'Resolved', cls: 'text-safe-success bg-safe-success/10 border-safe-success/20' },
-      false_alarm: { icon: 'triangle-exclamation', label: 'False Alarm', cls: 'text-safe-text-gray bg-white/5 border-white/10' },
-      closed: { icon: 'lock', label: 'Closed', cls: 'text-safe-text-gray bg-white/5 border-white/10' },
+      false_alarm: { icon: 'triangle-exclamation', label: 'False Alarm', cls: 'text-safe-text-gray bg-safe-gray-light/25 border-safe-gray-light' },
+      closed: { icon: 'lock', label: 'Closed', cls: 'text-safe-text-gray bg-safe-gray-light/25 border-safe-gray-light' },
     }[status];
     return (
       <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${terminalMeta.cls}`}>
@@ -97,7 +97,7 @@ function CaseActionsBar({
             icon="triangle-exclamation"
             label="False Alarm"
             onClick={() => setFalseAlarmOpen(true)}
-            colorClass="border-white/10 bg-white/5 text-safe-text-gray hover:bg-white/10 hover:text-white"
+            colorClass="border-safe-gray-light bg-safe-gray-light/25 text-safe-text-gray hover:bg-safe-gray-light/30 hover:text-safe-text-primary"
           />
         )}
 

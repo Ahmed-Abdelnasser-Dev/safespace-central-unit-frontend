@@ -219,21 +219,18 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
           <div className={`flex items-center gap-2 ${
           column.key === 'actions' ? 'justify-end' : ''}`}>
             <button
-              type="button"
               onClick={() => handleEditClick(user)}
               className="px-3 py-1.5 text-xs font-medium text-safe-text-dark bg-safe-bg hover:bg-safe-border/50 rounded-lg transition-colors"
             >
               Edit
             </button>
             <button
-              type="button"
               onClick={() => handleDeactivate(user)}
               className="px-3 py-1.5 text-xs font-medium text-safe-text-dark bg-safe-bg hover:bg-safe-border/50 rounded-lg transition-colors min-w-[80px] text-center"
             >
               {user.isActive ? 'Deactivate' : 'Activate'}
             </button>
             <button
-              type="button"
               onClick={() => handleDelete(user)}
               className="px-3 py-1.5 text-xs font-medium text-white bg-safe-danger hover:bg-safe-danger/90 rounded-lg transition-colors"
             >
@@ -250,7 +247,7 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
   // Loading state
   if (loading) {
     return (
-      <div className="mt-6 bg-white rounded-xl border border-safe-border p-8">
+      <div className="mt-6 bg-safe-sidebar rounded-xl border border-safe-border p-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-safe-blue-btn mx-auto mb-4"></div>
           <p className="text-safe-text-gray">Loading users...</p>
@@ -262,7 +259,7 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
   // Empty state
   if (users.length === 0) {
     return (
-      <div className="mt-6 bg-white rounded-xl border border-safe-border p-8">
+      <div className="mt-6 bg-safe-sidebar rounded-xl border border-safe-border p-8">
         <div className="text-center">
           <FontAwesomeIcon icon="users" className="text-4xl text-safe-text-gray mb-4" />
           <p className="text-safe-text-dark font-medium">No users found</p>

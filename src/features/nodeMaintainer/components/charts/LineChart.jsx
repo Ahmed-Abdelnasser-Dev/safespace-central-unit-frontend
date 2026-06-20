@@ -49,7 +49,7 @@ function LineChart({
   return (
     <div style={{ width: '100%', marginTop: 'clamp(8px, 1vw, 12px)' }}>
       <p
-        className="font-bold text-[#101828] mb-[8px] sm:mb-[9px] md:mb-[10px]"
+        className="font-bold text-safe-text-primary mb-[8px] sm:mb-[9px] md:mb-[10px]"
         style={{
           fontSize: 'clamp(12px, 1.3vw, 13px)',
           fontFamily,

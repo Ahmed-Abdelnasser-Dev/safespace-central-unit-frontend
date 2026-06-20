@@ -36,7 +36,7 @@ function AssignmentRow({ assignment, unit, onUpdateStatus, onCancel }) {
               className="text-safe-text-muted text-[11px] flex-shrink-0"
             />
           )}
-          <span className="text-sm font-medium text-white truncate">
+          <span className="text-sm font-medium text-safe-text-primary truncate">
             {unit?.name ?? assignment.unitId}
           </span>
         </div>
@@ -83,7 +83,7 @@ function ActiveAssignmentsPanel({ assignments, units, onUpdateStatus, onCancel }
 
   if (assignments.length === 0) {
     return (
-      <div className="bg-safe-gray border border-white/8 rounded-xl px-4 py-8 text-center">
+      <div className="bg-safe-gray border border-safe-gray-light rounded-xl px-4 py-8 text-center">
         <FontAwesomeIcon icon="route" className="text-2xl text-safe-text-muted/50 mb-2" />
         <p className="text-safe-text-muted text-sm">No units dispatched yet</p>
         <p className="text-xs text-safe-text-muted/60 mt-1">
@@ -98,9 +98,9 @@ function ActiveAssignmentsPanel({ assignments, units, onUpdateStatus, onCancel }
   }
 
   return (
-    <div className="bg-safe-gray border border-white/8 rounded-xl overflow-hidden">
-      <div className="px-4 py-3 border-b border-white/8 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white">Active Assignments</h3>
+    <div className="bg-safe-gray border border-safe-gray-light rounded-xl overflow-hidden">
+      <div className="px-4 py-3 border-b border-safe-gray-light flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-safe-text-primary">Active Assignments</h3>
         {activeAssignments.length > 0 && (
           <span className="bg-safe-blue/20 text-safe-blue rounded-full px-2 py-0.5 text-xs font-medium">
             {activeAssignments.length}
@@ -109,7 +109,7 @@ function ActiveAssignmentsPanel({ assignments, units, onUpdateStatus, onCancel }
       </div>
 
       {activeAssignments.length > 0 && (
-        <ul className="divide-y divide-white/6">
+        <ul className="divide-y divide-safe-gray-light">
           {activeAssignments.map((a) => (
             <AssignmentRow
               key={a.id}
@@ -124,10 +124,10 @@ function ActiveAssignmentsPanel({ assignments, units, onUpdateStatus, onCancel }
 
       {closedAssignments.length > 0 && (
         <>
-          <div className="px-4 py-2 border-t border-white/8 bg-safe-gray-light/10">
+          <div className="px-4 py-2 border-t border-safe-gray-light bg-safe-gray-light/10">
             <span className="text-xs text-safe-text-muted/60">Resolved</span>
           </div>
-          <ul className="divide-y divide-white/6 opacity-60">
+          <ul className="divide-y divide-safe-gray-light opacity-60">
             {closedAssignments.map((a) => (
               <AssignmentRow
                 key={a.id}

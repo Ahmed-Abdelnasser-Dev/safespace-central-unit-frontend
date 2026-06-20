@@ -12,7 +12,7 @@ function ConfigCard({
   className = '' 
 }) {
   return (
-    <div className={`space-y-[12px] p-[12px] border border-[#e5e7eb] rounded-[8px] bg-[#f7f8f9] ${className}`}>
+    <div className={`space-y-[12px] p-[12px] border border-safe-gray-light rounded-[8px] bg-safe-gray ${className}`}>
       {children}
     </div>
   );

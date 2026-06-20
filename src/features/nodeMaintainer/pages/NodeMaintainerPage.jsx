@@ -115,11 +115,8 @@ export default function NodeMaintainerPage() {
   };
 
   return (
-    <div 
-      className="flex h-full w-full overflow-hidden"
-      style={{
-        backgroundImage: 'linear-gradient(143.67381513661007deg, rgb(249, 250, 251) 0%, rgb(243, 244, 246) 100%)'
-      }}
+    <div
+      className="flex h-full w-full overflow-hidden bg-safe-dark"
     >
       <div className="flex-1 flex flex-col overflow-hidden">
         <NodeMaintainerHeader onAddNode={() => setShowAddNodeModal(true)} />
@@ -148,15 +145,15 @@ export default function NodeMaintainerPage() {
               renderTabContent={renderTabContent}
             />
           ) : (
-            <div className="flex-1 flex items-center justify-center bg-white/50 border border-[#e5e7eb] rounded-[8px] lg:rounded-[10px] xl:rounded-[13.684px]">
+            <div className="flex-1 flex items-center justify-center bg-safe-sidebar border border-safe-gray-light rounded-[8px] lg:rounded-[10px] xl:rounded-[13.684px]">
               <div className="text-center px-[20px]">
                 <FontAwesomeIcon
                   icon="circle-info"
-                  className="text-[#99a1af] mb-[12px]"
+                  className="text-safe-text-muted mb-[12px]"
                   style={{ width: 'clamp(32px, 5vw, 48px)', height: 'clamp(32px, 5vw, 48px)' }}
                 />
                 <p
-                  className="text-[#6a7282]"
+                  className="text-safe-text-muted"
                   style={{ fontSize: 'clamp(12px, 1.2vw, 14px)', fontFamily: 'Arimo, sans-serif' }}
                 >
                   Select a node from the list to view details

@@ -111,7 +111,7 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 animate-slideUp">
+      <div className="bg-safe-sidebar rounded-xl border border-safe-gray-light w-full max-w-2xl mx-4 animate-slideUp">
         {/* Modal Header */}
         <div className="px-8 py-6 border-b border-safe-border">
           <h2 className="text-xl font-bold text-safe-text-dark">Create New User</h2>
@@ -264,7 +264,7 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2.5 text-sm font-medium text-safe-text-dark bg-white border border-safe-border hover:bg-safe-bg rounded-lg transition-colors"
+              className="px-4 py-2.5 text-sm font-medium text-safe-text-primary bg-safe-gray border border-safe-gray-light hover:bg-safe-gray-light/50 rounded-lg transition-colors"
             >
               Cancel
             </button>

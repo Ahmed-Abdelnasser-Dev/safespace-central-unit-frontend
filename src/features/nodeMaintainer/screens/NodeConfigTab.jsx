@@ -72,16 +72,20 @@ function NodeConfigTab() {
   ];
 
   return (
-    <div className="p-6 space-y-6 animate-slideUp">
-      <div className="space-y-3">
+    <div className="p-[20px] space-y-[20px]">
+      <div className="space-y-[12px]">
         <SectionLabel text="Node Status" icon="power-off" />
         <ConfigCard>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="text-safe-text-gray">Current</span>
+          <div className="flex flex-wrap items-center justify-between gap-[12px]">
+            <div className="flex items-center gap-[10px]">
+              <span className="text-safe-text-muted" style={{ ...typography.label, fontFamily }}>Current</span>
               <StatusBadge status={node.status} />
             </div>
-            <Button variant={node.status === 'online' ? 'danger' : 'primary'} size="sm" onClick={handleToggleStatus}>
+            <Button
+              variant={node.status === 'online' ? 'danger' : 'primary'}
+              size="sm"
+              onClick={handleToggleStatus}
+            >
               {node.status === 'online' ? 'Deactivate Node' : 'Activate Node'}
             </Button>
           </div>
@@ -89,7 +93,7 @@ function NodeConfigTab() {
       </div>
 
       {configSections.map(section => (
-        <div key={section.title} className="space-y-3">
+        <div key={section.title} className="space-y-[12px]">
           <SectionLabel text={section.title} icon={section.icon} />
 
           <ConfigCard>
@@ -112,25 +116,32 @@ function NodeConfigTab() {
       <div className="space-y-[12px]">
         <SectionLabel text="System Information" icon="microchip" />
         <ConfigCard>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center py-2 border-b border-safe-border/30">
-              <span className="text-safe-text-gray">Firmware Version</span>
-              <span className="text-safe-text-dark font-medium">{node.firmwareVersion || 'unknown'}</span>
+          <div className="space-y-[8px]">
+            <div className="flex justify-between items-center py-[8px] border-b border-safe-gray-light">
+              <span className="text-safe-text-muted" style={{ ...typography.label, fontFamily }}>Firmware Version</span>
+              <span className="text-safe-text-primary font-medium" style={{ ...typography.body, fontFamily }}>{node.firmwareVersion || 'unknown'}</span>
             </div>
-            <div className="flex justify-between items-center py-2 border-b border-safe-border/30">
-              <span className="text-safe-text-gray">AI Model Version</span>
-              <span className="text-safe-text-dark font-medium">{node.modelVersion || 'unknown'}</span>
+            <div className="flex justify-between items-center py-[8px] border-b border-safe-gray-light">
+              <span className="text-safe-text-muted" style={{ ...typography.label, fontFamily }}>AI Model Version</span>
+              <span className="text-safe-text-primary font-medium" style={{ ...typography.body, fontFamily }}>{node.modelVersion || 'unknown'}</span>
             </div>
-            <div className="flex justify-between items-center py-2">
-              <span className="text-safe-text-gray">Uptime</span>
-              <span className="text-safe-text-dark font-medium">{node.uptimeSec ? `${Math.floor(node.uptimeSec / 3600)}h ${Math.floor((node.uptimeSec % 3600) / 60)}m` : '0m'}</span>
+            <div className="flex justify-between items-center py-[8px]">
+              <span className="text-safe-text-muted" style={{ ...typography.label, fontFamily }}>Uptime</span>
+              <span className="text-safe-text-primary font-medium" style={{ ...typography.body, fontFamily }}>
+                {node.uptimeSec ? `${Math.floor(node.uptimeSec / 3600)}h ${Math.floor((node.uptimeSec % 3600) / 60)}m` : '0m'}
+              </span>
             </div>
           </div>
         </ConfigCard>
       </div>
 
       {/* Save Button */}
-      <PrimaryButton onClick={handleSaveConfig} disabled={!hasChanges} icon="floppy-disk" text="Save Configuration" />
+      <PrimaryButton
+        onClick={handleSaveConfig}
+        disabled={!hasChanges}
+        icon="floppy-disk"
+        text="Save Configuration"
+      />
     </div>
   );
 }

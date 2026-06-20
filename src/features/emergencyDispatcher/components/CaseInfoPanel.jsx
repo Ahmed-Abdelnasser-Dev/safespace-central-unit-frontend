@@ -5,10 +5,10 @@ function CaseInfoPanel({ caseRecord }) {
   const lon = caseRecord.longitude.toFixed(4);
 
   return (
-    <div className="bg-safe-gray rounded-xl border border-white/8 px-4 py-3 flex items-center gap-4">
+    <div className="bg-safe-gray rounded-xl border border-safe-gray-light px-4 py-3 flex items-center gap-4">
       <div className="flex items-center gap-2 flex-1 min-w-0">
         <FontAwesomeIcon icon="location-dot" className="text-safe-danger/70 text-sm flex-shrink-0" />
-        <span className="text-sm font-mono text-white">
+        <span className="text-sm font-mono text-safe-text-primary">
           {lat}° N, {lon}° E
         </span>
       </div>

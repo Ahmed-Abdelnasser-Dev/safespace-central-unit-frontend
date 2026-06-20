@@ -15,10 +15,11 @@ import {
   faBan, faExclamation, faImage,
   faClipboardList, faFileLines, faServer, faWrench, faCompass,
   faHeadset, faTruckMedical, faFireFlameCurved, faHardHat, faRoute, faFilter,
-  faUpRightFromSquare, faAnglesUp, faArrowLeft,
+  faUpRightFromSquare, faAnglesUp, faArrowLeft, faArrowRight,
   faFireExtinguisher, faPersonFallingBurst, faCircleRadiation,
   faHouseChimney, faUserCheck, faSatelliteDish, faCircleDot,
   faCircleExclamation,
+  faSun, faMoon, faFingerprint,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -37,8 +38,9 @@ library.add(
   faBan, faExclamation, faImage,
   faClipboardList, faFileLines, faServer, faWrench, faCompass,
   faHeadset, faTruckMedical, faFireFlameCurved, faHardHat, faRoute, faFilter,
-  faUpRightFromSquare, faAnglesUp, faArrowLeft,
+  faUpRightFromSquare, faAnglesUp, faArrowLeft, faArrowRight,
   faFireExtinguisher, faPersonFallingBurst, faCircleRadiation,
   faHouseChimney, faUserCheck, faSatelliteDish, faCircleDot,
   faCircleExclamation,
+  faSun, faMoon, faFingerprint,
 );

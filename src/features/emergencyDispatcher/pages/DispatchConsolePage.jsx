@@ -125,15 +125,15 @@ export default function DispatchConsolePage() {
       <div className="flex-1 overflow-hidden flex flex-col xl:grid xl:grid-cols-[minmax(300px,360px)_1fr_minmax(300px,360px)]">
 
         {/* ── LEFT: Queue panel ── */}
-        <div className="order-2 xl:order-1 xl:flex xl:flex-col xl:overflow-hidden xl:border-r xl:border-white/8">
-          <div className="xl:hidden flex-shrink-0 flex items-center gap-2 px-4 py-2 border-b border-white/8 bg-safe-gray">
+        <div className="order-2 xl:order-1 xl:flex xl:flex-col xl:overflow-hidden xl:border-r xl:border-safe-gray-light">
+          <div className="xl:hidden flex-shrink-0 flex items-center gap-2 px-4 py-2 border-b border-safe-gray-light bg-safe-gray">
             <FontAwesomeIcon icon="headset" className="text-safe-text-muted text-xs" />
-            <span className="text-xs font-semibold text-white">Case Queue</span>
+            <span className="text-xs font-semibold text-safe-text-primary">Case Queue</span>
             <div className="flex-1" />
             <button
               type="button"
               onClick={() => setRosterOpen((p) => !p)}
-              className="flex items-center gap-1.5 text-xs text-safe-text-muted hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-safe-blue/40 rounded"
+              className="flex items-center gap-1.5 text-xs text-safe-text-muted hover:text-safe-text-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-safe-blue/40 rounded"
             >
               <FontAwesomeIcon icon="users" className="text-xs" />
               Units
@@ -154,7 +154,7 @@ export default function DispatchConsolePage() {
         </div>
 
         {/* ── CENTER: Live map ── */}
-        <div className="order-1 xl:order-2 h-[44vh] xl:h-full xl:border-x xl:border-white/8">
+        <div className="order-1 xl:order-2 h-[44vh] xl:h-full xl:border-x xl:border-safe-gray-light">
           <ConsoleMap
             cases={cases}
             units={units}
@@ -170,8 +170,8 @@ export default function DispatchConsolePage() {
 
         {/* ── RIGHT: Units roster (xl always visible, below xl: toggleable drawer) ── */}
         <div
-          className={`order-3 xl:order-3 xl:flex xl:flex-col xl:overflow-hidden xl:border-l xl:border-white/8 ${
-            rosterOpen ? 'flex flex-col h-60 border-t border-white/8' : 'hidden xl:flex'
+          className={`order-3 xl:order-3 xl:flex xl:flex-col xl:overflow-hidden xl:border-l xl:border-safe-gray-light ${
+            rosterOpen ? 'flex flex-col h-60 border-t border-safe-gray-light' : 'hidden xl:flex'
           }`}
         >
           <UnitsRosterPanel units={units} onCenterOnUnit={handleUnitCenter} />
@@ -179,7 +179,7 @@ export default function DispatchConsolePage() {
       </div>
 
       {/* Keyboard shortcut hint */}
-      <div className="hidden xl:flex flex-shrink-0 px-5 py-1.5 bg-safe-sidebar/40 border-t border-white/6 items-center gap-4">
+      <div className="hidden xl:flex flex-shrink-0 px-5 py-1.5 bg-safe-sidebar/40 border-t border-safe-gray-light items-center gap-4">
         <span className="text-[10px] text-safe-text-muted/50">Shortcuts:</span>
         {[
           ['↑↓', 'Navigate queue'],
@@ -189,7 +189,7 @@ export default function DispatchConsolePage() {
           ['Esc', 'Clear selection'],
         ].map(([key, label]) => (
           <span key={key} className="flex items-center gap-1 text-[10px] text-safe-text-muted/55">
-            <kbd className="px-1 py-0.5 bg-white/8 rounded text-[9px] font-mono text-safe-text-muted/70 border border-white/10">{key}</kbd>
+            <kbd className="px-1 py-0.5 bg-safe-gray-light/40 rounded text-[9px] font-mono text-safe-text-muted/70 border border-safe-gray-light">{key}</kbd>
             {label}
           </span>
         ))}

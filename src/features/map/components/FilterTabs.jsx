@@ -11,7 +11,7 @@ function FilterTabs({ activeTab = 'call-emergency' }) {
 
   return (
    
-    <div className="bg-white rounded-xl  mx-4 mt-4"> 
+    <div className="bg-safe-sidebar rounded-xl mx-4 mt-4 border border-safe-border">
       
   
       <div className="flex items-center justify-between gap-4 px-4 py-3.5"> 
@@ -37,8 +37,8 @@ function FilterTabs({ activeTab = 'call-emergency' }) {
           return (
             <button
               key={tab.id}
-              className={`px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 transition-all whitespace-nowrap bg-gray-100 ${
-                isActive ? 'text-safe-text-dark' : 'text-safe-text-gray'
+              className={`px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 transition-all whitespace-nowrap bg-safe-gray ${
+                isActive ? 'text-safe-text-primary' : 'text-safe-text-muted'
               }`}
             >
               <FontAwesomeIcon icon={tab.icon} className="text-sm" />

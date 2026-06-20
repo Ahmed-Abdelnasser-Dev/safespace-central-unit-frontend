@@ -29,12 +29,12 @@ function ConfirmDialog({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-[16px]">
-      <div className="bg-white rounded-[12px] shadow-lg max-w-[400px] w-full p-[20px]">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-[16px]">
+      <div className="bg-safe-gray border border-safe-gray-light rounded-2xl max-w-[400px] w-full p-[20px]">
         {/* Header */}
-        <h3 
-          className="font-bold text-[#101828] mb-[12px]"
-          style={{ 
+        <h3
+          className="font-bold text-safe-text-primary mb-[12px]"
+          style={{
             fontSize: 'clamp(14px, 1.5vw, 16px)',
             fontFamily: 'Arimo, sans-serif'
           }}
@@ -43,9 +43,9 @@ function ConfirmDialog({
         </h3>
 
         {/* Message */}
-        <p 
-          className="text-[#6a7282] mb-[12px]"
-          style={{ 
+        <p
+          className="text-safe-text-muted mb-[12px]"
+          style={{
             fontSize: 'clamp(12px, 1.3vw, 14px)',
             fontFamily: 'Arimo, sans-serif'
           }}
@@ -55,8 +55,8 @@ function ConfirmDialog({
 
         {errorMessage && (
           <div
-            className="mb-[20px] rounded-[8px] border border-[#f2b8bd] bg-[#fdecee] px-[12px] py-[8px] text-[#b42318]"
-            style={{ 
+            className="mb-[20px] rounded-[8px] border border-safe-danger/20 bg-safe-danger/10 px-[12px] py-[8px] text-safe-danger"
+            style={{
               fontSize: 'clamp(11px, 1.2vw, 12px)',
               fontFamily: 'Arimo, sans-serif'
             }}
@@ -69,8 +69,8 @@ function ConfirmDialog({
         <div className="flex gap-[12px] justify-end">
           <button
             onClick={onCancel}
-            className="px-[16px] py-[10px] border border-[#e5e7eb] rounded-[6px] text-[#101828] font-medium transition-all duration-200 hover:bg-[#f7f8f9]"
-            style={{ 
+            className="px-[16px] py-[10px] border border-safe-gray-light rounded-[6px] text-safe-text-primary font-medium transition-all duration-200 hover:bg-safe-gray-light/50"
+            style={{
               fontSize: 'clamp(12px, 1.2vw, 13px)',
               fontFamily: 'Arimo, sans-serif'
             }}
@@ -85,7 +85,7 @@ function ConfirmDialog({
                 ? 'bg-[#d63e4d] hover:bg-[#b82c3a]'
                 : 'bg-[#247cff] hover:bg-[#1a5dcc]'
             }`}
-            style={{ 
+            style={{
               fontSize: 'clamp(12px, 1.2vw, 13px)',
               fontFamily: 'Arimo, sans-serif'
             }}

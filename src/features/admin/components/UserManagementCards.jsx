@@ -79,33 +79,29 @@ function UserManagementCards() {
     ];
 
     return (
-        <div className="grid grid-cols-4 gap-6 mb-8">
-            {cardsData.map((item, idx) => (
+        <div className="grid grid-cols-4 gap-7">
+            {cardsData.map((item) => (
                 <div
                     key={item.id}
-                    className="bg-white rounded-xl p-6 border border-safe-border/50 hover:border-safe-border/80 relative overflow-hidden shadow-card hover:shadow-lg transition-all duration-300 group animate-slideUp"
-                    style={{ animationDelay: `${idx * 0.1}s` }}
+                    className="bg-safe-sidebar rounded-xl p-6 border border-safe-border relative overflow-hidden"
                 >
-                    {/* Accent bar */}
-                    <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-safe-blue to-safe-blue-light opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
-                    <div className="flex items-start justify-between mb-4">
-                        <div className="text-xs font-bold text-safe-text-gray/70 uppercase tracking-wider">
+                    <div className="flex items-start justify-between mb-3">
+                        <div className="text-sm font-semibold text-safe-text-gray">
                             {item.label}
                         </div>
-                        <div className="w-10 h-10 rounded-lg bg-safe-gray/5 flex items-center justify-center group-hover:bg-safe-gray/10 transition-colors duration-200">
+                        <div className="text-2xl px-2 py-1">
                             <FontAwesomeIcon
                                 icon={item.icon}
-                                className={`${item.iconcolor} text-base`}
+                                className={item.iconcolor}
                             />
                         </div>
                     </div>
 
-                    <div className="text-4xl font-bold text-safe-text-dark mb-3">
+                    <div className="text-3xl font-bold text-safe-dark mb-5">
                         {item.value}
                     </div>
 
-                    <div className="text-xs text-safe-text-gray/70 font-light">
+                    <div className="text-xs text-safe-text-gray">
                         {item.trend}
                     </div>
                 </div>

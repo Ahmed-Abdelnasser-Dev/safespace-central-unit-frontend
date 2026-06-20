@@ -37,36 +37,36 @@ function UsersTable({ columns, data, onRowClick, renderCell, className = '' }) {
   });
 
   return (
-    <div className={`mt-8 bg-white rounded-xl border border-safe-border/50 overflow-hidden shadow-card hover:shadow-lg transition-all duration-300 ${className}`}>
+    <div className={`mt-6 bg-safe-sidebar rounded-xl border border-safe-border overflow-hidden ${className}`}>
       <div className="overflow-x-auto">
         <table className="w-full table-auto">
           {/* Table Header */}
-          <thead className="bg-gradient-to-r from-safe-bg to-safe-bg/50 border-b border-safe-border/60">
+          <thead className="bg-safe-bg border-b border-safe-border">
             <tr>
               {columns.map((column, index) => (
                 <th
                   key={index}
-                  className={`px-4 py-4 text-left text-xs font-bold text-safe-text-dark tracking-wider uppercase 
+                  className={`px-4 py-4 text-left text-xs font-bold text-safe-text-dark tracking-wider 
                     ${index === 0 ? 'pl-6' : ''} 
                     ${index === columns.length - 1 ? 'pr-6' : ''}
                     ${column.headerClass || ''}
-                    ${column.sortable ? 'cursor-pointer select-none hover:bg-safe-gray/20 transition-colors' : ''}
+                    ${column.sortable ? 'cursor-pointer select-none' : ''}
                   `}
                   style={{ width: column.width || 'auto' }}
                   onClick={() => handleSort(column)}
                 >
-                  <div className={`flex items-center gap-2 ${
+                  <div className={`flex items-center gap-1.5 ${
                   column.headerClass?.includes('text-right') ? 'justify-end' : ''}`}>
                     {column.label}
                     {column.sortable && (
-                      <span className="flex flex-col ml-1 gap-px opacity-50 hover:opacity-100 transition-opacity">
+                      <span className="flex flex-col ml-1 gap-px">
                         <FontAwesomeIcon
                           icon="chevron-up"
-                          className={`text-[10px] leading-none ${sortKey === column.key && sortDir === 'asc' ? 'text-safe-blue opacity-100' : 'text-safe-text-gray'}`}
+                          className={`text-[10px] leading-none ${sortKey === column.key && sortDir === 'asc' ? 'text-safe-blue-btn' : 'text-safe-text-muted'}`}
                         />
                         <FontAwesomeIcon
                           icon="chevron-down"
-                          className={`text-[10px] leading-none ${sortKey === column.key && sortDir === 'desc' ? 'text-safe-blue opacity-100' : 'text-safe-text-gray'}`}
+                          className={`text-[10px] leading-none ${sortKey === column.key && sortDir === 'desc' ? 'text-safe-blue-btn' : 'text-safe-text-muted'}`}
                         />
                       </span>
                     )}
@@ -77,20 +77,20 @@ function UsersTable({ columns, data, onRowClick, renderCell, className = '' }) {
           </thead>
 
           {/* Table Body */}
-          <tbody className="divide-y divide-safe-border/30">
+          <tbody className="divide-y divide-safe-border">
             {sortedData && sortedData.length > 0 ? (
               sortedData.map((row, rowIndex) => (
                 <tr
                   key={row.id || rowIndex}
-                  className={`transition-all duration-200 ${
-                    onRowClick ? 'cursor-pointer hover:bg-safe-blue/3 hover:border-l-2 hover:border-l-safe-blue' : 'hover:bg-safe-gray/5'
+                  className={`transition-colors ${
+                    onRowClick ? 'cursor-pointer hover:bg-safe-bg/30' : ''
                   }`}
                   onClick={() => onRowClick && onRowClick(row)}
                 >
                   {columns.map((column, colIndex) => (
                     <td
                       key={colIndex}
-                      className={`px-4 py-4 text-sm text-safe-text-dark font-light ${
+                      className={`px-4 py-4 ${
                         colIndex === 0 ? 'pl-6' : ''
                       } ${colIndex === columns.length - 1 ? 'pr-6' : ''}`}
                       onClick={(e) => column.stopPropagation && e.stopPropagation()}
@@ -104,12 +104,9 @@ function UsersTable({ columns, data, onRowClick, renderCell, className = '' }) {
               <tr>
                 <td 
                   colSpan={columns.length} 
-                  className="px-6 py-12 text-center text-safe-text-gray/60 font-light"
+                  className="px-6 py-8 text-center text-safe-text-gray"
                 >
-                  <div className="flex flex-col items-center gap-2">
-                    <FontAwesomeIcon icon="inbox" className="text-3xl opacity-30" />
-                    <span>No data available</span>
-                  </div>
+                  No data available
                 </td>
               </tr>
             )}

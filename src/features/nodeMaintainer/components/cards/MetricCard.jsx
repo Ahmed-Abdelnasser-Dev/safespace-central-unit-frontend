@@ -20,10 +20,10 @@ function MetricCard({
   trendColor = null 
 }) {
   return (
-    <div className="p-[10px] sm:p-[11px] md:p-[12px] lg:p-[14px] bg-[#f7f8f9] rounded-[6px] sm:rounded-[7px] md:rounded-[8px] border border-[#e5e7eb] hover:shadow-sm transition-shadow duration-200">
+    <div className="p-[10px] sm:p-[11px] md:p-[12px] lg:p-[14px] bg-safe-gray rounded-[6px] sm:rounded-[7px] md:rounded-[8px] border border-safe-gray-light transition-colors duration-200">
       {/* Header */}
       <div className="flex items-center justify-between mb-[8px] sm:mb-[9px] md:mb-[10px]">
-        <span className="font-normal text-[#6a7282]" style={{ fontSize: 'clamp(11px, 1vw, 13px)', fontFamily }}>
+        <span className="font-normal text-safe-text-muted" style={{ fontSize: 'clamp(11px, 1vw, 13px)', fontFamily }}>
           {label}
         </span>
         {icon && (
@@ -36,7 +36,7 @@ function MetricCard({
         <span className="font-bold" style={{ fontSize: 'clamp(18px, 2.5vw, 22px)', color, fontFamily }}>
           {value}
         </span>
-        <span className="text-[#6a7282]" style={{ fontSize: 'clamp(11px, 1vw, 12px)', fontFamily }}>
+        <span className="text-safe-text-muted" style={{ fontSize: 'clamp(11px, 1vw, 12px)', fontFamily }}>
           {unit}
         </span>
         {trend && (
@@ -47,7 +47,7 @@ function MetricCard({
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full h-1.5 bg-[#e5e7eb] rounded-full overflow-hidden">
+      <div className="w-full h-1.5 bg-safe-gray-light rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-300"
           style={{

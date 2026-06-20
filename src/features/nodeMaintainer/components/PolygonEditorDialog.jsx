@@ -99,27 +99,27 @@ function PolygonEditorDialog({ node, polygon, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-safe-gray border border-safe-gray-light rounded-2xl max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-safe-border">
-          <h2 className="text-lg font-semibold text-safe-text-dark">
+        <div className="flex items-center justify-between p-4 border-b border-safe-gray-light">
+          <h2 className="text-lg font-semibold text-safe-text-primary">
             Polygon Editor - {node.id}
           </h2>
-          <button onClick={onClose} className="p-2 hover:bg-safe-bg rounded-lg transition-colors">
-            <FontAwesomeIcon icon="xmark" className="text-lg text-safe-text-gray" />
+          <button onClick={onClose} className="p-2 hover:bg-safe-gray-light rounded-lg transition-colors">
+            <FontAwesomeIcon icon="xmark" className="text-lg text-safe-text-muted" />
           </button>
         </div>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <div>
-            <label className="text-sm font-medium text-safe-text-dark mb-1 block">Polygon Name</label>
+            <label className="text-sm font-medium text-safe-text-primary mb-1 block">Polygon Name</label>
             <input
               type="text"
               value={polygonName}
               onChange={(e) => setPolygonName(e.target.value)}
-              className="w-full px-3 py-2 border border-safe-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-safe-blue/20"
+              className="w-full px-3 py-2 bg-safe-gray border border-safe-gray-light text-safe-text-primary rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-safe-blue/20"
             />
           </div>
 
@@ -141,12 +141,12 @@ function PolygonEditorDialog({ node, polygon, onClose }) {
             <div className="flex-1">
               <div className="mb-2 flex items-center gap-2">
                 <FontAwesomeIcon icon={toolMode === 'edit' ? 'location-dot' : 'pen'} className="text-safe-blue text-sm" />
-                <label className="text-sm font-medium text-safe-text-dark">
+                <label className="text-sm font-medium text-safe-text-primary">
                   {toolMode === 'edit' ? 'Drag points to move them' : `Click to draw polygon points (${points.length})`}
                 </label>
               </div>
               <div
-                className="relative w-full max-w-[640px] mx-auto border-2 border-dashed border-safe-border rounded-lg bg-black"
+                className="relative w-full max-w-[640px] mx-auto border-2 border-dashed border-safe-gray-light rounded-lg bg-black"
                 style={{ aspectRatio: '1 / 1', minHeight: '320px', maxHeight: '640px' }}
               >
                 <canvas
@@ -164,7 +164,7 @@ function PolygonEditorDialog({ node, polygon, onClose }) {
             </div>
           </div>
 
-          <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
+          <div className="p-3 bg-safe-blue/10 border border-safe-blue/20 rounded-lg text-sm text-safe-blue">
             <p className="font-medium mb-1">How to draw:</p>
             <ul className="text-xs space-y-1 list-disc list-inside">
               <li>Click on the image to add polygon points</li>
@@ -177,7 +177,7 @@ function PolygonEditorDialog({ node, polygon, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-4 border-t border-safe-border bg-safe-bg">
+        <div className="flex items-center justify-end gap-3 p-4 border-t border-safe-gray-light bg-safe-gray">
           <Button variant="secondary" size="sm" onClick={onClose}>Cancel</Button>
           <Button variant="primary" size="sm" onClick={handleSave} disabled={points.length < 3}>
             <FontAwesomeIcon icon="floppy-disk" className="mr-1" />

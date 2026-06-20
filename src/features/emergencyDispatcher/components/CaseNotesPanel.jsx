@@ -9,7 +9,7 @@ function NoteEntry({ note }) {
     <li className="flex gap-3" aria-label={isSystem ? 'System log entry' : 'Dispatcher note'}>
       <div className="flex-shrink-0 mt-0.5">
         {isSystem ? (
-          <span className="w-6 h-6 rounded-full bg-safe-gray-light border border-white/10 flex items-center justify-center">
+          <span className="w-6 h-6 rounded-full bg-safe-gray-light border border-safe-gray-light flex items-center justify-center">
             <FontAwesomeIcon icon="circle-info" className="text-[10px] text-safe-text-muted" />
           </span>
         ) : (
@@ -25,7 +25,7 @@ function NoteEntry({ note }) {
           </span>
           <span className="text-[10px] text-safe-text-muted/60 font-mono">{timeSince(note.createdAt)}</span>
         </div>
-        <p className={`text-sm mt-0.5 leading-relaxed ${isSystem ? 'text-safe-text-muted' : 'text-white'}`}>
+        <p className={`text-sm mt-0.5 leading-relaxed ${isSystem ? 'text-safe-text-muted' : 'text-safe-text-primary'}`}>
           {note.content}
         </p>
       </div>
@@ -47,9 +47,9 @@ function CaseNotesPanel({ caseRecord, onAddNote }) {
   };
 
   return (
-    <div className="bg-safe-gray border border-white/8 rounded-xl overflow-hidden">
-      <div className="px-4 py-3 border-b border-white/8">
-        <h3 className="text-sm font-semibold text-white">Notes &amp; Activity</h3>
+    <div className="bg-safe-gray border border-safe-gray-light rounded-xl overflow-hidden">
+      <div className="px-4 py-3 border-b border-safe-gray-light">
+        <h3 className="text-sm font-semibold text-safe-text-primary">Notes &amp; Activity</h3>
       </div>
 
       {notes.length === 0 ? (
@@ -69,7 +69,7 @@ function CaseNotesPanel({ caseRecord, onAddNote }) {
 
       <form
         onSubmit={handleSubmit}
-        className="flex gap-2 px-3 py-3 border-t border-white/8"
+        className="flex gap-2 px-3 py-3 border-t border-safe-gray-light"
       >
         {/* Dark-surface input — matches the card background, avoids jarring white box */}
         <input
@@ -77,7 +77,7 @@ function CaseNotesPanel({ caseRecord, onAddNote }) {
           onChange={(e) => setDraft(e.target.value)}
           placeholder="Add a note…"
           aria-label="Case note"
-          className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-white/10 bg-safe-gray-light text-white text-sm placeholder:text-safe-text-muted/50 focus:outline-none focus:ring-2 focus:ring-safe-blue/30 focus:border-safe-blue/60 transition-all"
+          className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-safe-gray-light bg-safe-gray-light text-safe-text-primary text-sm placeholder:text-safe-text-muted/50 focus:outline-none focus:ring-2 focus:ring-safe-blue/30 focus:border-safe-blue/60 transition-all"
         />
         <Button
           type="submit"

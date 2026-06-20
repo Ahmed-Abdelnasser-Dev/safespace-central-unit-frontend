@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux';
 
 function ProtectedRoute({ children, allowedRoles = null }) {
   const location = useLocation();
-  const { isAuthenticated, user, loading, loadingRefresh, mustChangePassword } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, loading, mustChangePassword } = useSelector((state) => state.auth);
 
-  // Show loading state while checking authentication (both loading and loadingRefresh)
-  if (loading || loadingRefresh) {
+  // Show loading state while checking authentication
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-safe-bg">
         <div className="text-center">
@@ -44,7 +44,6 @@ function ProtectedRoute({ children, allowedRoles = null }) {
               {allowedRoles.length === 1 && ` This page requires ${allowedRoles[0]} role.`}
             </p>
             <button
-              type="button"
               onClick={() => window.history.back()}
               className="px-6 py-2 bg-safe-blue-btn text-white rounded-lg hover:bg-safe-blue-btn/90 transition-colors"
             >

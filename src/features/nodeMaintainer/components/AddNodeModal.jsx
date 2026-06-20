@@ -68,34 +68,34 @@ export default function AddNodeModal({ isOpen, onClose, onSubmit, existingNodeId
 
   return (
     <Modal open={isOpen} onClose={handleClose} size="md">
-      <div className="bg-white rounded-xl border border-safe-border shadow-lg overflow-hidden">
+      <div className="bg-safe-gray border border-safe-gray-light rounded-2xl overflow-hidden">
         <div className="px-8 py-6">
-          <h3 className="text-safe-text-dark font-bold text-xl">Add New Node</h3>
-          <p className="text-safe-text-gray text-sm mt-1">Create a node and jump to configuration.</p>
+          <h3 className="text-safe-text-primary font-bold text-xl">Add New Node</h3>
+          <p className="text-safe-text-muted text-sm mt-1">Create a node and jump to configuration.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-safe-text-dark">Node ID</label>
+              <label className="text-sm font-semibold text-safe-text-primary">Node ID</label>
               <Input value={newNode.id} onChange={updateField('id')} placeholder="NODE-006" />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-safe-text-dark">IP Address</label>
+              <label className="text-sm font-semibold text-safe-text-primary">IP Address</label>
               <Input value={newNode.ipAddress} onChange={updateField('ipAddress')} placeholder="192.168.1.200" />
             </div>
             <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-semibold text-safe-text-dark">Location Address</label>
+              <label className="text-sm font-semibold text-safe-text-primary">Location Address</label>
               <Input value={newNode.address} onChange={updateField('address')} placeholder="Highway A1, Exit 23B" />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-safe-text-dark">Latitude</label>
+              <label className="text-sm font-semibold text-safe-text-primary">Latitude</label>
               <Input value={newNode.latitude} onChange={updateField('latitude')} placeholder="40.7128" />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-safe-text-dark">Longitude</label>
+              <label className="text-sm font-semibold text-safe-text-primary">Longitude</label>
               <Input value={newNode.longitude} onChange={updateField('longitude')} placeholder="-74.0060" />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-safe-text-dark">Speed Limit (km/h)</label>
+              <label className="text-sm font-semibold text-safe-text-primary">Speed Limit (km/h)</label>
               <Input value={newNode.speedLimit} onChange={updateField('speedLimit')} placeholder="80" />
             </div>
           </div>

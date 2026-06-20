@@ -47,13 +47,13 @@ export default function NewAssignmentModal({ caseRecord, onDismiss }) {
               <FontAwesomeIcon icon="triangle-exclamation" className="text-safe-orange text-sm" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-white">You've been assigned a case</p>
+              <p className="text-sm font-semibold text-safe-text-primary">You've been assigned a case</p>
               <p className="text-xs text-safe-text-muted">Respond and begin coordinating immediately.</p>
             </div>
           </div>
 
           {/* Case summary */}
-          <div className="bg-safe-gray rounded-xl border border-white/8 px-4 py-3 space-y-2.5">
+          <div className="bg-safe-gray rounded-xl border border-safe-gray-light px-4 py-3 space-y-2.5">
             {/* Type row */}
             <div className="flex items-center gap-1.5">
               <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dot}`} aria-hidden="true" />
@@ -66,14 +66,14 @@ export default function NewAssignmentModal({ caseRecord, onDismiss }) {
             {/* Identity + time */}
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-white truncate">{identity}</p>
+                <p className="text-sm font-semibold text-safe-text-primary truncate">{identity}</p>
                 {isSOS && caseRecord.victim?.phone && (
                   <p className="text-xs text-safe-text-muted font-mono mt-0.5">{caseRecord.victim.phone}</p>
                 )}
               </div>
               <div className="text-right flex-shrink-0">
                 <p className="text-[10px] font-medium text-safe-text-muted/60 uppercase tracking-wide">Received</p>
-                <p className="text-xs font-mono text-white mt-0.5">
+                <p className="text-xs font-mono text-safe-text-primary mt-0.5">
                   <LiveTimeSince receivedAt={caseRecord.receivedAt} />
                 </p>
               </div>

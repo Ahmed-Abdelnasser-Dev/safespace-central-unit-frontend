@@ -4,6 +4,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Theme CSS custom properties ──────────────────────────────────────────── */
+/* Light mode defaults — space-separated RGB values for Tailwind opacity support */
+:root {
+  --color-safe-dark:       245 247 250;   /* #f5f7fa — page canvas (slightly cooler) */
+  --color-safe-sidebar:    255 255 255;   /* #ffffff — sidebar / header */
+  --color-safe-gray:       237 241 246;   /* #edf1f6 — card surface */
+  --color-safe-gray-light: 209 219 231;   /* #d1dbe7 — elevated / border */
+  --color-text-primary:    15 20 25;      /* #0f1419 — body text */
+  --color-text-muted:      71 85 105;     /* #475569 — muted text (6.1:1 on card, passes WCAG AA) */
+}
+
+/* Dark mode overrides */
+.dark {
+  --color-safe-dark:       17 17 17;      /* #111111 */
+  --color-safe-sidebar:    26 26 26;      /* #1a1a1a */
+  --color-safe-gray:       36 36 36;      /* #242424 */
+  --color-safe-gray-light: 51 51 51;      /* #333333 */
+  --color-text-primary:    255 255 255;   /* #ffffff */
+  --color-text-muted:      139 153 181;   /* #8b99b5 */
+}
+
 @layer base {
   body {
     @apply font-sans;
@@ -112,8 +133,8 @@
 
 /* Dark-mode override for MapLibre GL popups inside the dispatcher map */
 .emergency-dispatcher-unit-popover .maplibregl-popup-content {
-  background: #1a1f2e;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #242424;
+  border: 1px solid #333333;
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
   padding: 12px 14px;
@@ -121,7 +142,7 @@
 }
 
 .emergency-dispatcher-unit-popover .maplibregl-popup-tip {
-  border-top-color: #1a1f2e !important;
+  border-top-color: #242424 !important;
 }
 
 .emergency-dispatcher-unit-popover .maplibregl-popup-close-button {

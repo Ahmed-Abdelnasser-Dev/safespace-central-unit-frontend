@@ -16,13 +16,13 @@ function UnitRow({ unit, onCenterOnUnit }) {
       type="button"
       onClick={() => onCenterOnUnit?.(unit.id)}
       aria-label={`Center map on ${unit.name}, ${getUnitTypeLabel(unit.unitType)}, ${unit.status.replace('_', ' ')}`}
-      className="w-full text-left flex items-center gap-2.5 px-3 py-2 hover:bg-white/5 transition-colors duration-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-safe-blue/40"
+      className="w-full text-left flex items-center gap-2.5 px-3 py-2 hover:bg-safe-gray-light/30 transition-colors duration-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-safe-blue/40"
     >
-      <div className="w-6 h-6 rounded-md bg-white/8 flex items-center justify-center flex-shrink-0">
+      <div className="w-6 h-6 rounded-md bg-safe-gray-light/40 flex items-center justify-center flex-shrink-0">
         <FontAwesomeIcon icon={getUnitTypeIcon(unit.unitType)} className="text-safe-text-muted text-[10px]" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-medium text-white truncate leading-tight">{unit.name}</p>
+        <p className="text-xs font-medium text-safe-text-primary truncate leading-tight">{unit.name}</p>
         <p className="text-[10px] text-safe-text-muted/75 truncate">{getUnitTypeLabel(unit.unitType)}</p>
       </div>
       <UnitStatusBadge status={unit.status} />
@@ -42,7 +42,7 @@ function StatusGroup({ group, units, onCenterOnUnit }) {
         </span>
         <span className="ml-auto font-mono text-[10px] text-safe-text-muted/60">{units.length}</span>
       </div>
-      <div className="divide-y divide-white/5">
+      <div className="divide-y divide-safe-gray-light">
         {units.map((unit) => (
           <UnitRow key={unit.id} unit={unit} onCenterOnUnit={onCenterOnUnit} />
         ))}
@@ -65,9 +65,9 @@ export default function UnitsRosterPanel({ units, onCenterOnUnit }) {
   return (
     <div className="flex flex-col h-full overflow-hidden bg-safe-gray">
       {/* Panel header */}
-      <div className="px-4 py-3 border-b border-white/8 flex-shrink-0">
+      <div className="px-4 py-3 border-b border-safe-gray-light flex-shrink-0">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-white">Units</h2>
+          <h2 className="text-sm font-semibold text-safe-text-primary">Units</h2>
           <div className="flex items-center gap-1.5">
             <span className="text-[11px] text-safe-success font-mono font-semibold">{availableCount} avail</span>
             <span className="text-white/20 text-xs">/</span>
@@ -96,7 +96,7 @@ export default function UnitsRosterPanel({ units, onCenterOnUnit }) {
       </div>
 
       {/* Footer legend */}
-      <div className="flex-shrink-0 px-3 py-2 border-t border-white/8 flex flex-wrap gap-x-3 gap-y-1">
+      <div className="flex-shrink-0 px-3 py-2 border-t border-safe-gray-light flex flex-wrap gap-x-3 gap-y-1">
         {STATUS_GROUPS.map((g) => (
           <div key={g.key} className="flex items-center gap-1">
             <span className={`w-1.5 h-1.5 rounded-full ${g.dot}`} />

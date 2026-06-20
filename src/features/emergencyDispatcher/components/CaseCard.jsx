@@ -4,7 +4,7 @@ import { getCaseStatusStyle, getCaseTypeLabel, timeSince } from '../utils/caseFo
 const SEVERITY_DOT = {
   HIGH:   { dot: 'bg-safe-danger',  border: 'border-safe-danger/35' },
   MEDIUM: { dot: 'bg-safe-accent',  border: 'border-safe-accent/25' },
-  LOW:    { dot: 'bg-safe-info',    border: 'border-white/8' },
+  LOW:    { dot: 'bg-safe-info',    border: 'border-safe-gray-light' },
 };
 
 // Status mini-pill color map
@@ -13,7 +13,7 @@ const STATUS_CHIP = {
   accent:  'bg-safe-accent/12 text-safe-accent',
   danger:  'bg-safe-danger/12 text-safe-danger',
   success: 'bg-safe-success/12 text-safe-success',
-  neutral: 'bg-white/6 text-safe-text-muted/70',
+  neutral: 'bg-safe-gray-light/30 text-safe-text-muted/70',
 };
 
 function CaseCard({ caseRecord, onOpen, suppressQueuedBadge: _suppressQueuedBadge = false }) {
@@ -35,7 +35,7 @@ function CaseCard({ caseRecord, onOpen, suppressQueuedBadge: _suppressQueuedBadg
       ].filter(Boolean).join(' · ') || 'Road incident';
 
   const typeLabel = getCaseTypeLabel(caseRecord);
-  const sev = SEVERITY_DOT[caseRecord.severity] ?? { dot: 'bg-safe-text-muted/40', border: 'border-white/8' };
+  const sev = SEVERITY_DOT[caseRecord.severity] ?? { dot: 'bg-safe-text-muted/40', border: 'border-safe-gray-light' };
   const borderClass = caseRecord.isUnread ? 'border-safe-danger/45' : sev.border;
 
   return (
@@ -44,7 +44,7 @@ function CaseCard({ caseRecord, onOpen, suppressQueuedBadge: _suppressQueuedBadg
       onClick={() => onOpen(caseRecord)}
       aria-label={`Open case: ${victimLabel}, ${caseRecord.severity} ${caseRecord.caseType}`}
       className={`w-full text-left bg-safe-gray rounded-xl border p-3.5 transition-all duration-200
-        hover:border-safe-blue/40 hover:bg-white/[0.03]
+        hover:border-safe-blue/40 hover:bg-safe-gray-light/15
         focus:outline-none focus-visible:ring-2 focus-visible:ring-safe-blue/50
         ${borderClass}`}
     >
@@ -77,7 +77,7 @@ function CaseCard({ caseRecord, onOpen, suppressQueuedBadge: _suppressQueuedBadg
       </div>
 
       {/* Row 2: hero identity — the primary scan anchor */}
-      <p className="text-sm font-semibold text-white truncate leading-snug mb-0.5">
+      <p className="text-sm font-semibold text-safe-text-primary truncate leading-snug mb-0.5">
         {victimLabel}
       </p>
 

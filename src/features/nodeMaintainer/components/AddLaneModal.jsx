@@ -38,33 +38,33 @@ export default function AddLaneModal({ isOpen, onClose, onConfirm, laneStatusOpt
 
   return (
     <Modal open={isOpen} onClose={handleClose} size="md">
-      <Card className="bg-white rounded-xl overflow-hidden">
-        <div className="px-8 py-6 border-b border-[#e5e7eb]">
-          <h3 className="text-[#101828] font-bold" style={{ ...typography.heading2, fontFamily }}>
+      <Card className="bg-safe-gray border border-safe-gray-light rounded-2xl overflow-hidden">
+        <div className="px-8 py-6 border-b border-safe-gray-light">
+          <h3 className="text-safe-text-primary font-bold" style={{ ...typography.heading2, fontFamily }}>
             Add New Lane
           </h3>
-          <p className="text-[#6a7282] mt-2" style={{ ...typography.bodySmall, fontFamily }}>
+          <p className="text-safe-text-muted mt-2" style={{ ...typography.bodySmall, fontFamily }}>
             Define lane name, type, and status.
           </p>
         </div>
 
         <div className="px-8 py-6 space-y-6">
           <div>
-            <label className="text-[#101828] font-semibold block mb-2" style={{ ...typography.label, fontFamily }}>
+            <label className="text-safe-text-primary font-semibold block mb-2" style={{ ...typography.label, fontFamily }}>
               Lane Name
             </label>
             <Input value={laneName} onChange={(e) => setLaneName(e.target.value)} placeholder="Lane 4" />
           </div>
 
           <div>
-            <label className="text-[#101828] font-semibold block mb-2" style={{ ...typography.label, fontFamily }}>
+            <label className="text-safe-text-primary font-semibold block mb-2" style={{ ...typography.label, fontFamily }}>
               Lane Type
             </label>
             <Input value={laneType} onChange={(e) => setLaneType(e.target.value)} placeholder="Custom Lane" />
           </div>
 
           <div>
-            <label className="text-[#101828] font-semibold block mb-3" style={{ ...typography.label, fontFamily }}>
+            <label className="text-safe-text-primary font-semibold block mb-3" style={{ ...typography.label, fontFamily }}>
               Lane Status
             </label>
             <div className="flex flex-wrap gap-3">
@@ -76,7 +76,7 @@ export default function AddLaneModal({ isOpen, onClose, onConfirm, laneStatusOpt
                   className={`px-4 py-2 rounded-lg border transition-all flex items-center gap-2 ${
                     laneStatus === status.value
                       ? 'border-[#247cff] bg-[#247cff]/10 text-[#247cff]'
-                      : 'border-[#e5e7eb] text-[#6a7282] hover:bg-[#f7f8f9]'
+                      : 'border-safe-gray-light text-safe-text-muted hover:bg-safe-gray-light/50'
                   }`}
                   style={{ ...typography.bodySmall, fontFamily }}
                 >

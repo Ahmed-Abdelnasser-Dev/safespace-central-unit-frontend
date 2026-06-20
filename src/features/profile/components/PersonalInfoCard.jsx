@@ -3,12 +3,12 @@ import InfoRow from './InfoRow';
 
 function PersonalInfoCard({ profile, onEdit }) {
   return (
-    <div className="bg-white rounded-xl border border-safe-border p-7">
+    <div className="bg-safe-sidebar rounded-xl border border-safe-gray-light p-7">
       <div className="mb-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h3 className="text-base font-bold text-safe-text-dark">Personal Information</h3>
-            <p className="text-xs text-safe-text-gray mt-0.5">Editable by the User</p>
+            <h3 className="text-base font-bold text-safe-text-primary">Personal Information</h3>
+            <p className="text-xs text-safe-text-muted mt-0.5">Editable by the User</p>
           </div>
           <button
             onClick={onEdit}
@@ -18,7 +18,7 @@ function PersonalInfoCard({ profile, onEdit }) {
             Edit
           </button>
         </div>
-        <div className="border-b border-safe-border" />
+        <div className="border-b border-safe-gray-light" />
       </div>
 
       <div className="space-y-4">

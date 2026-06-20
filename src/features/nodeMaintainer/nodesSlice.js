@@ -92,7 +92,7 @@ const normalizeNode = (node) => {
 
 export const fetchNodes = createAsyncThunk('nodes/fetchNodes', async (_, thunkApi) => {
   try {
-    const response = await axios.get(`${API_URL}/nodes`);
+    const response = await axios.get(`${API_URL}/nodes`, { withCredentials: true });
     return response.data.data || [];
   } catch (error) {
     return thunkApi.rejectWithValue(error?.response?.data?.message || 'Failed to fetch nodes');
@@ -102,7 +102,7 @@ export const fetchNodes = createAsyncThunk('nodes/fetchNodes', async (_, thunkAp
 export const registerNode = createAsyncThunk('nodes/registerNode', async (payload, thunkApi) => {
   try {
     await axios.post(`${API_URL}/nodes/register`, payload);
-    const response = await axios.get(`${API_URL}/nodes`);
+    const response = await axios.get(`${API_URL}/nodes`, { withCredentials: true });
     return response.data.data || [];
   } catch (error) {
     return thunkApi.rejectWithValue(error?.response?.data?.message || 'Failed to register node');

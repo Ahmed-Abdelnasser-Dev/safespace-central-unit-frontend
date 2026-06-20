@@ -40,7 +40,7 @@ export default function StationMarker({ station }) {
               style={{ color: cfg.color, fontSize: 8, flexShrink: 0 }}
             />
             <span
-              className="text-white leading-none whitespace-nowrap"
+              className="text-safe-text-primary leading-none whitespace-nowrap"
               style={{ fontSize: 9, fontWeight: 600, opacity: 0.9 }}
             >
               {label}

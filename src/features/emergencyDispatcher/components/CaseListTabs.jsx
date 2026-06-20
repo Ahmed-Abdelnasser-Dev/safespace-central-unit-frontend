@@ -23,13 +23,13 @@ function CaseListTabs({ activeTab, onChange, unreadCounts }) {
             onClick={() => onChange(tab.key)}
             className={`relative flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors duration-200 border-b-2 -mb-px ${
               isActive
-                ? 'border-safe-blue text-white'
-                : 'border-transparent text-safe-text-gray hover:text-white'
+                ? 'border-safe-blue text-safe-text-primary'
+                : 'border-transparent text-safe-text-gray hover:text-safe-text-primary'
             }`}
           >
             {tab.label}
             {tab.unread > 0 && (
-              <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-safe-danger text-white text-xs font-bold">
+              <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-safe-danger text-safe-text-primary text-xs font-bold">
                 {tab.unread}
               </span>
             )}

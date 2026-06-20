@@ -67,9 +67,9 @@ function NearestUnitsPanel({
   const hasSelection = selectedUnitIds.length > 0;
 
   return (
-    <div className="flex flex-col bg-safe-gray border border-white/8 rounded-xl overflow-hidden">
-      <div className="px-4 py-3 border-b border-white/8 flex items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold text-white">Nearest Units</h3>
+    <div className="flex flex-col bg-safe-gray border border-safe-gray-light rounded-xl overflow-hidden">
+      <div className="px-4 py-3 border-b border-safe-gray-light flex items-center justify-between gap-2">
+        <h3 className="text-sm font-semibold text-safe-text-primary">Nearest Units</h3>
         <div className="flex items-center gap-2">
           {hasSelection && (
             <button
@@ -77,8 +77,8 @@ function NearestUnitsPanel({
               onClick={() => setSelectedOnly((v) => !v)}
               className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-all duration-150 ${
                 selectedOnly
-                  ? 'bg-safe-blue text-white'
-                  : 'bg-white/8 text-white/60 hover:bg-white/15 hover:text-white'
+                  ? 'bg-safe-blue text-safe-text-primary'
+                  : 'bg-safe-gray-light/40 text-white/60 hover:bg-safe-gray-light/30 hover:text-safe-text-primary'
               }`}
             >
               <FontAwesomeIcon icon="check-square" className="mr-1.5 text-[10px]" />
@@ -148,7 +148,7 @@ function NearestUnitsPanel({
                         icon={getUnitTypeIcon(unit.unitType)}
                         className="text-safe-text-muted text-[11px] flex-shrink-0"
                       />
-                      <span className="text-sm font-medium text-white truncate">{unit.name}</span>
+                      <span className="text-sm font-medium text-safe-text-primary truncate">{unit.name}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-1 pl-6">
                       <UnitStatusBadge status={unit.status} />
@@ -164,7 +164,7 @@ function NearestUnitsPanel({
         )}
       </div>
 
-      <div className="px-4 py-3 border-t border-white/8 bg-safe-gray-light/20 flex-shrink-0">
+      <div className="px-4 py-3 border-t border-safe-gray-light bg-safe-gray-light/20 flex-shrink-0">
         <Button
           variant="primary"
           className="w-full"

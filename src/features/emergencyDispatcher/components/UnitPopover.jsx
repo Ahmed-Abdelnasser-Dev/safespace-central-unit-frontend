@@ -27,7 +27,7 @@ function UnitPopover({ unit, distanceKm, onClose }) {
       className="emergency-dispatcher-unit-popover"
     >
       <div className="min-w-[190px]">
-        <p className="text-sm font-semibold text-white mb-0.5">{unit.name}</p>
+        <p className="text-sm font-semibold text-safe-text-primary mb-0.5">{unit.name}</p>
         <p className="text-xs text-safe-text-muted mb-2">{getUnitTypeLabel(unit.unitType)}</p>
         <UnitStatusBadge status={unit.status} />
         {typeof distanceKm === 'number' && (

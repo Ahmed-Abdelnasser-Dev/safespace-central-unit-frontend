@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function ProfileHeroCard({ profile, photoUrl, onPhotoUpload }) {
   return (
-    <div className="bg-white rounded-xl border border-safe-border p-7">
+    <div className="bg-safe-sidebar rounded-xl border border-safe-gray-light p-7">
       <div className="flex items-start justify-between">
         {/* Left: Avatar + Info */}
         <div className="flex items-start gap-6">
@@ -23,35 +23,35 @@ function ProfileHeroCard({ profile, photoUrl, onPhotoUpload }) {
 
           {/* Info */}
           <div className="pt-1">
-            <h2 className="text-2xl font-bold text-safe-text-dark">{profile.fullName}</h2>
-            <p className="text-sm text-safe-text-gray mt-0.5">@{profile.username}</p>
+            <h2 className="text-2xl font-bold text-safe-text-primary">{profile.fullName}</h2>
+            <p className="text-sm text-safe-text-muted mt-0.5">@{profile.username}</p>
 
             <div className="flex items-center gap-4 mt-3">
-              <span className="flex items-center gap-1.5 text-sm text-safe-text-gray">
+              <span className="flex items-center gap-1.5 text-sm text-safe-text-muted">
                 <FontAwesomeIcon icon="shield" className="text-safe-blue-btn/70 text-xs" />
                 {profile.role}
               </span>
-              <span className="text-safe-text-gray/40">•</span>
-              <span className="flex items-center gap-1.5 text-sm text-safe-text-gray">
-                <FontAwesomeIcon icon="map-pin" className="text-safe-text-gray text-xs" />
+              <span className="text-safe-text-muted/40">•</span>
+              <span className="flex items-center gap-1.5 text-sm text-safe-text-muted">
+                <FontAwesomeIcon icon="map-pin" className="text-safe-text-muted text-xs" />
                 {profile.location}
               </span>
             </div>
 
             <div className="flex items-center gap-5 mt-2.5">
-              <span className="flex items-center gap-1.5 text-sm text-safe-text-gray">
-                <FontAwesomeIcon icon="envelope" className="text-xs text-safe-text-gray/60" />
+              <span className="flex items-center gap-1.5 text-sm text-safe-text-muted">
+                <FontAwesomeIcon icon="envelope" className="text-xs text-safe-text-muted/60" />
                 {profile.email}
               </span>
-              <span className="text-safe-text-gray/40">•</span>
-              <span className="flex items-center gap-1.5 text-sm text-safe-text-gray">
-                <FontAwesomeIcon icon="phone" className="text-xs text-safe-text-gray/60" />
+              <span className="text-safe-text-muted/40">•</span>
+              <span className="flex items-center gap-1.5 text-sm text-safe-text-muted">
+                <FontAwesomeIcon icon="phone" className="text-xs text-safe-text-muted/60" />
                 {profile.phone}
               </span>
             </div>
 
-            <p className="flex items-center gap-1.5 text-sm text-safe-text-gray mt-2">
-              <FontAwesomeIcon icon="calendar" className="text-xs text-safe-text-gray/60" />
+            <p className="flex items-center gap-1.5 text-sm text-safe-text-muted mt-2">
+              <FontAwesomeIcon icon="calendar" className="text-xs text-safe-text-muted/60" />
               Member since {profile.memberSince}
             </p>
           </div>

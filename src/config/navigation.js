@@ -10,8 +10,9 @@ export const ROLE_NAV_CONFIG = {
       { label: 'User Management', icon: 'users', path: '/user-management' },
       { label: 'Activity Logs', icon: 'clipboard-list', path: '/activity-logs' },
       { label: 'Dashboard', icon: 'chart-line', path: '/dashboard' },
-      { label: 'Map Overview', icon: 'map', path: '/map' },
+      { label: 'Map Overview', icon: 'map', path: '/road-observer' },
       { label: 'Cases', icon: 'headset', path: '/cases' },
+      { label: 'Node Maintainer', icon: 'server', path: '/node-maintainer' },
       { label: 'Camera Feeds', icon: 'video', path: '/cameras' },
       { label: 'Reports', icon: 'file-lines', path: '/reports' },
       { label: 'Settings', icon: 'gear', path: '/settings' },
@@ -21,7 +22,7 @@ export const ROLE_NAV_CONFIG = {
     defaultPath: '/cases',
     navItems: [
       { label: 'Dispatch', icon: 'headset', path: '/cases' },
-      { label: 'Map Overview', icon: 'map', path: '/map' },
+      { label: 'Map Overview', icon: 'map', path: '/road-observer' },
       { label: 'Dashboard', icon: 'chart-line', path: '/dashboard' },
       { label: 'Alerts', icon: 'bell', path: '/alerts' },
       { label: 'Camera Feeds', icon: 'video', path: '/cameras' },
@@ -29,9 +30,10 @@ export const ROLE_NAV_CONFIG = {
     ],
   },
   road_observer: {
-    defaultPath: '/map',
+    defaultPath: '/road-observer',
     navItems: [
-      { label: 'Map Overview', icon: 'map', path: '/map' },
+      { label: 'Live Monitoring', icon: 'satellite-dish', path: '/road-observer' },
+      { label: 'Incident History', icon: 'clipboard-list', path: '/incident-history' },
       { label: 'Reports', icon: 'file-lines', path: '/reports' },
       { label: 'Camera Feeds', icon: 'video', path: '/cameras' },
     ],
@@ -50,7 +52,7 @@ export const ROLE_NAV_CONFIG = {
  * @returns {string} The default path for the role.
  */
 export function getDefaultPath(roleName) {
-  return ROLE_NAV_CONFIG[roleName]?.defaultPath || '/map';
+  return ROLE_NAV_CONFIG[roleName]?.defaultPath || '/road-observer';
 }
 
 /**

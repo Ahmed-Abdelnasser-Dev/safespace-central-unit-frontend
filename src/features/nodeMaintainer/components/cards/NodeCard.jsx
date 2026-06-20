@@ -23,10 +23,10 @@ export default function NodeCard({ node, isSelected, onSelect }) {
   return (
     <button
       onClick={() => onSelect(node.id)}
-      className={`w-full rounded-[8.285px] border-[1.364px] text-left transition-all duration-200 hover:shadow-m ${
-        isSelected 
-          ? 'bg-[#f0f6ff] border-[#247cff] shadow-sm' 
-          : 'bg-[#f7f8f9] border-transparent hover:bg-[#eff0f1]'
+      className={`w-full rounded-[8.285px] border-[1.364px] text-left transition-all duration-200 ${
+        isSelected
+          ? 'bg-safe-blue/10 border-safe-blue'
+          : 'bg-safe-gray border-transparent hover:bg-safe-gray-light/50'
       }`}
       style={{ height: '90px' }}
     >
@@ -43,7 +43,7 @@ export default function NodeCard({ node, isSelected, onSelect }) {
               }} 
             />
             <span 
-              className="font-bold text-[#101828] truncate"
+              className="font-bold text-safe-text-primary truncate"
               style={{ 
                 fontSize: 'clamp(12px, 1.3vw, 14px)',
                 lineHeight: '16.157px',
@@ -69,7 +69,7 @@ export default function NodeCard({ node, isSelected, onSelect }) {
 
         {/* Location */}
         <p 
-          className="text-[#6a7282] mb-[6px] truncate"
+          className="text-safe-text-muted mb-[6px] truncate"
           style={{ 
             fontSize: 'clamp(11px, 1.2vw, 12px)',
             lineHeight: '14.914px',
@@ -85,14 +85,14 @@ export default function NodeCard({ node, isSelected, onSelect }) {
           <div className="flex items-center gap-[4px]">
             <FontAwesomeIcon 
               icon="microchip" 
-              className="text-[#6a7282] flex-shrink-0" 
+              className="text-safe-text-muted flex-shrink-0" 
               style={{ 
                 width: 'clamp(9px, 1.2vw, 11px)',
                 height: 'clamp(9px, 1.2vw, 11px)'
               }}
             />
             <span 
-              className="text-[#6a7282] whitespace-nowrap"
+              className="text-safe-text-muted whitespace-nowrap"
               style={{ 
                 fontSize: 'clamp(10px, 1.1vw, 12px)',
                 lineHeight: '12.428px',
@@ -107,14 +107,14 @@ export default function NodeCard({ node, isSelected, onSelect }) {
           <div className="flex items-center gap-[4px]">
             <FontAwesomeIcon 
               icon="temperature-half" 
-              className="text-[#6a7282] flex-shrink-0" 
+              className="text-safe-text-muted flex-shrink-0" 
               style={{ 
                 width: 'clamp(9px, 1.2vw, 11px)',
                 height: 'clamp(9px, 1.2vw, 11px)'
               }}
             />
             <span 
-              className="text-[#6a7282] whitespace-nowrap"
+              className="text-safe-text-muted whitespace-nowrap"
               style={{ 
                 fontSize: 'clamp(10px, 1.1vw, 12px)',
                 lineHeight: '12.428px',
@@ -129,14 +129,14 @@ export default function NodeCard({ node, isSelected, onSelect }) {
           <div className="flex items-center gap-[4px]">
             <FontAwesomeIcon 
               icon="wifi" 
-              className="text-[#6a7282] flex-shrink-0" 
+              className="text-safe-text-muted flex-shrink-0" 
               style={{ 
                 width: 'clamp(9px, 1.2vw, 11px)',
                 height: 'clamp(9px, 1.2vw, 11px)'
               }}
             />
             <span 
-              className="text-[#6a7282] whitespace-nowrap"
+              className="text-safe-text-muted whitespace-nowrap"
               style={{ 
                 fontSize: 'clamp(10px, 1.1vw, 12px)',
                 lineHeight: '12.428px',

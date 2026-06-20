@@ -34,7 +34,6 @@ class ErrorBoundary extends Component {
               An unexpected error occurred. Please try refreshing the page.
             </p>
             <button
-              type="button"
               onClick={() => window.location.reload()}
               className="px-6 py-2 bg-safe-blue-btn text-white rounded-lg hover:bg-safe-blue-btn/90 transition-colors"
             >

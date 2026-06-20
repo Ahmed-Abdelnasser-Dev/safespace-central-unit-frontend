@@ -45,6 +45,7 @@ const AlertsPage = lazy(() => import('./features/alerts/pages/AlertsPage.jsx'));
 const ReportsPage = lazy(() => import('./features/reports/pages/ReportsPage.jsx'));
 const MessagesPage = lazy(() => import('./features/messages/pages/MessagesPage.jsx'));
 const CameraFeedsPage = lazy(() => import('./features/cameras/pages/CameraFeedsPage.jsx'));
+const IncidentHistoryPage = lazy(() => import('./features/incidents/pages/IncidentHistoryPage.jsx'));
 
 // -- Loading fallback ---------------------------------------------------------
 function PageLoader() {
@@ -123,15 +124,17 @@ function App() {
               element={isAuthenticated ? <RoleRedirect /> : <Navigate to="/sign-in" replace />}
             />
 
-            {/* Map — all roles */}
+            {/* Road Observer monitoring console — all roles can view the map */}
             <Route
-              path="map"
+              path="road-observer"
               element={
                 <ProtectedRoute allowedRoles={ALL_ROLES}>
                   <MapOverviewPage />
                 </ProtectedRoute>
               }
             />
+            {/* Legacy /map redirect — keeps old links working */}
+            <Route path="map" element={<Navigate to="/road-observer" replace />} />
 
             {/* Cases — Dispatch Console + Case Detail, sharing one DispatcherProvider */}
             <Route
@@ -241,6 +244,16 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={ALL_ROLES}>
                   <CameraFeedsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Incident History — road_observer + admin */}
+            <Route
+              path="incident-history"
+              element={
+                <ProtectedRoute allowedRoles={['road_observer', 'admin']}>
+                  <IncidentHistoryPage />
                 </ProtectedRoute>
               }
             />

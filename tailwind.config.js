@@ -4,21 +4,29 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        'safe-dark': '#0a1119',
-        'safe-sidebar': '#121820',
+        // Theme-adaptive surfaces — values defined as CSS vars in index.css
+        'safe-dark':       'rgb(var(--color-safe-dark) / <alpha-value>)',
+        'safe-sidebar':    'rgb(var(--color-safe-sidebar) / <alpha-value>)',
+        'safe-gray':       'rgb(var(--color-safe-gray) / <alpha-value>)',
+        'safe-gray-light': 'rgb(var(--color-safe-gray-light) / <alpha-value>)',
+        // Theme-adaptive text
+        'safe-text-primary': 'rgb(var(--color-text-primary) / <alpha-value>)',
+        'safe-text-muted':   'rgb(var(--color-text-muted) / <alpha-value>)',
+
         'safe-blue': '#3b7cff',
         'safe-blue-light': '#5a96ff',
         'safe-blue-btn': '#2563eb',
-        'safe-gray': '#1a1f2e',
-        'safe-gray-light': '#2a3142',
-        'safe-bg': '#f0f4f8',
-        'safe-white': '#ffffff',
-        'safe-text-dark': '#0f1419',
-        'safe-text-gray': '#64748b',
-        'safe-text-muted': '#8b99b5',
+        // Legacy tokens — now adaptive (backed by same CSS vars as primary tokens)
+        'safe-bg':        'rgb(var(--color-safe-dark) / <alpha-value>)',
+        'safe-white':     'rgb(var(--color-safe-sidebar) / <alpha-value>)',
+        'safe-text-dark': 'rgb(var(--color-text-primary) / <alpha-value>)',
+        'safe-text-gray': 'rgb(var(--color-text-muted) / <alpha-value>)',
+        'safe-border':    'rgb(var(--color-safe-gray-light) / <alpha-value>)',
+
         'safe-accent': '#ff6b35',
         'safe-orange': '#fb923c',
         'safe-danger': '#ef4444',
@@ -26,7 +34,6 @@ export default {
         'safe-success': '#10b981',
         'safe-green': '#22c55e',
         'safe-info': '#0ea5e9',
-        'safe-border': '#e2e8f0',
         'safe-purple': '#8b5cf6',
         'safe-teal': '#14b8a6',
       },

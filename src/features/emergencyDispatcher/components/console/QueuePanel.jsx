@@ -37,7 +37,7 @@ function AssignedCard({ caseRecord, onOpen }) {
     >
       <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dot}`} aria-hidden="true" />
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-semibold text-white truncate">{identity}</p>
+        <p className="text-xs font-semibold text-safe-text-primary truncate">{identity}</p>
         <p className="text-[10px] text-safe-text-muted/60 font-mono mt-0.5">{timeSince(caseRecord.receivedAt)}</p>
       </div>
       <FontAwesomeIcon icon="chevron-right" className="text-safe-text-muted/40 text-xs flex-shrink-0" />
@@ -81,7 +81,7 @@ export default function QueuePanel({
     <div className="flex flex-col h-full overflow-hidden bg-safe-dark">
       {/* Assigned-to-me — only shown when assignments exist */}
       {activeAssignedToMe.length > 0 && (
-        <div className="flex-shrink-0 border-b border-white/6 bg-safe-blue/5">
+        <div className="flex-shrink-0 border-b border-safe-gray-light bg-safe-blue/5">
           <div className="px-4 py-2 flex items-center gap-2">
             <FontAwesomeIcon icon="user-check" className="text-safe-blue text-xs" />
             <span className="text-xs font-semibold text-safe-blue">Assigned to me</span>
@@ -98,7 +98,7 @@ export default function QueuePanel({
       )}
 
       {/* Tab switcher */}
-      <div className="flex-shrink-0 px-2 border-b border-white/6">
+      <div className="flex-shrink-0 px-2 border-b border-safe-gray-light">
         <CaseListTabs activeTab={activeTab} onChange={onTabChange} unreadCounts={unreadCounts} />
       </div>
 
@@ -141,7 +141,7 @@ export default function QueuePanel({
           (c) => ['resolved', 'false_alarm', 'closed'].includes(c.status) && c.caseType === activeTab
         ).length;
         return closedCount > 0 ? (
-          <div className="flex-shrink-0 px-4 py-2 border-t border-white/6">
+          <div className="flex-shrink-0 px-4 py-2 border-t border-safe-gray-light">
             <p className="text-[10px] text-safe-text-muted/50 font-mono">
               + {closedCount} resolved / closed
             </p>
