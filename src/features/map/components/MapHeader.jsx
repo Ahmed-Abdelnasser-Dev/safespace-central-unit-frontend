@@ -1,20 +1,26 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-function MapHeader() {
+function MapHeader({
+  unreadCount = 0,
+  notifOpen = false,
+  onToggleNotif,
+  onRefresh,
+  isLoading = false,
+}) {
   return (
-    <header className="bg-safe-sidebar border-b border-safe-border px-8 py-5">
+    <header className="bg-safe-sidebar border-b border-safe-border px-8 py-5 flex-shrink-0">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-safe-text-dark">Map Overview</h1>
-          <p className="text-xs text-safe-text-gray mt-1">Real-time monitoring dashboard</p>
+          <h1 className="text-2xl font-semibold text-safe-text-primary">Map Overview</h1>
+          <p className="text-xs text-safe-text-muted mt-1">Real-time monitoring dashboard</p>
         </div>
-        
+
         <div className="flex items-center gap-4">
           {/* Search Bar */}
           <div className="relative">
-            <FontAwesomeIcon 
-              icon="magnifying-glass" 
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-safe-text-gray text-sm"
+            <FontAwesomeIcon
+              icon="magnifying-glass"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-safe-text-muted text-sm"
             />
             <input
               type="text"
@@ -24,16 +30,35 @@ function MapHeader() {
           </div>
 
           {/* Refresh Button */}
-          <button className="w-10 h-10 rounded-lg border border-safe-border flex items-center justify-center text-safe-text-gray hover:bg-safe-bg transition-colors">
-            <FontAwesomeIcon icon="rotate" className="text-sm" />
+          <button
+            onClick={onRefresh}
+            disabled={isLoading}
+            title="Refresh"
+            className="w-10 h-10 rounded-lg border border-safe-border flex items-center justify-center text-safe-text-muted hover:bg-safe-gray transition-colors disabled:opacity-50"
+          >
+            <FontAwesomeIcon
+              icon="rotate"
+              className={`text-sm ${isLoading ? 'animate-spin' : ''}`}
+            />
           </button>
 
-          {/* Notifications */}
-          <button className="relative w-10 h-10 rounded-lg border border-safe-border flex items-center justify-center text-safe-text-gray hover:bg-safe-bg transition-colors">
+          {/* Notification Bell */}
+          <button
+            onClick={onToggleNotif}
+            title="Notifications"
+            aria-pressed={notifOpen}
+            className={`relative w-10 h-10 rounded-lg border flex items-center justify-center transition-colors ${
+              notifOpen
+                ? 'border-safe-blue bg-safe-blue/10 text-safe-blue'
+                : 'border-safe-border text-safe-text-muted hover:bg-safe-gray'
+            }`}
+          >
             <FontAwesomeIcon icon="bell" className="text-sm" />
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-safe-danger rounded-full text-white text-[10px] font-semibold flex items-center justify-center">
-              3
-            </span>
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-safe-danger rounded-full text-white text-[10px] font-bold flex items-center justify-center">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
           </button>
         </div>
       </div>
