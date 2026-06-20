@@ -149,6 +149,7 @@ function CaseDetailPage() {
               victim={caseRecord.victim}
               medicalProfile={caseRecord.medicalProfile}
               emergencyContacts={caseRecord.emergencyContacts}
+              loading={!('notes' in caseRecord)}
             />
           ) : (
             <IncidentInfoPanel caseRecord={caseRecord} />

@@ -16,8 +16,8 @@ function IncidentInfoPanel({ caseRecord }) {
         <h3 className="text-sm font-semibold text-white">Detection Details</h3>
       </div>
       <div className="px-4 py-2">
-        <InfoRow label="Source" value={caseRecord.nodeLabel} />
-        <InfoRow label="Confidence" value={`${Math.round(caseRecord.confidence * 100)}%`} />
+        <InfoRow label="Source" value={caseRecord.nodeLabel ?? '—'} />
+        <InfoRow label="Confidence" value={caseRecord.confidence != null ? `${Math.round(caseRecord.confidence * 100)}%` : '—'} />
       </div>
       {caseRecord.affectedLanes?.length > 0 && (
         <div className="px-4 pb-3">

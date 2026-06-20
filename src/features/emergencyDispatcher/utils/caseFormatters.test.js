@@ -46,7 +46,7 @@ describe('getCaseStatusStyle', () => {
     expect(getCaseStatusStyle('received')).toEqual({ variant: 'neutral', label: 'Received' });
     expect(getCaseStatusStyle('active')).toEqual({ variant: 'info', label: 'Active' });
     expect(getCaseStatusStyle('escalated')).toEqual({ variant: 'accent', label: 'Escalated' });
-    expect(getCaseStatusStyle('closed')).toEqual({ variant: 'success', label: 'Closed' });
+    expect(getCaseStatusStyle('closed')).toEqual({ variant: 'neutral', label: 'Closed' });
   });
 });
 

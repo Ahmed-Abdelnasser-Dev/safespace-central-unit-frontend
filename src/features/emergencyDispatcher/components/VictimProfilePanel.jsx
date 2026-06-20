@@ -54,9 +54,20 @@ function calcAge(dob) {
   return age;
 }
 
-function VictimProfilePanel({ victim, medicalProfile, emergencyContacts }) {
+function VictimProfilePanel({ victim, medicalProfile, emergencyContacts, loading = false }) {
   const [medicalOpen, setMedicalOpen] = useState(true);
   const [contactsOpen, setContactsOpen] = useState(true);
+
+  if (!victim) {
+    return (
+      <div className="bg-safe-gray rounded-xl border border-white/8 p-4">
+        <h3 className="text-sm font-semibold text-white mb-3">Victim</h3>
+        <p className={`text-sm text-safe-text-muted/60 ${loading ? 'animate-pulse' : ''}`}>
+          {loading ? 'Loading victim profile…' : 'No victim profile on file.'}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-safe-gray rounded-xl border border-white/8 divide-y divide-white/5">

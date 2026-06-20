@@ -127,3 +127,80 @@ export function offNodeConfigUpdate(callback) {
   const s = getSocket();
   s.off('node_config_update', callback);
 }
+
+// ── Emergency Dispatcher realtime events ──────────────────────────────────────
+// All events arrive on the `dispatcher:global` room (joined automatically on
+// connection when the authenticated user has the emergency_dispatcher role).
+// `dispatcher:assigned` additionally arrives on `dispatcher:{userId}`.
+
+/**
+ * A new case entered the dispatcher queue (Road Observer approved SOS/incident).
+ * Payload: partial Case object (no PII — fetch full case via getCase for PII).
+ * @param {Function} callback
+ */
+export function onCaseNew(callback) {
+  getSocket().on('case:new', callback);
+}
+export function offCaseNew(callback) {
+  getSocket().off('case:new', callback);
+}
+
+/**
+ * A case was modified (status change, new note, dispatcher assigned, units dispatched…).
+ * Payload: partial Case — always includes `id`, `status`, and any changed fields.
+ * @param {Function} callback
+ */
+export function onCaseUpdated(callback) {
+  getSocket().on('case:updated', callback);
+}
+export function offCaseUpdated(callback) {
+  getSocket().off('case:updated', callback);
+}
+
+/**
+ * A field unit's GPS position was updated.
+ * Payload: { unitId, latitude, longitude, lastLocationAt }
+ * @param {Function} callback
+ */
+export function onUnitLocation(callback) {
+  getSocket().on('unit:location', callback);
+}
+export function offUnitLocation(callback) {
+  getSocket().off('unit:location', callback);
+}
+
+/**
+ * A field unit's operational status changed.
+ * Payload: { unitId, status }
+ * @param {Function} callback
+ */
+export function onUnitStatus(callback) {
+  getSocket().on('unit:status', callback);
+}
+export function offUnitStatus(callback) {
+  getSocket().off('unit:status', callback);
+}
+
+/**
+ * An assignment's status changed.
+ * Payload: full Assignment object { id, caseId, unitId, status, dispatchedAt, assignedBy }
+ * @param {Function} callback
+ */
+export function onAssignmentUpdated(callback) {
+  getSocket().on('assignment:updated', callback);
+}
+export function offAssignmentUpdated(callback) {
+  getSocket().off('assignment:updated', callback);
+}
+
+/**
+ * A case was routed to this specific dispatcher (personal room event).
+ * Payload: { caseId }
+ * @param {Function} callback
+ */
+export function onDispatcherAssigned(callback) {
+  getSocket().on('dispatcher:assigned', callback);
+}
+export function offDispatcherAssigned(callback) {
+  getSocket().off('dispatcher:assigned', callback);
+}

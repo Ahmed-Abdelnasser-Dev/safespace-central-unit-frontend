@@ -268,4 +268,131 @@ export const metricsAPI = {
   }
 };
 
+// ============================================================================
+// Emergency Dispatcher APIs
+// ============================================================================
+
+export const dispatcherAPI = {
+  /**
+   * Get authenticated dispatcher's session info (id, name, shiftStart)
+   * @returns {Promise<{id: string, name: string, shiftStart: string}>}
+   */
+  getSession: async () => {
+    const { data } = await api.get('/dispatcher/me', { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * List dispatcher cases (paginated, filterable by status/caseType)
+   * @param {Object} params - status, caseType, page, limit
+   * @returns {Promise<{cases: Case[], meta: PaginationMeta}>}
+   */
+  listCases: async (params = {}) => {
+    const { data } = await api.get('/dispatcher/cases', { params, withCredentials: true });
+    return { cases: data.data, meta: data.meta };
+  },
+
+  /**
+   * Get full case detail including notes and attachments
+   * @param {string} id - DispatcherCase UUID
+   * @returns {Promise<Case>}
+   */
+  getCase: async (id) => {
+    const { data } = await api.get(`/dispatcher/cases/${id}`, { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * Acknowledge a case — clears isUnread, transitions queued→acknowledged (idempotent)
+   * @param {string} id - DispatcherCase UUID
+   * @returns {Promise<Case>}
+   */
+  acknowledgeCase: async (id) => {
+    const { data } = await api.patch(`/dispatcher/cases/${id}/acknowledge`, {}, { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * Change case status (dispatcher-initiated transitions only)
+   * @param {string} id - DispatcherCase UUID
+   * @param {'escalated'|'resolved'|'false_alarm'|'closed'} status
+   * @returns {Promise<Case>}
+   */
+  setCaseStatus: async (id, status) => {
+    const { data } = await api.patch(`/dispatcher/cases/${id}/status`, { status }, { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * Add a dispatcher note to a case (max 2000 chars)
+   * @param {string} id - DispatcherCase UUID
+   * @param {string} content
+   * @returns {Promise<CaseNote>}
+   */
+  addNote: async (id, content) => {
+    const { data } = await api.post(`/dispatcher/cases/${id}/notes`, { content }, { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * Dispatch one or more available units to a case
+   * @param {string} id - DispatcherCase UUID
+   * @param {string[]} unitIds - array of EmergencyUnit UUIDs
+   * @returns {Promise<Assignment[]>}
+   */
+  assignUnits: async (id, unitIds) => {
+    const { data } = await api.post(`/dispatcher/cases/${id}/assignments`, { unitIds }, { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * Advance an assignment status (forward-only: notified→en_route→on_scene→completed)
+   * @param {string} assignmentId
+   * @param {'en_route'|'on_scene'|'completed'} status
+   * @returns {Promise<Assignment>}
+   */
+  updateAssignmentStatus: async (assignmentId, status) => {
+    const { data } = await api.patch(`/dispatcher/assignments/${assignmentId}/status`, { status }, { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * Cancel an in-progress assignment (allowed from notified or en_route)
+   * @param {string} assignmentId
+   * @returns {Promise<Assignment>}
+   */
+  cancelAssignment: async (assignmentId) => {
+    const { data } = await api.patch(`/dispatcher/assignments/${assignmentId}/cancel`, {}, { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * List all emergency units with live status and GPS
+   * @returns {Promise<EmergencyUnit[]>}
+   */
+  listUnits: async () => {
+    const { data } = await api.get('/dispatcher/units', { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * List units ranked by straight-line distance from a coordinate
+   * @param {{lat: number, lng: number, excludeOffDuty?: boolean, limit?: number}} params
+   * @returns {Promise<NearestUnit[]>}
+   */
+  nearestUnits: async (params) => {
+    const { data } = await api.get('/dispatcher/units/nearest', { params, withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * List all service stations (cacheable)
+   * @returns {Promise<Station[]>}
+   */
+  listStations: async () => {
+    const { data } = await api.get('/dispatcher/stations', { withCredentials: true });
+    return data.data;
+  },
+};
+
 export default api;

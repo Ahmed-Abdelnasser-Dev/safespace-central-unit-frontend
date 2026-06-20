@@ -24,8 +24,8 @@ const SEVERITY_DOT = {
 
 function AssignedCard({ caseRecord, onOpen }) {
   const identity = caseRecord.caseType === 'sos'
-    ? caseRecord.victim?.fullName ?? 'Unknown'
-    : caseRecord.nodeLabel;
+    ? (caseRecord.victim?.fullName ?? 'Unknown Caller')
+    : (caseRecord.nodeLabel ?? 'Node Incident');
   const dot = SEVERITY_DOT[caseRecord.severity] ?? 'bg-safe-text-muted/40';
 
   return (

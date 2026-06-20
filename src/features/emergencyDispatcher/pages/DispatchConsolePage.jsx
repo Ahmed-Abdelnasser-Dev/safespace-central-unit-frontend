@@ -25,10 +25,12 @@ export default function DispatchConsolePage() {
   const {
     cases,
     units,
+    stations,
     allAssignments,
     assignedToMe,
     pendingAssignment,
     dismissAssignment,
+    currentDispatcher,
   } = useDispatcherData();
 
   const [activeTab, setActiveTab] = useState('sos');
@@ -104,7 +106,11 @@ export default function DispatchConsolePage() {
   return (
     <div className="flex flex-col h-full overflow-hidden bg-safe-dark">
       {/* Top command bar */}
-      <CommandBar activeCaseCount={activeCaseCount} availableUnitCount={availableUnitCount} />
+      <CommandBar
+        activeCaseCount={activeCaseCount}
+        availableUnitCount={availableUnitCount}
+        dispatcherName={currentDispatcher?.name ?? 'Dispatcher'}
+      />
 
       {/* Three-zone console grid */}
       <div className="flex-1 overflow-hidden flex flex-col xl:grid xl:grid-cols-[minmax(300px,360px)_1fr_minmax(300px,360px)]">
@@ -143,6 +149,7 @@ export default function DispatchConsolePage() {
           <ConsoleMap
             cases={cases}
             units={units}
+            stations={stations ?? []}
             allAssignments={allAssignments ?? []}
             selectedCaseId={null}
             mapHighlightedCaseId={mapHighlightedCaseId}

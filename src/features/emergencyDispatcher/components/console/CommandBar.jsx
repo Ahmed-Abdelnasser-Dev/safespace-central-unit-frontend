@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function LiveClock() {
@@ -15,8 +14,8 @@ function LiveClock() {
   );
 }
 
-export default function CommandBar({ activeCaseCount, availableUnitCount }) {
-  const userName = useSelector((state) => state.auth.user?.name ?? 'Dispatcher');
+export default function CommandBar({ activeCaseCount, availableUnitCount, dispatcherName = 'Dispatcher' }) {
+  const userName = dispatcherName;
 
   return (
     <div className="px-5 py-2.5 border-b border-white/8 flex-shrink-0 flex items-center gap-5 bg-safe-sidebar/80 backdrop-blur-sm">

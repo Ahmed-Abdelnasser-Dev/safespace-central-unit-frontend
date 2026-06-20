@@ -1,137 +1,53 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from 'react';
-import { dispatcherReducer, createInitialState } from '../hooks/useDispatcherData';
+/**
+ * DispatcherProvider
+ *
+ * Orchestrates the Emergency Dispatcher feature:
+ *   - Dispatches fetchInitialData on mount (REST: session, cases, units, stations).
+ *   - Subscribes to Socket.IO dispatcher events for real-time updates.
+ *   - Assembles the identical seam value that all consumer components expect via
+ *     useDispatcherData() — shape is the contract; the implementation behind it changed.
+ *
+ * Previous implementation used a local useReducer + setInterval ticker simulation.
+ * That has been fully replaced by this Redux-backed, socket-wired version.
+ */
 
-export const CURRENT_DISPATCHER = {
-  id: 'dispatcher-001',
-  name: 'Mohamed Hassan',
-  shiftStart: new Date(Date.now() - 3.5 * 3600 * 1000).toISOString(),
-};
-
-const TICKER_INTERVAL_MS = 2000;
-// ~1 new case every 90s at 2s ticks
-const NEW_CASE_PROBABILITY = 0.022;
-// ~1 assignment alert every 3 min
-const ASSIGN_PROBABILITY = 0.011;
-
-const EMERGENCY_TYPES = ['ROAD_ACCIDENT', 'MEDICAL', 'UNSPECIFIED'];
-const INCIDENT_TYPES = ['COLLISION', 'STOPPED_VEHICLE', 'ROAD_HAZARD'];
-const SEVERITIES = ['HIGH', 'MEDIUM', 'LOW'];
-const SEVERITY_WEIGHTS = [0.25, 0.5, 0.25];
-
-function weightedRandom(weights) {
-  const r = Math.random();
-  let cumulative = 0;
-  for (let i = 0; i < weights.length; i++) {
-    cumulative += weights[i];
-    if (r < cumulative) return i;
-  }
-  return weights.length - 1;
-}
-
-let _liveSeq = 1;
-function generateNewCase() {
-  const seq = _liveSeq++;
-  const id = `case-live-${Date.now()}-${seq}`;
-  const isSOS = Math.random() < 0.55;
-  const severity = SEVERITIES[weightedRandom(SEVERITY_WEIGHTS)];
-  const latitude = 30.545 + Math.random() * 0.09;
-  const longitude = 32.2 + Math.random() * 0.13;
-  const now = new Date().toISOString();
-
-  if (isSOS) {
-    return {
-      id,
-      caseType: 'sos',
-      severity,
-      status: 'queued',
-      latitude,
-      longitude,
-      receivedAt: now,
-      isUnread: true,
-      notes: [{ id: `${id}-n1`, caseId: id, authorType: 'system', content: 'New SOS received via mobile app', createdAt: now }],
-      assignmentIds: [],
-      emergencyType: EMERGENCY_TYPES[Math.floor(Math.random() * EMERGENCY_TYPES.length)],
-      attachments: [],
-      victim: { fullName: 'Unknown Caller', nationalId: null, dob: null, phone: null },
-      medicalProfile: null,
-      emergencyContacts: [],
-    };
-  }
-  return {
-    id,
-    caseType: 'incident',
-    severity,
-    status: 'queued',
-    latitude,
-    longitude,
-    receivedAt: now,
-    isUnread: true,
-    notes: [{ id: `${id}-n1`, caseId: id, authorType: 'system', content: 'AI detection: incident at highway node', createdAt: now }],
-    assignmentIds: [],
-    incidentType: INCIDENT_TYPES[Math.floor(Math.random() * INCIDENT_TYPES.length)],
-    confidence: 0.68 + Math.random() * 0.28,
-    affectedLanes: ['L1', 'L2', 'L3'].slice(0, 1 + Math.floor(Math.random() * 2)),
-    nodeLabel: `Highway Node ${String(Math.floor(Math.random() * 20) + 1).padStart(2, '0')} — Auto-detected`,
-    attachments: [],
-  };
-}
-
-function extendedInitialState() {
-  return {
-    ...createInitialState(),
-    pendingAssignment: null,
-  };
-}
-
-function extendedReducer(state, action) {
-  const { pendingAssignment, ...baseState } = state;
-
-  switch (action.type) {
-    case 'ADD_CASE':
-      return { ...state, cases: [action.caseRecord, ...state.cases] };
-
-    case 'ASSIGN_CASE_TO_DISPATCHER': {
-      const updatedCases = state.cases.map((c) =>
-        c.id === action.caseId ? { ...c, assignedDispatcherId: CURRENT_DISPATCHER.id } : c
-      );
-      return { ...state, cases: updatedCases, pendingAssignment: { caseId: action.caseId } };
-    }
-
-    case 'DISMISS_ASSIGNMENT':
-      return { ...state, pendingAssignment: null };
-
-    case 'TICKER_TICK': {
-      const nextBase = dispatcherReducer(baseState, action);
-      let nextState = { ...nextBase, pendingAssignment };
-
-      if (Math.random() < NEW_CASE_PROBABILITY) {
-        const newCase = generateNewCase();
-        nextState = { ...nextState, cases: [newCase, ...nextState.cases] };
-      }
-
-      if (!nextState.pendingAssignment && Math.random() < ASSIGN_PROBABILITY) {
-        const eligible = nextState.cases.filter(
-          (c) => !c.assignedDispatcherId && ['queued', 'acknowledged'].includes(c.status)
-        );
-        if (eligible.length > 0) {
-          const target = eligible[Math.floor(Math.random() * eligible.length)];
-          nextState = {
-            ...nextState,
-            cases: nextState.cases.map((c) =>
-              c.id === target.id ? { ...c, assignedDispatcherId: CURRENT_DISPATCHER.id } : c
-            ),
-            pendingAssignment: { caseId: target.id },
-          };
-        }
-      }
-
-      return nextState;
-    }
-
-    default:
-      return { ...dispatcherReducer(baseState, action), pendingAssignment };
-  }
-}
+import { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchInitialData,
+  selectCaseThunk,
+  dispatchUnitsThunk,
+  cancelAssignmentThunk,
+  updateAssignmentStatusThunk,
+  addNoteThunk,
+  setCaseStatusThunk,
+  selectUnit,
+  deselectUnit,
+  clearSelectedUnits,
+  setUnitFilter,
+  dismissAssignment,
+  caseNew,
+  caseUpdated,
+  unitLocation,
+  unitStatus,
+  assignmentUpserted,
+  dispatcherAssigned,
+} from '../dispatcherSlice';
+import {
+  initSocket,
+  onCaseNew,
+  offCaseNew,
+  onCaseUpdated,
+  offCaseUpdated,
+  onUnitLocation,
+  offUnitLocation,
+  onUnitStatus,
+  offUnitStatus,
+  onAssignmentUpdated,
+  offAssignmentUpdated,
+  onDispatcherAssigned,
+  offDispatcherAssigned,
+} from '@/services/socketService';
 
 export const DispatcherContext = createContext(null);
 
@@ -142,77 +58,188 @@ export function useDispatcherContext() {
 }
 
 export function DispatcherProvider({ children }) {
-  const [state, dispatch] = useReducer(extendedReducer, undefined, extendedInitialState);
+  const dispatch = useDispatch();
+  const sliceState = useSelector((state) => state.dispatcher);
+
+  // ── Bootstrap: fetch initial data + wire socket events on mount ──────────
 
   useEffect(() => {
-    const id = window.setInterval(() => dispatch({ type: 'TICKER_TICK' }), TICKER_INTERVAL_MS);
-    return () => window.clearInterval(id);
-  }, []);
+    dispatch(fetchInitialData());
+
+    // Ensure socket is initialised (singleton — safe to call multiple times)
+    initSocket();
+
+    // Socket event handlers — each dispatches the matching slice reducer
+    const handleCaseNew        = (payload) => dispatch(caseNew(payload));
+    const handleCaseUpdated    = (payload) => dispatch(caseUpdated(payload));
+    const handleUnitLocation   = (payload) => dispatch(unitLocation(payload));
+    const handleUnitStatus     = (payload) => dispatch(unitStatus(payload));
+    const handleAssignment     = (payload) => dispatch(assignmentUpserted(payload));
+    const handleDispAssigned   = (payload) => dispatch(dispatcherAssigned(payload));
+
+    onCaseNew(handleCaseNew);
+    onCaseUpdated(handleCaseUpdated);
+    onUnitLocation(handleUnitLocation);
+    onUnitStatus(handleUnitStatus);
+    onAssignmentUpdated(handleAssignment);
+    onDispatcherAssigned(handleDispAssigned);
+
+    return () => {
+      offCaseNew(handleCaseNew);
+      offCaseUpdated(handleCaseUpdated);
+      offUnitLocation(handleUnitLocation);
+      offUnitStatus(handleUnitStatus);
+      offAssignmentUpdated(handleAssignment);
+      offDispatcherAssigned(handleDispAssigned);
+    };
+  }, [dispatch]);
+
+  // ── Derived values ───────────────────────────────────────────────────────
 
   const selectedCase = useMemo(
-    () => state.cases.find((c) => c.id === state.selectedCaseId) ?? null,
-    [state.cases, state.selectedCaseId]
+    () => sliceState.cases.find((c) => c.id === sliceState.selectedCaseId) ?? null,
+    [sliceState.cases, sliceState.selectedCaseId]
   );
 
   const assignments = useMemo(
-    () => state.assignments.filter((a) => a.caseId === state.selectedCaseId),
-    [state.assignments, state.selectedCaseId]
+    () => sliceState.assignments.filter((a) => a.caseId === sliceState.selectedCaseId),
+    [sliceState.assignments, sliceState.selectedCaseId]
   );
 
   const assignedToMe = useMemo(
-    () => state.cases.filter((c) => c.assignedDispatcherId === CURRENT_DISPATCHER.id),
-    [state.cases]
+    () => sliceState.cases.filter((c) => c.assignedDispatcherId === sliceState.session?.id),
+    [sliceState.cases, sliceState.session]
   );
 
-  const selectCase = useCallback((caseId) => dispatch({ type: 'SELECT_CASE', caseId }), []);
-  const selectUnit = useCallback((unitId) => dispatch({ type: 'SELECT_UNIT', unitId }), []);
-  const deselectUnit = useCallback((unitId) => dispatch({ type: 'DESELECT_UNIT', unitId }), []);
-  const clearSelectedUnits = useCallback(() => dispatch({ type: 'CLEAR_SELECTED_UNITS' }), []);
-  const setUnitFilter = useCallback((filter) => dispatch({ type: 'SET_UNIT_FILTER', filter }), []);
-  const dispatchUnits = useCallback((caseId, unitIds) => dispatch({ type: 'DISPATCH_UNITS', caseId, unitIds }), []);
-  const cancelAssignment = useCallback((assignmentId) => dispatch({ type: 'CANCEL_ASSIGNMENT', assignmentId }), []);
-  const updateAssignmentStatus = useCallback((assignmentId, status) => dispatch({ type: 'UPDATE_ASSIGNMENT_STATUS', assignmentId, status }), []);
-  const addNote = useCallback((caseId, content) => dispatch({ type: 'ADD_NOTE', caseId, content }), []);
-  const escalateCase = useCallback((caseId) => dispatch({ type: 'ESCALATE_CASE', caseId }), []);
-  const resolveCase = useCallback((caseId) => dispatch({ type: 'RESOLVE_CASE', caseId }), []);
-  const markFalseAlarm = useCallback((caseId) => dispatch({ type: 'MARK_FALSE_ALARM', caseId }), []);
-  const closeCase = useCallback((caseId) => dispatch({ type: 'CLOSE_CASE', caseId }), []);
-  const dismissAssignment = useCallback(() => dispatch({ type: 'DISMISS_ASSIGNMENT' }), []);
+  // ── Bound action callbacks ───────────────────────────────────────────────
 
-  const value = useMemo(() => ({
-    cases: state.cases,
-    units: state.units,
-    selectedCase,
-    assignments,
-    allAssignments: state.assignments,
-    selectedUnitIds: state.selectedUnitIds,
-    unitFilter: state.unitFilter,
-    pendingAssignment: state.pendingAssignment,
-    loading: false,
-    error: null,
-    currentDispatcher: CURRENT_DISPATCHER,
-    assignedToMe,
-    selectCase,
-    selectUnit,
-    deselectUnit,
-    clearSelectedUnits,
-    setUnitFilter,
-    dispatchUnits,
-    cancelAssignment,
-    updateAssignmentStatus,
-    addNote,
-    escalateCase,
-    resolveCase,
-    markFalseAlarm,
-    closeCase,
-    dismissAssignment,
-  }), [
-    state.cases, state.units, state.assignments, state.selectedUnitIds, state.unitFilter,
-    state.pendingAssignment, selectedCase, assignments, assignedToMe,
-    selectCase, selectUnit, deselectUnit, clearSelectedUnits, setUnitFilter,
-    dispatchUnits, cancelAssignment, updateAssignmentStatus, addNote,
-    escalateCase, resolveCase, markFalseAlarm, closeCase, dismissAssignment,
-  ]);
+  const selectCase = useCallback(
+    (caseId) => dispatch(selectCaseThunk(caseId)),
+    [dispatch]
+  );
+  const selectUnitCb = useCallback(
+    (unitId) => dispatch(selectUnit(unitId)),
+    [dispatch]
+  );
+  const deselectUnitCb = useCallback(
+    (unitId) => dispatch(deselectUnit(unitId)),
+    [dispatch]
+  );
+  const clearSelectedUnitsCb = useCallback(
+    () => dispatch(clearSelectedUnits()),
+    [dispatch]
+  );
+  const setUnitFilterCb = useCallback(
+    (filter) => dispatch(setUnitFilter(filter)),
+    [dispatch]
+  );
+  const dispatchUnits = useCallback(
+    (caseId, unitIds) => dispatch(dispatchUnitsThunk({ caseId, unitIds })),
+    [dispatch]
+  );
+  const cancelAssignment = useCallback(
+    (assignmentId) => dispatch(cancelAssignmentThunk(assignmentId)),
+    [dispatch]
+  );
+  const updateAssignmentStatus = useCallback(
+    (assignmentId, status) => dispatch(updateAssignmentStatusThunk({ assignmentId, status })),
+    [dispatch]
+  );
+  const addNote = useCallback(
+    (caseId, content) => dispatch(addNoteThunk({ caseId, content })),
+    [dispatch]
+  );
+  const escalateCase = useCallback(
+    (caseId) => dispatch(setCaseStatusThunk({ caseId, status: 'escalated' })),
+    [dispatch]
+  );
+  const resolveCase = useCallback(
+    (caseId) => dispatch(setCaseStatusThunk({ caseId, status: 'resolved' })),
+    [dispatch]
+  );
+  const markFalseAlarm = useCallback(
+    (caseId) => dispatch(setCaseStatusThunk({ caseId, status: 'false_alarm' })),
+    [dispatch]
+  );
+  const closeCase = useCallback(
+    (caseId) => dispatch(setCaseStatusThunk({ caseId, status: 'closed' })),
+    [dispatch]
+  );
+  const dismissAssignmentCb = useCallback(
+    () => dispatch(dismissAssignment()),
+    [dispatch]
+  );
 
-  return <DispatcherContext.Provider value={value}>{children}</DispatcherContext.Provider>;
+  // ── Context value (identical seam shape — consumers unchanged) ───────────
+
+  const value = useMemo(
+    () => ({
+      // Data
+      cases: sliceState.cases,
+      units: sliceState.units,
+      stations: sliceState.stations,
+      selectedCase,
+      assignments,
+      allAssignments: sliceState.assignments,
+      selectedUnitIds: sliceState.selectedUnitIds,
+      unitFilter: sliceState.unitFilter,
+      pendingAssignment: sliceState.pendingAssignment,
+      // Status (replaces hardcoded false/null from mock era)
+      loading: sliceState.status === 'loading',
+      error: sliceState.error,
+      // Session (replaces hardcoded CURRENT_DISPATCHER)
+      currentDispatcher: sliceState.session,
+      assignedToMe,
+      // Actions
+      selectCase,
+      selectUnit: selectUnitCb,
+      deselectUnit: deselectUnitCb,
+      clearSelectedUnits: clearSelectedUnitsCb,
+      setUnitFilter: setUnitFilterCb,
+      dispatchUnits,
+      cancelAssignment,
+      updateAssignmentStatus,
+      addNote,
+      escalateCase,
+      resolveCase,
+      markFalseAlarm,
+      closeCase,
+      dismissAssignment: dismissAssignmentCb,
+    }),
+    [
+      sliceState.cases,
+      sliceState.units,
+      sliceState.stations,
+      sliceState.assignments,
+      sliceState.selectedUnitIds,
+      sliceState.unitFilter,
+      sliceState.pendingAssignment,
+      sliceState.status,
+      sliceState.error,
+      sliceState.session,
+      selectedCase,
+      assignments,
+      assignedToMe,
+      selectCase,
+      selectUnitCb,
+      deselectUnitCb,
+      clearSelectedUnitsCb,
+      setUnitFilterCb,
+      dispatchUnits,
+      cancelAssignment,
+      updateAssignmentStatus,
+      addNote,
+      escalateCase,
+      resolveCase,
+      markFalseAlarm,
+      closeCase,
+      dismissAssignmentCb,
+    ]
+  );
+
+  return (
+    <DispatcherContext.Provider value={value}>
+      {children}
+    </DispatcherContext.Provider>
+  );
 }

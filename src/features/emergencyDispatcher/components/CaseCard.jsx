@@ -24,10 +24,15 @@ function CaseCard({ caseRecord, onOpen, suppressQueuedBadge: _suppressQueuedBadg
   // Show status pill only for non-queued states — queued is implied in the queue context
   const showStatusBadge = caseRecord.status !== 'queued';
 
-  const victimLabel = isSos ? caseRecord.victim.fullName : caseRecord.nodeLabel;
+  const victimLabel = isSos
+    ? (caseRecord.victim?.fullName ?? 'Unknown Caller')
+    : (caseRecord.nodeLabel ?? 'Node Incident');
   const secondaryLabel = isSos
-    ? (caseRecord.victim.phone ?? 'No phone on file')
-    : `${Math.round(caseRecord.confidence * 100)}% confidence · Lanes ${caseRecord.affectedLanes.join(', ')}`;
+    ? (caseRecord.victim?.phone ?? 'No phone on file')
+    : [
+        caseRecord.confidence != null ? `${Math.round(caseRecord.confidence * 100)}% confidence` : null,
+        caseRecord.affectedLanes?.length ? `Lanes ${caseRecord.affectedLanes.join(', ')}` : null,
+      ].filter(Boolean).join(' · ') || 'Road incident';
 
   const typeLabel = getCaseTypeLabel(caseRecord);
   const sev = SEVERITY_DOT[caseRecord.severity] ?? { dot: 'bg-safe-text-muted/40', border: 'border-white/8' };

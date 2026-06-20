@@ -7,7 +7,6 @@ import MapControls from '../MapControls';
 import CaseMarker from './CaseMarker';
 import StationMarker from './StationMarker';
 import { rankByDistance } from '@/shared/utils/haversine';
-import { mockStations } from '../../data/mockStations';
 
 const DARK_BASEMAP_STYLE = {
   version: 8,
@@ -59,6 +58,7 @@ function buildInitialView(cases, units) {
 export default function ConsoleMap({
   cases,
   units,
+  stations = [],
   allAssignments,
   selectedCaseId,
   mapHighlightedCaseId,
@@ -112,7 +112,7 @@ export default function ConsoleMap({
 
   // Faint spoke lines from each station to its non-dispatched units
   const homeBaseLineFeatures = useMemo(() => {
-    const stationMap = Object.fromEntries(mockStations.map((s) => [s.id, s]));
+    const stationMap = Object.fromEntries(stations.map((s) => [s.id, s]));
     const features = [];
     for (const unit of visibleUnits) {
       if (!unit.stationId) continue;
@@ -136,7 +136,7 @@ export default function ConsoleMap({
       });
     }
     return { type: 'FeatureCollection', features };
-  }, [visibleUnits]);
+  }, [visibleUnits, stations]);
 
   // Distance rings centred on the selected/highlighted case
   const ringCenter = focusCase;
@@ -251,7 +251,7 @@ export default function ConsoleMap({
         })}
 
         {/* Station bases */}
-        {mockStations.map((station) => (
+        {stations.map((station) => (
           <StationMarker key={station.id} station={station} />
         ))}
 
