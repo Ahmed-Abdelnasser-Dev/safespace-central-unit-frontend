@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Map, { Source, Layer } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import UnitMarker from '../UnitMarker';
@@ -62,6 +62,7 @@ export default function ConsoleMap({
   allAssignments,
   selectedCaseId,
   mapHighlightedCaseId,
+  incomingCase,
   onSelectCase,
   onSelectUnit,
 }) {
@@ -75,6 +76,14 @@ export default function ConsoleMap({
   const [unitFilter, setUnitFilter] = useState({ types: [], availableOnly: false });
 
   const animDuration = prefersReducedMotion ? 0 : 900;
+
+  // Pan the map to the incident location whenever a new case:new arrives
+  useEffect(() => {
+    if (!incomingCase) return;
+    const { latitude, longitude } = incomingCase;
+    if (latitude == null || longitude == null) return;
+    mapRef.current?.flyTo({ center: [longitude, latitude], zoom: 14, duration: animDuration });
+  }, [incomingCase, animDuration]);
 
   // Active cases shown on map (exclude resolved/closed/false_alarm)
   const activeCases = useMemo(

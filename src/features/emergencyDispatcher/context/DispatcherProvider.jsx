@@ -26,6 +26,7 @@ import {
   clearSelectedUnits,
   setUnitFilter,
   dismissAssignment,
+  dismissIncomingCase,
   caseNew,
   caseUpdated,
   unitLocation,
@@ -169,6 +170,10 @@ export function DispatcherProvider({ children }) {
     () => dispatch(dismissAssignment()),
     [dispatch]
   );
+  const dismissIncomingCaseCb = useCallback(
+    () => dispatch(dismissIncomingCase()),
+    [dispatch]
+  );
 
   // ── Context value (identical seam shape — consumers unchanged) ───────────
 
@@ -184,6 +189,7 @@ export function DispatcherProvider({ children }) {
       selectedUnitIds: sliceState.selectedUnitIds,
       unitFilter: sliceState.unitFilter,
       pendingAssignment: sliceState.pendingAssignment,
+      incomingCase: sliceState.incomingCase,
       // Status (replaces hardcoded false/null from mock era)
       loading: sliceState.status === 'loading',
       error: sliceState.error,
@@ -205,6 +211,7 @@ export function DispatcherProvider({ children }) {
       markFalseAlarm,
       closeCase,
       dismissAssignment: dismissAssignmentCb,
+      dismissIncomingCase: dismissIncomingCaseCb,
     }),
     [
       sliceState.cases,
@@ -214,6 +221,7 @@ export function DispatcherProvider({ children }) {
       sliceState.selectedUnitIds,
       sliceState.unitFilter,
       sliceState.pendingAssignment,
+      sliceState.incomingCase,
       sliceState.status,
       sliceState.error,
       sliceState.session,
@@ -234,6 +242,7 @@ export function DispatcherProvider({ children }) {
       markFalseAlarm,
       closeCase,
       dismissAssignmentCb,
+      dismissIncomingCaseCb,
     ]
   );
 

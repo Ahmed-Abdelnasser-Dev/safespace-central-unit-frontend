@@ -29,6 +29,7 @@ export default function DispatchConsolePage() {
     allAssignments,
     assignedToMe,
     pendingAssignment,
+    incomingCase,
     dismissAssignment,
     currentDispatcher,
   } = useDispatcherData();
@@ -84,6 +85,14 @@ export default function DispatchConsolePage() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [keyboardList, keyboardFocusId, cases, navigate]);
+
+  // When a new case:new arrives, highlight it on the map so the marker is
+  // visually distinct until the dispatcher dismisses the dialog or moves on.
+  useEffect(() => {
+    if (incomingCase) {
+      setMapHighlightedCaseId(incomingCase.id);
+    }
+  }, [incomingCase]);
 
   const handleMapHighlight = useCallback((caseId) => {
     setMapHighlightedCaseId(caseId);
@@ -153,6 +162,7 @@ export default function DispatchConsolePage() {
             allAssignments={allAssignments ?? []}
             selectedCaseId={null}
             mapHighlightedCaseId={mapHighlightedCaseId}
+            incomingCase={incomingCase}
             onSelectCase={handleMapHighlight}
             onSelectUnit={handleUnitCenter}
           />

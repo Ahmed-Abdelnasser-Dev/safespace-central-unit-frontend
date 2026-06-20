@@ -57,6 +57,7 @@ const initialState = {
   selectedUnitIds: [],
   unitFilter: { types: [], availableOnly: false },
   pendingAssignment: null,
+  incomingCase: null, // Full Case from case:new; drives the global new-incident alert dialog
   status: 'idle',
   error: null,
 };
@@ -248,23 +249,51 @@ const dispatcherSlice = createSlice({
 
     /**
      * case:new — a new case entered the queue.
-     * Prepend to list only if not already present (dedup guard).
+     * Prepend to list only if not already present (dedup guard); merge if the
+     * case arrived via both the REST poll and the socket event.
+     * Also sets incomingCase to drive the global new-incident alert dialog for
+     * ALL connected dispatchers in the dispatcher:global room.
      */
     caseNew(state, action) {
       const incoming = action.payload;
-      if (!state.cases.some((c) => c.id === incoming.id)) {
+      const existingIdx = state.cases.findIndex((c) => c.id === incoming.id);
+      if (existingIdx === -1) {
         state.cases = [incoming, ...state.cases];
+      } else {
+        // Case arrived via both REST poll and socket — merge, preserving detail fields
+        state.cases = state.cases.map((c, i) =>
+          i === existingIdx ? { ...c, ...incoming } : c
+        );
       }
+      // Drive the global alert dialog for every dispatcher in dispatcher:global
+      state.incomingCase = incoming;
+    },
+
+    /**
+     * dismissIncomingCase — called when the dispatcher closes the new-incident dialog.
+     */
+    dismissIncomingCase(state) {
+      state.incomingCase = null;
     },
 
     /**
      * case:updated — shallow-merge partial case update by id.
      * If the case isn't in our local list yet (shouldn't happen normally), ignore it.
+     * Clears incomingCase if the updated case has reached a terminal status — prevents
+     * the new-incident dialog from lingering after the case is resolved elsewhere.
      */
     caseUpdated(state, action) {
       const partial = action.payload;
       if (state.cases.some((c) => c.id === partial.id)) {
         state.cases = mergeCaseById(state.cases, partial);
+      }
+      const TERMINAL = ['resolved', 'closed', 'false_alarm'];
+      if (
+        state.incomingCase?.id === partial.id &&
+        partial.status &&
+        TERMINAL.includes(partial.status)
+      ) {
+        state.incomingCase = null;
       }
     },
 
@@ -433,6 +462,7 @@ export const {
   setUnitFilter,
   dismissAssignment,
   caseNew,
+  dismissIncomingCase,
   caseUpdated,
   unitLocation,
   unitStatus,
