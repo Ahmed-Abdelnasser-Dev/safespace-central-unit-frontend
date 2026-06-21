@@ -41,15 +41,23 @@ function UserManagementButtons({ onSearch, onRoleFilter, onStatusFilter, current
 
     const [createdUserPassword, setCreatedUserPassword] = useState(null);
     const [createdUserEmail, setCreatedUserEmail] = useState('');
+    const [welcomeEmailSent, setWelcomeEmailSent] = useState(false);
+    const [welcomeEmailRequested, setWelcomeEmailRequested] = useState(true);
 
     const handleCreateUser = async (data) => {
         try {
             const result = await userAPI.createUser(data);
             setIsModalOpen(false);
-            // Show the temp password that the backend generated
+            setWelcomeEmailRequested(data.sendWelcomeEmail !== false);
             if (result && result.tempPassword) {
                 setCreatedUserEmail(result.email || data.email);
                 setCreatedUserPassword(result.tempPassword);
+                setWelcomeEmailSent(!!result.welcomeEmailSent);
+                if (data.sendWelcomeEmail !== false && result.welcomeEmailSent) {
+                    showSuccess(`User created — welcome email sent to ${result.email || data.email}`);
+                } else if (data.sendWelcomeEmail !== false && !result.welcomeEmailSent) {
+                    showError('User created, but the welcome email could not be sent — share the password below manually');
+                }
             } else {
                 showSuccess('User created successfully');
             }
@@ -195,9 +203,26 @@ function UserManagementButtons({ onSearch, onRoleFilter, onStatusFilter, current
                             </div>
                             <div>
                                 <h3 className="text-lg font-bold text-safe-text-dark">User Created Successfully</h3>
-                                <p className="text-xs text-safe-text-gray">Share this temporary password with the user securely</p>
+                                <p className="text-xs text-safe-text-gray">
+                                    {welcomeEmailRequested
+                                        ? (welcomeEmailSent
+                                            ? 'A welcome email with these credentials was sent to the user'
+                                            : "Welcome email failed to send — share this password with the user manually")
+                                        : 'Share this temporary password with the user securely'}
+                                </p>
                             </div>
                         </div>
+
+                        {welcomeEmailRequested && (
+                            <div className={`flex items-center gap-2 mb-4 px-3 py-2 rounded-lg text-xs font-medium ${
+                                welcomeEmailSent
+                                    ? 'bg-safe-green/10 text-safe-green'
+                                    : 'bg-yellow-50 text-yellow-800 border border-yellow-200'
+                            }`}>
+                                <FontAwesomeIcon icon={welcomeEmailSent ? 'check-circle' : 'triangle-exclamation'} />
+                                {welcomeEmailSent ? 'Welcome email delivered' : 'Welcome email not delivered'}
+                            </div>
+                        )}
 
                         <div className="bg-safe-bg rounded-lg p-4 mb-4">
                             <p className="text-xs text-safe-text-gray mb-1">Email</p>
@@ -229,7 +254,7 @@ function UserManagementButtons({ onSearch, onRoleFilter, onStatusFilter, current
                         </div>
 
                         <button
-                            onClick={() => { setCreatedUserPassword(null); setCreatedUserEmail(''); }}
+                            onClick={() => { setCreatedUserPassword(null); setCreatedUserEmail(''); setWelcomeEmailSent(false); }}
                             className="w-full px-4 py-2.5 text-sm font-medium text-white bg-safe-blue-btn hover:bg-safe-blue-btn/90 rounded-lg transition-colors"
                         >
                             I've Saved the Password

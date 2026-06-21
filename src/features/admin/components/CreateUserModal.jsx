@@ -4,16 +4,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 /**
  * Create New User Modal
  *
- * The backend auto-generates a secure temporary password on user creation.
- * We do NOT send a password from here — that was the bug causing a mismatch
- * between what was shown in the modal and what was actually set by the backend.
+ * Admin can either type a temporary password for the new user, or let the
+ * backend auto-generate a secure one. Either way, the password is emailed
+ * to the new user as part of their welcome email (toggleable).
  */
 function CreateUserModal({ isOpen, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
     email: '',
     nationalId: '',
     roleId: '',
+    tempPassword: '',
   });
+  const [autoGenerate, setAutoGenerate] = useState(true);
+  const [sendWelcomeEmail, setSendWelcomeEmail] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [errors, setErrors] = useState({});
 
@@ -27,6 +31,26 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
+  };
+
+  const generateRandomPassword = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+    let pwd = '';
+    for (let i = 0; i < 14; i++) {
+      pwd += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return pwd;
+  };
+
+  const handleToggleAutoGenerate = (checked) => {
+    setAutoGenerate(checked);
+    if (checked) {
+      handleInputChange('tempPassword', '');
+    }
+  };
+
+  const handleFillGenerated = () => {
+    handleInputChange('tempPassword', generateRandomPassword());
   };
 
   const validateForm = () => {
@@ -50,6 +74,14 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
       newErrors.roleId = 'Role is required';
     }
 
+    if (!autoGenerate) {
+      if (!formData.tempPassword) {
+        newErrors.tempPassword = 'Enter a temporary password or switch to auto-generate';
+      } else if (formData.tempPassword.length < 8) {
+        newErrors.tempPassword = 'Password must be at least 8 characters';
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -62,7 +94,9 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
         email: formData.email,
         nationalId: formData.nationalId,
         roleId: parseInt(formData.roleId, 10),
-        // No password — backend generates it and returns it as tempPassword
+        sendWelcomeEmail,
+        // Only send a password if the admin typed one — otherwise backend generates it
+        ...(!autoGenerate && formData.tempPassword ? { tempPassword: formData.tempPassword } : {}),
       };
 
       if (onSubmit) {
@@ -74,8 +108,11 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
   };
 
   const handleClose = () => {
-    setFormData({ email: '', nationalId: '', roleId: '' });
+    setFormData({ email: '', nationalId: '', roleId: '', tempPassword: '' });
     setErrors({});
+    setAutoGenerate(true);
+    setSendWelcomeEmail(true);
+    setShowPassword(false);
     onClose();
   };
 
@@ -88,7 +125,7 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
         <div className="px-8 py-6 border-b border-safe-border">
           <h2 className="text-xl font-bold text-safe-text-dark">Create New User</h2>
           <p className="text-sm text-safe-text-gray mt-1">
-            A secure temporary password will be auto-generated and shown once after creation.
+            Set a temporary password, or let the system generate one for you.
           </p>
         </div>
 
@@ -173,14 +210,83 @@ function CreateUserModal({ isOpen, onClose, onSubmit }) {
               )}
             </div>
 
-            {/* Password info notice */}
-            <div className="p-3 bg-safe-blue-btn/5 border border-safe-blue-btn/20 rounded-lg flex items-start gap-2">
-              <FontAwesomeIcon icon="shield-halved" className="text-safe-blue-btn mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-safe-text-gray">
-                A cryptographically secure temporary password will be generated automatically by the system.
-                It will be shown to you <strong className="text-safe-text-dark">once</strong> after the user is created — copy and share it securely with the user.
-              </p>
+            {/* Temporary Password */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-safe-text-dark">
+                  Temporary Password {!autoGenerate && <span className="text-safe-danger">*</span>}
+                </label>
+                <label className="flex items-center gap-2 text-xs text-safe-text-gray cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={autoGenerate}
+                    onChange={(e) => handleToggleAutoGenerate(e.target.checked)}
+                    className="rounded border-safe-border text-safe-blue-btn focus:ring-safe-blue-btn/30"
+                  />
+                  Auto-generate
+                </label>
+              </div>
+
+              {autoGenerate ? (
+                <div className="px-4 py-2.5 bg-safe-bg border border-dashed border-safe-border rounded-lg text-sm text-safe-text-gray italic">
+                  A secure password will be generated automatically
+                </div>
+              ) : (
+                <>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={formData.tempPassword}
+                      onChange={(e) => handleInputChange('tempPassword', e.target.value)}
+                      placeholder="Enter a temporary password (min 8 characters)"
+                      aria-invalid={!!errors.tempPassword}
+                      aria-describedby={errors.tempPassword ? 'tempPassword-error' : undefined}
+                      className={`w-full px-4 py-2.5 pr-28 bg-safe-bg border rounded-lg text-safe-text-dark placeholder-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/30 transition-colors ${
+                        errors.tempPassword ? 'border-safe-danger' : 'border-safe-border'
+                      }`}
+                    />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((v) => !v)}
+                        className="px-2 py-1.5 text-xs text-safe-text-gray hover:text-safe-text-dark transition-colors"
+                        title={showPassword ? 'Hide password' : 'Show password'}
+                      >
+                        <FontAwesomeIcon icon={showPassword ? 'eye-slash' : 'eye'} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleFillGenerated}
+                        className="px-2.5 py-1.5 text-xs font-medium bg-white border border-safe-border rounded-md text-safe-text-gray hover:bg-safe-bg transition-colors"
+                      >
+                        Generate
+                      </button>
+                    </div>
+                  </div>
+                  {errors.tempPassword && (
+                    <p id="tempPassword-error" className="mt-1.5 text-xs text-safe-danger flex items-center gap-1">
+                      <FontAwesomeIcon icon="exclamation-triangle" className="text-[10px]" />
+                      {errors.tempPassword}
+                    </p>
+                  )}
+                </>
+              )}
             </div>
+
+            {/* Send welcome email toggle */}
+            <label className="flex items-start gap-3 p-3 bg-safe-blue-btn/5 border border-safe-blue-btn/20 rounded-lg cursor-pointer">
+              <input
+                type="checkbox"
+                checked={sendWelcomeEmail}
+                onChange={(e) => setSendWelcomeEmail(e.target.checked)}
+                className="mt-0.5 rounded border-safe-border text-safe-blue-btn focus:ring-safe-blue-btn/30"
+              />
+              <span className="text-xs text-safe-text-gray">
+                <span className="font-medium text-safe-text-dark block mb-0.5">Send welcome email</span>
+                The new user will receive their login email and temporary password by email, with a link to sign in.
+                The user must change this password on first login.
+              </span>
+            </label>
 
           </div>
 
