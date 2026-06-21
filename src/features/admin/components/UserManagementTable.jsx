@@ -4,6 +4,7 @@ import { userAPI } from '@/services/api';
 import UsersTable from '@/components/ui/UsersTable';
 import EditAccountInfoModal from './EditAccountInfoModal';
 import ResetPasswordModal from './ResetPasswordModal';
+import DeleteUserModal from './DeleteUserModal';
 import { showSuccess, showError } from '@/utils/toast';
 import { API_BASE_URL } from '@/lib/apiConfig';
 
@@ -16,6 +17,7 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [resetTarget, setResetTarget] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const getPhotoUrl = (user) => {
     if (!user.profilePhotoUrl) return null;
@@ -108,16 +110,18 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
     }
   };
 
-  const handleDelete = async (user) => {
-    if (!window.confirm(`Are you sure you want to delete ${user.fullName || user.email}?\nThis action cannot be undone.`)) return;
-    try {
-      await userAPI.deleteUser(user.id);
+  const handleDeleteClick = (user) => {
+      setDeleteTarget(user);
+    };
+
+    const handleDeleteModalClose = () => {
+      setDeleteTarget(null);
+    };
+
+    const handleDeletedOrDeactivated = () => {
+      setDeleteTarget(null);
       if (onRefresh) onRefresh();
-    } catch (error) {
-      console.error('Failed to delete user:', error);
-      showError(error.response?.data?.message || 'Failed to delete user');
-    }
-  };
+    };
 
   // Get user initials for avatar
   const getInitials = (user) => {
@@ -240,7 +244,7 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
               {user.isActive ? 'Deactivate' : 'Activate'}
             </button>
             <button
-              onClick={() => handleDelete(user)}
+              onClick={() => handleDeleteClick(user)}
               className="px-3 py-1.5 text-xs font-medium text-white bg-safe-danger hover:bg-safe-danger/90 rounded-lg transition-colors"
             >
               Delete
@@ -300,6 +304,14 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
         isOpen={!!resetTarget}
         user={resetTarget}
         onClose={() => setResetTarget(null)}
+      />
+
+      <DeleteUserModal
+        isOpen={!!deleteTarget}
+        user={deleteTarget}
+        onClose={handleDeleteModalClose}
+        onDeactivated={handleDeletedOrDeactivated}
+        onDeleted={handleDeletedOrDeactivated}
       />
     </>
   );

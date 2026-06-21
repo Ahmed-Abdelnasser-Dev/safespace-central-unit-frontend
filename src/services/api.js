@@ -256,8 +256,13 @@ export const userAPI = {
     return data.data;
   },
 
-  deleteUser: async (userId) => {
-    const { data } = await api.delete(`/users/${userId}`);
+/**
+   * Permanently delete a user (admin only).
+   * Requires confirmEmail — must exactly match the target user's email.
+   * This is the server-side half of the "type the user's email to confirm" modal.
+   */
+  deleteUser: async (userId, confirmEmail) => {
+    const { data } = await api.delete(`/users/${userId}`, { data: { confirmEmail } });
     return data;
   },
 };
