@@ -31,6 +31,13 @@ api.interceptors.request.use(
 );
 
 // ─── Response interceptor — silent token refresh ──────────────────────────────
+// Refresh tokens rotate server-side on every use (old one is revoked, a new
+// one issued). If two requests 401 at the same time and each independently
+// calls /auth/refresh, the second call races against an already-rotated
+// token and fails — wrongly logging out a still-valid session. This shared
+// promise makes every concurrent 401 retry await the *same* refresh call.
+let refreshPromise = null;
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -48,11 +55,16 @@ api.interceptors.response.use(
       try {
         // Refresh cookie is sent automatically via withCredentials.
         // Backend rotates it and sets a new access cookie.
-        await axios.post(
-          `${API_URL}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
+        // Reuse an in-flight refresh instead of starting a new one.
+        if (!refreshPromise) {
+          refreshPromise = axios
+            .post(`${API_URL}/auth/refresh`, {}, { withCredentials: true })
+            .finally(() => {
+              refreshPromise = null;
+            });
+        }
+
+        await refreshPromise;
 
         // Retry the original request — new access cookie is now in place
         return api(originalRequest);
@@ -138,10 +150,12 @@ export const authAPI = {
   },
 
   /**
-   * Change password
+   * Change password.
+   * Identity comes from the authenticated session (HttpOnly cookie) on the
+   * backend — never send a userId here, the server ignores/rejects it.
    */
-  changePassword: async (userId, currentPassword, newPassword) => {
-    await api.post('/auth/change-password', { userId, currentPassword, newPassword });
+  changePassword: async (currentPassword, newPassword) => {
+    await api.post('/auth/change-password', { currentPassword, newPassword });
   },
 
   /**
