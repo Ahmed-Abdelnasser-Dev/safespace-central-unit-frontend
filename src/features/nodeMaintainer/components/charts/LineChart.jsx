@@ -39,7 +39,7 @@ function LineChart({
         y1={y}
         x2="300"
         y2={y}
-        stroke="#e5e7eb"
+        stroke="rgb(var(--color-safe-gray-light))"
         strokeWidth="1"
         strokeDasharray="2,2"
       />
@@ -64,7 +64,7 @@ function LineChart({
           width: '100%',
           height: 'auto',
           display: 'block',
-          backgroundColor: '#f9fafb',
+          backgroundColor: 'rgb(var(--color-safe-gray))',
           borderRadius: '4px',
         }}
         preserveAspectRatio="xMidYMid meet"
@@ -104,7 +104,7 @@ function LineChart({
             key={`label-${index}`}
             style={{
               fontSize: 'clamp(10px, 1vw, 12px)',
-              color: '#64748b',
+              color: 'rgb(var(--color-text-muted))',
               fontFamily,
             }}
           >

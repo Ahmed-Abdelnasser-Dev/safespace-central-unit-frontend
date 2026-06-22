@@ -1,4 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import SearchInput from '@/components/ui/SearchInput';
 
 function MapHeader({
   unreadCount = 0,
@@ -17,17 +18,10 @@ function MapHeader({
 
         <div className="flex items-center gap-4">
           {/* Search Bar */}
-          <div className="relative">
-            <FontAwesomeIcon
-              icon="magnifying-glass"
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-safe-text-muted text-sm"
-            />
-            <input
-              type="text"
-              placeholder="Search locations, units, incidents..."
-              className="pl-11 pr-4 py-2.5 w-[340px] rounded-lg border border-safe-border bg-safe-dark text-sm text-safe-text-primary placeholder:text-safe-text-muted focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn"
-            />
-          </div>
+          <SearchInput
+            placeholder="Search locations, units, incidents..."
+            width="340px"
+          />
 
           {/* Refresh Button */}
           <button

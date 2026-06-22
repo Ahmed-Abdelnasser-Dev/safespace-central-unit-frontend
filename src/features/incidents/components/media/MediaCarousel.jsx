@@ -49,7 +49,7 @@ function MediaCarousel({ mediaList = [], accidentPolygon = null, nodePolygons = 
   }, [index]);
 
   return (
-    <div ref={containerRef} className="w-full h-full flex items-center justify-center bg-gray-200 relative overflow-hidden">
+    <div ref={containerRef} className="w-full h-full flex items-center justify-center bg-safe-gray relative overflow-hidden">
       {current ? (
         <>
           <div className="relative w-full h-full">
@@ -71,8 +71,8 @@ function MediaCarousel({ mediaList = [], accidentPolygon = null, nodePolygons = 
         </>
       ) : (
         <div className="flex flex-col items-center gap-2">
-          <FontAwesomeIcon icon="image" className="text-gray-400 text-3xl" />
-          <span className="text-xs text-gray-600 font-medium">No media available</span>
+          <FontAwesomeIcon icon="image" className="text-safe-text-muted text-3xl" />
+          <span className="text-xs text-safe-text-primary font-medium">No media available</span>
         </div>
       )}
 

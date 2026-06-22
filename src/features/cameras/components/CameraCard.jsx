@@ -19,20 +19,20 @@ export default function CameraCard({ camera, onEdit, onDelete, canManage }) {
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-safe-text-primary font-medium mb-1">{camera.name}</h3>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-safe-text-muted">
             <FontAwesomeIcon icon="map-marker-alt" className="mr-2" />
             {camera.location || 'No location set'}
           </p>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-safe-text-muted mt-1">
             Node: {camera.nodeId || 'Unassigned'}
           </p>
         </div>
         {canManage && (
           <div className="flex gap-2">
-            <button onClick={() => onEdit(camera)} className="p-2 text-gray-400 hover:text-safe-text-primary hover:bg-safe-gray-light rounded" aria-label="Edit">
+            <button onClick={() => onEdit(camera)} className="p-2 text-safe-text-muted hover:text-safe-text-primary hover:bg-safe-gray-light rounded" aria-label="Edit">
               <FontAwesomeIcon icon="edit" />
             </button>
-            <button onClick={() => onDelete(camera)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-safe-gray-light rounded" aria-label="Delete">
+            <button onClick={() => onDelete(camera)} className="p-2 text-safe-text-muted hover:text-red-500 hover:bg-safe-gray-light rounded" aria-label="Delete">
               <FontAwesomeIcon icon="trash" />
             </button>
           </div>
@@ -40,7 +40,7 @@ export default function CameraCard({ camera, onEdit, onDelete, canManage }) {
       </div>
       <div className="flex items-center justify-between border-t border-safe-gray-light pt-3">
         <CameraStatusBadge status={camera.status === 'ONLINE' ? 'live' : (camera.status === 'ERROR' ? 'error' : 'offline')} />
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-safe-text-muted">
           Last seen: {timeAgo(camera.lastSeenAt)}
         </span>
       </div>

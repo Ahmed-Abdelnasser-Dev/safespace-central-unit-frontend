@@ -6,7 +6,7 @@
  * @component
  */
 
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { selectNode } from '../nodesSlice';
 import Map from 'react-map-gl/maplibre';
@@ -20,28 +20,12 @@ import MapHoverCard from './map/MapHoverCard.jsx';
 import MapNodeMarker from './map/MapNodeMarker.jsx';
 import useMapAutoCenter from './map/useMapAutoCenter.js';
 import useMapHoverPosition from './map/useMapHoverPosition.js';
-
-const MAP_STYLE = {
-  version: 8,
-  sources: {
-    'carto-dark': {
-      type: 'raster',
-      tiles: [
-        'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-        'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-        'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-      ],
-      tileSize: 256,
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      maxzoom: 20,
-    },
-  },
-  layers: [{ id: 'carto-dark', type: 'raster', source: 'carto-dark', paint: { 'raster-opacity': 1 } }],
-};
+import { useMapStyle } from '@/hooks/useMapStyle.js';
 
 export default function FullScreenMapDialog({ nodes, selectedNodeId, onClose }) {
   const dispatch = useDispatch();
   const mapRef = useRef(null);
+  const mapStyle = useMapStyle();
   const [hoveredNodeId, setHoveredNodeId] = useState(null);
   const hoveredNode = nodes.find(node => node.id === hoveredNodeId);
   const hoverPosition = useMapHoverPosition(mapRef, hoveredNode);
@@ -78,7 +62,7 @@ export default function FullScreenMapDialog({ nodes, selectedNodeId, onClose }) 
               zoom: 11
             }}
             style={{ width: '100%', height: '100%' }}
-            mapStyle={MAP_STYLE}
+            mapStyle={mapStyle}
           >
             {nodes.map((node) => (
               <MapNodeMarker

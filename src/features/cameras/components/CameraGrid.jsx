@@ -9,7 +9,7 @@ export default function CameraGrid({ onEdit, onDelete, canManage }) {
     return (
       <div className="text-center py-20">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-safe-blue mx-auto mb-3" />
-        <p className="text-gray-400">Loading camera feeds...</p>
+        <p className="text-safe-text-muted">Loading camera feeds...</p>
       </div>
     );
   }
@@ -27,9 +27,9 @@ export default function CameraGrid({ onEdit, onDelete, canManage }) {
   if (cameras.length === 0) {
     return (
       <div className="bg-safe-gray rounded-xl p-12 text-center border border-safe-gray-light">
-        <FontAwesomeIcon icon="video-slash" className="text-4xl text-gray-500 mb-3" />
+        <FontAwesomeIcon icon="video-slash" className="text-4xl text-safe-text-muted mb-3" />
         <h3 className="text-safe-text-primary text-lg font-medium mb-1">No Cameras found</h3>
-        <p className="text-gray-400 text-sm">No cameras are currently configured in the stream service.</p>
+        <p className="text-safe-text-muted text-sm">No cameras are currently configured in the stream service.</p>
       </div>
     );
   }

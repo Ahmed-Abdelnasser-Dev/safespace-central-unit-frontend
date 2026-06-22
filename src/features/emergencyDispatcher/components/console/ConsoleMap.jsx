@@ -7,24 +7,7 @@ import MapControls from '../MapControls';
 import CaseMarker from './CaseMarker';
 import StationMarker from './StationMarker';
 import { rankByDistance } from '@/shared/utils/haversine';
-
-const DARK_BASEMAP_STYLE = {
-  version: 8,
-  sources: {
-    'dark-matter': {
-      type: 'raster',
-      tiles: [
-        'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-        'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-        'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-      ],
-      tileSize: 256,
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      maxzoom: 20,
-    },
-  },
-  layers: [{ id: 'dark-matter', type: 'raster', source: 'dark-matter', paint: { 'raster-opacity': 1 } }],
-};
+import { useMapStyle } from '@/hooks/useMapStyle.js';
 
 const RADIUS_RING_KM = [1, 5, 10];
 
@@ -67,6 +50,7 @@ export default function ConsoleMap({
   onSelectUnit,
 }) {
   const mapRef = useRef();
+  const mapStyle = useMapStyle();
   const prefersReducedMotion =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -197,7 +181,7 @@ export default function ConsoleMap({
         {...viewState}
         onMove={(e) => setViewState(e.viewState)}
         mapLib={import('maplibre-gl')}
-        mapStyle={DARK_BASEMAP_STYLE}
+        mapStyle={mapStyle}
         style={{ width: '100%', height: '100%' }}
         attributionControl={false}
       >

@@ -3,25 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Map, { Marker, NavigationControl, GeolocateControl } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import useGeolocation from '@/hooks/useGeolocation';
+import { useMapStyle } from '@/hooks/useMapStyle.js';
 import { getLaneCfg } from './NodesList.jsx';
-
-const DARK_BASEMAP_STYLE = {
-  version: 8,
-  sources: {
-    'dark-matter': {
-      type: 'raster',
-      tiles: [
-        'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-        'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-        'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-      ],
-      tileSize: 256,
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      maxzoom: 20,
-    },
-  },
-  layers: [{ id: 'dark-matter', type: 'raster', source: 'dark-matter', paint: { 'raster-opacity': 1 } }],
-};
 
 /** Coloured dot marker for a single node. */
 function NodeMarker({ node, isActive, onClick, onMouseEnter, onMouseLeave }) {
@@ -157,6 +140,7 @@ function NodePopover({ node, onClose, onViewDetails }) {
 function MapView({ nodes = [], filter = 'all', activeIncidentNodeIds = [], focusedNodeId = null, onViewNodeDetails }) {
   const mapRef = useRef();
   const location = useGeolocation();
+  const mapStyle = useMapStyle();
   const [viewState, setViewState] = useState({
     longitude: 32.5498,
     latitude: 30.0131,
@@ -221,7 +205,7 @@ function MapView({ nodes = [], filter = 'all', activeIncidentNodeIds = [], focus
         {...viewState}
         onMove={(evt) => setViewState(evt.viewState)}
         mapLib={import('maplibre-gl')}
-        mapStyle={DARK_BASEMAP_STYLE}
+        mapStyle={mapStyle}
         style={{ width: '100%', height: '100%' }}
         attributionControl={false}
         onClick={() => { clearCloseTimer(); setHoveredNode(null); }}

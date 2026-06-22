@@ -14,7 +14,7 @@ export default function CameraFeed({ camera }) {
           <CameraStatusBadge status={status} />
           <h3 className="text-safe-text-primary font-medium">{camera.name}</h3>
         </div>
-        <span className="text-xs text-gray-500 font-mono">{camera.id}</span>
+        <span className="text-xs text-safe-text-muted font-mono">{camera.id}</span>
       </div>
 
       {/* Video Area */}
@@ -23,7 +23,7 @@ export default function CameraFeed({ camera }) {
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-safe-dark/80 z-10">
              {status === 'connecting' && <span className="text-safe-blue animate-pulse">Establishing connection...</span>}
              {status === 'error' && <span className="text-red-400">Stream interrupted</span>}
-             {status === 'stopped' && <span className="text-gray-500">Stream offline</span>}
+             {status === 'stopped' && <span className="text-safe-text-muted">Stream offline</span>}
           </div>
         )}
         <canvas 
@@ -34,7 +34,7 @@ export default function CameraFeed({ camera }) {
       </div>
 
       {/* Footer Stats */}
-      <div className="px-4 py-2 bg-safe-dark/50 flex items-center justify-between text-xs text-gray-400 font-mono border-t border-safe-gray-light">
+      <div className="px-4 py-2 bg-safe-dark/50 flex items-center justify-between text-xs text-safe-text-muted font-mono border-t border-safe-gray-light">
         <span>{fps} FPS</span>
         {canvasRef.current && canvasRef.current.width > 0 && (
           <span>{canvasRef.current.width}×{canvasRef.current.height}</span>

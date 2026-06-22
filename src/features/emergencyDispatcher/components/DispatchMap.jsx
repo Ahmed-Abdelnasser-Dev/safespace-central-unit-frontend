@@ -5,28 +5,7 @@ import { rankByDistance } from '@/shared/utils/haversine';
 import UnitMarker from './UnitMarker';
 import UnitPopover from './UnitPopover';
 import MapControls from './MapControls';
-
-// CARTO's free dark-matter raster tiles — matches the fixed dark safe-*
-// theme (see DESIGN.md); MapView.jsx's light OSM raster style would clash
-// here. Same raster-source shape as the existing map feature, just a
-// different tile URL — no new dependency.
-const DARK_BASEMAP_STYLE = {
-  version: 8,
-  sources: {
-    'dark-matter': {
-      type: 'raster',
-      tiles: [
-        'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-        'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-        'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-      ],
-      tileSize: 256,
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      maxzoom: 20,
-    },
-  },
-  layers: [{ id: 'dark-matter', type: 'raster', source: 'dark-matter', paint: { 'raster-opacity': 1 } }],
-};
+import { useMapStyle } from '@/hooks/useMapStyle.js';
 
 const RADIUS_RING_KM = [1, 5, 10];
 
@@ -47,6 +26,7 @@ function circlePolygon(centerLat, centerLon, radiusKm, points = 64) {
 
 function DispatchMap({ caseRecord, units, dispatchedUnitIds = [] }) {
   const mapRef = useRef();
+  const mapStyle = useMapStyle();
   const prefersReducedMotion = typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const [viewState, setViewState] = useState({
@@ -126,7 +106,7 @@ function DispatchMap({ caseRecord, units, dispatchedUnitIds = [] }) {
         {...viewState}
         onMove={(evt) => setViewState(evt.viewState)}
         mapLib={import('maplibre-gl')}
-        mapStyle={DARK_BASEMAP_STYLE}
+        mapStyle={mapStyle}
         style={{ width: '100%', height: '100%' }}
         attributionControl={false}
       >

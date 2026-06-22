@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function CameraStatusBadge({ status }) {
-  let colorClass = 'bg-safe-gray text-gray-400';
+  let colorClass = 'bg-safe-gray text-safe-text-muted';
   let icon = 'circle-minus';
   let label = 'Offline';
 

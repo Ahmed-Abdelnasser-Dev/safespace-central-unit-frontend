@@ -18,7 +18,7 @@ function Button({ variant = 'primary', size = 'md', type = 'button', disabled = 
   };
   const variants = {
     primary: 'bg-safe-blue-btn text-white hover:bg-safe-blue-btn/90 hover:shadow-md active:scale-[0.98] focus:ring-safe-blue-btn/30',
-    secondary: 'bg-white text-safe-text-dark border border-safe-border hover:bg-safe-bg hover:border-safe-text-gray/30 active:scale-[0.98] focus:ring-safe-blue-btn/30',
+    secondary: 'bg-safe-sidebar text-safe-text-primary border border-safe-border hover:bg-safe-gray hover:border-safe-text-muted/30 active:scale-[0.98] focus:ring-safe-blue-btn/30',
     danger: 'bg-safe-danger text-white hover:bg-safe-danger/90 hover:shadow-md active:scale-[0.98] focus:ring-safe-danger/30',
     ghost: 'bg-transparent text-safe-text-gray hover:bg-safe-bg active:scale-[0.98] focus:ring-safe-blue-btn/20'
   };
