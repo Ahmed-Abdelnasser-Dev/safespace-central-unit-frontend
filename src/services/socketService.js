@@ -12,7 +12,10 @@ let socket = null;
  */
 export function initSocket() {
   if (!socket) {
-    socket = io(SOCKET_URL, {
+    // When VITE_API_URL=/api (same-origin DMZ mode), SOCKET_URL resolves to ''
+    // (empty string). Passing undefined to socket.io connects to the current
+    // origin, which nginx proxies to the backend. A non-empty URL is used as-is.
+    socket = io(SOCKET_URL || undefined, {
       withCredentials: true,
       transports: ['polling'],
       reconnectionDelay: 1000,

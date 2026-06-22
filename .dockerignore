@@ -1,0 +1,33 @@
+# Build artifacts — rebuilt inside the container
+node_modules
+dist
+
+# Git history — not needed in the image
+.git
+.gitignore
+
+# Local env files — secrets must not leak into the image layer
+.env
+.env.local
+.env.*.local
+# .env.example and .env.deploy.example are safe to include (no secrets)
+
+# Claude / superpowers tooling
+.claude
+.specify
+
+# Logs & OS artifacts
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Screenshots and large binary assets under docs/
+screenshots
+docs/screenshots
+
+# CI — not needed at build time
+.github
+
+# Spec / planning files
+specs

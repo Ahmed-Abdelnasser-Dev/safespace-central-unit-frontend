@@ -90,12 +90,28 @@ Cookie-based. `api.js` sends `withCredentials: true`. On 401 it auto-refreshes v
 
 ## Env Vars
 
+### Build-time (`VITE_*` — baked into the JS bundle by `vite build`)
+
 ```
-VITE_API_URL           # Full API base including /api
-VITE_SOCKET_URL        # Socket.IO origin
-VITE_NODE_VIDEO_WS_URL # WebSocket base for video feeds
-VITE_ENABLE_DEV_PROXY  # Set true to proxy /api + /socket.io via Vite
-VITE_DEV_PROXY_TARGET  # Target for proxy (default: http://localhost:5000)
+VITE_API_URL           # API base URL. Default: /api (same-origin DMZ mode via reverse proxy).
+                       # Use an absolute URL (http://host:5000/api) only if NOT using the built-in proxy.
+VITE_SOCKET_URL        # Socket.IO origin. Omit (or leave empty) to use current origin (DMZ mode).
+VITE_NODE_VIDEO_WS_URL # Absolute ws:// base for video feeds. Omit to use current origin + /stream-service proxy.
+VITE_ENABLE_DEV_PROXY  # Dev only — set true to proxy /api + /socket.io via Vite dev server.
+VITE_DEV_PROXY_TARGET  # Dev only — target for the Vite proxy (default: http://localhost:5000).
+```
+
+### Runtime nginx proxy (DMZ deployment — `docker-compose.yml` / `.env`)
+
+These are injected into the nginx container at start via `deploy/nginx/default.conf.template`.
+No rebuild is needed when they change — just `docker compose restart`.
+
+```
+BACKEND_HOST           # IP of the protected backend VM (e.g. 10.0.0.5)
+BACKEND_PORT           # Backend HTTP port (default: 5000)
+STREAM_HOST            # IP of the stream-service VM (usually same as BACKEND_HOST)
+STREAM_PORT            # Stream-service port (default: 4001)
+HTTP_PORT              # Host port for the frontend container (default: 80)
 ```
 
 ## Commands
@@ -107,6 +123,14 @@ npm run preview   # Preview production build
 npx vitest        # Run tests
 ```
 
+### DMZ deployment (on the VM)
+```bash
+cp .env.deploy.example .env   # fill in BACKEND_HOST
+chmod +x setup.sh && ./setup.sh  # installs Docker, starts the stack
+docker compose up -d --build  # manual rebuild after code changes
+docker compose logs -f frontend
+```
+
 ## Testing
 
 **Current state:** One reducer unit test — `src/features/nodeMaintainer/nodesSlice.test.js`. Effective coverage ~0%.
@@ -115,7 +139,9 @@ Target: 80% coverage. Use Vitest + Testing Library.
 
 ## Deployment
 
-GitHub Actions on push to `main` → SSH into EC2, `docker compose up --build`. See `.github/workflows/deploy.yml`.
+**EC2 (legacy):** GitHub Actions on push to `main` → SSH into EC2, `docker compose up --build`. See `.github/workflows/deploy.yml`. The compose file for that stack lives in `~/Safe-Space-Mobile-Server` on the EC2 host, not in this repo.
+
+**DMZ VM (3-VM setup):** See [`docs/deployment-dmz.md`](./docs/deployment-dmz.md) for the full guide. In summary: the nginx container serves the SPA *and* reverse-proxies all API/socket/video traffic to the protected backend VM. The browser only talks to the DMZ VM's IP on port 80. No backend URL is ever exposed directly to the browser.
 
 ## Conventions
 

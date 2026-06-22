@@ -27,12 +27,15 @@ export function useStreamSocket(cameraId, canvasRef) {
     let ws = null;
 
     const connect = () => {
-      // Force cache-bust (1)
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const isDev = import.meta.env.DEV;
-      const baseUrl = isDev
-        ? `${protocol}//${window.location.host}/stream-service`
-        : (import.meta.env.VITE_NODE_VIDEO_WS_URL || 'ws://localhost:4001');
+      // If an explicit absolute ws URL is set, use it directly.
+      // Otherwise (including the DMZ same-origin mode) use the current origin
+      // with /stream-service prefix — nginx strips the prefix and proxies to
+      // the stream-service on port 4001.
+      const envWs = import.meta.env.VITE_NODE_VIDEO_WS_URL;
+      const baseUrl = (envWs && /^wss?:\/\//i.test(envWs))
+        ? envWs
+        : `${protocol}//${window.location.host}/stream-service`;
 
       ws = new WebSocket(`${baseUrl}/stream/${cameraId}`);
       wsRef.current = ws;
