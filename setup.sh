@@ -133,7 +133,9 @@ start_stack() {
     cd "$REPO_DIR"
 
     info "Building and starting the Docker stack..."
-    # Use 'docker compose' (plugin) or fall back to 'docker-compose' (legacy)
+
+    # Determine compose command
+    local COMPOSE
     if docker compose version &>/dev/null 2>&1; then
         COMPOSE="docker compose"
     elif command -v docker-compose &>/dev/null; then
@@ -141,6 +143,17 @@ start_stack() {
     else
         error "Neither 'docker compose' nor 'docker-compose' found."
         exit 1
+    fi
+
+    # If the current shell doesn't have the docker group yet (just added),
+    # re-exec this step under newgrp so the group takes effect immediately.
+    if ! docker info &>/dev/null 2>&1; then
+        info "Docker socket not yet accessible in this session — using newgrp docker..."
+        exec newgrp docker <<NEWGRP
+cd "$REPO_DIR"
+$COMPOSE up -d --build
+NEWGRP
+        return
     fi
 
     $COMPOSE up -d --build
