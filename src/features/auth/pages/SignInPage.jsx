@@ -166,7 +166,7 @@ function SignIn() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={handleEmailBlur}
-              className={`w-full pl-11 pr-4 py-3 text-sm rounded-lg border bg-white text-safe-text-dark placeholder:text-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all duration-200 ${emailError ? 'border-safe-danger focus:ring-safe-danger/20 focus:border-safe-danger' : 'border-safe-border/60 hover:border-safe-border focus:ring-safe-blue/20 focus:border-safe-blue'} disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-safe-gray-light`}
+              className={`w-full pl-11 pr-4 py-3 text-sm rounded-lg border bg-white dark:bg-safe-gray text-safe-text-dark placeholder:text-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all duration-200 ${emailError ? 'border-safe-danger focus:ring-safe-danger/20 focus:border-safe-danger' : 'border-safe-border/60 dark:border-safe-border hover:border-safe-border focus:ring-safe-blue/20 focus:border-safe-blue'} disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-safe-gray-light`}
               disabled={loading || isSubmitting}
               autoComplete="email"
             />
@@ -191,7 +191,7 @@ function SignIn() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onBlur={handlePasswordBlur}
-              className={`w-full pl-11 pr-12 py-3 text-sm rounded-lg border bg-white text-safe-text-dark placeholder:text-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all duration-200 ${passwordError ? 'border-safe-danger focus:ring-safe-danger/20 focus:border-safe-danger' : 'border-safe-border/60 hover:border-safe-border focus:ring-safe-blue/20 focus:border-safe-blue'} disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-safe-gray-light`}
+              className={`w-full pl-11 pr-12 py-3 text-sm rounded-lg border bg-white dark:bg-safe-gray text-safe-text-dark placeholder:text-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-offset-0 transition-all duration-200 ${passwordError ? 'border-safe-danger focus:ring-safe-danger/20 focus:border-safe-danger' : 'border-safe-border/60 dark:border-safe-border hover:border-safe-border focus:ring-safe-blue/20 focus:border-safe-blue'} disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-safe-gray-light`}
               disabled={loading || isSubmitting}
               autoComplete="current-password"
             />

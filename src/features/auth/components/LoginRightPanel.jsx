@@ -16,7 +16,7 @@ function AuthRightPanel({
       <Card variant="elevated" className="rounded-2xl flex flex-col overflow-hidden">
         {/* Icon + Header */}
         {(icon || title || subtitle) && (
-          <div className="px-12 pt-12 pb-8 text-center bg-gradient-to-b from-safe-bg to-white">
+          <div className="px-12 pt-12 pb-8 text-center bg-gradient-to-b from-safe-bg to-safe-sidebar">
             {icon && (
               <div className="flex justify-center mb-6 animate-slideUp">
                 <div className="text-safe-blue text-4xl">{icon}</div>

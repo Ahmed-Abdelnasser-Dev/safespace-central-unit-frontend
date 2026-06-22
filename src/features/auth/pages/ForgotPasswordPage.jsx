@@ -34,7 +34,7 @@ function ForgotPassword() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@company.com"
-              className="w-full pl-11 pr-4 py-3 text-sm rounded-lg border border-safe-border/60 hover:border-safe-border bg-white text-safe-text-dark placeholder:text-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-safe-blue/20 focus:border-safe-blue transition-all duration-200 disabled:opacity-60 disabled:bg-safe-gray-light"
+              className="w-full pl-11 pr-4 py-3 text-sm rounded-lg border border-safe-border/60 dark:border-safe-border hover:border-safe-border bg-white dark:bg-safe-gray text-safe-text-dark placeholder:text-safe-text-gray/50 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-safe-blue/20 focus:border-safe-blue transition-all duration-200 disabled:opacity-60 disabled:bg-safe-gray-light"
             />
           </div>
         </div>
