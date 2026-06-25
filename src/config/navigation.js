@@ -3,6 +3,43 @@
  * Maps each backend role to its navigation items and default landing page.
  */
 
+/**
+ * Per-route page configuration consumed by AppTopBar.
+ * title   — shown as the page heading in the top bar.
+ * section — optional breadcrumb prefix (e.g. "Administration > Activity Logs").
+ *
+ * For dynamic routes (e.g. /cases/:id), AppTopBar falls back to the nearest
+ * prefix match.
+ */
+export const PAGE_CONFIG = {
+  '/user-management':  { title: 'User Management',   section: 'Administration' },
+  '/activity-logs':    { title: 'Activity Logs',     section: 'Administration' },
+  '/dashboard':        { title: 'Dashboard',         section: null },
+  '/road-observer':    { title: 'Live Monitoring',   section: null },
+  '/cases':            { title: 'Dispatch Console',  section: null },
+  '/node-maintainer':  { title: 'Node Maintainer',   section: null },
+  '/cameras':          { title: 'Camera Feeds',      section: null },
+  '/reports':          { title: 'Reports',           section: null },
+  '/settings':         { title: 'Settings',          section: null },
+  '/alerts':           { title: 'Alerts',            section: null },
+  '/messages':         { title: 'Messages',          section: null },
+  '/profile':          { title: 'Profile',           section: null },
+  '/incident-history': { title: 'Incident History',  section: null },
+  '/system-test':      { title: 'System Test',       section: null },
+};
+
+/**
+ * Resolve page config for a given pathname (including dynamic segments).
+ * Falls back to the longest matching static prefix.
+ */
+export function getPageConfig(pathname) {
+  if (PAGE_CONFIG[pathname]) return PAGE_CONFIG[pathname];
+  const match = Object.keys(PAGE_CONFIG)
+    .filter((p) => pathname.startsWith(p))
+    .sort((a, b) => b.length - a.length)[0];
+  return PAGE_CONFIG[match] ?? { title: '', section: null };
+}
+
 export const ROLE_NAV_CONFIG = {
   admin: {
     defaultPath: '/user-management',

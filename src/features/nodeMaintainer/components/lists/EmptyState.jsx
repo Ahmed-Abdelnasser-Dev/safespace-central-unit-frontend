@@ -1,38 +1,13 @@
-/**
- * Reusable Empty State Component
- * 
- * Displays icon, title, and message when no data available
- * Used for empty list states across tabs
- * 
- * @component
- */
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { typography, fontFamily } from '../../styles/typography';
 
-function EmptyState({ 
-  icon, 
-  title,
-  message = '',
-  className = '' 
-}) {
+function EmptyState({ icon, title, message = '', className = '' }) {
   return (
-    <div className={`text-center py-[32px]  ${className}`}>
+    <div className={`text-center py-8 ${className}`}>
       {icon && (
-        <FontAwesomeIcon 
-          icon={icon} 
-          className="text-safe-text-muted mb-[12px] block "
-          style={{ width: '32px', height: '32px' }} 
-        />
+        <FontAwesomeIcon icon={icon} className="text-safe-text-muted mb-3 block text-2xl" />
       )}
-      <p className="text-safe-text-muted" style={{ ...typography.body, fontFamily }}>
-        {title}
-      </p>
-      {message && (
-        <p className="text-safe-text-muted" style={{ ...typography.caption, fontFamily }}>
-          {message}
-        </p>
-      )}
+      <p className="text-sm text-safe-text-muted">{title}</p>
+      {message && <p className="text-xs text-safe-text-muted mt-1">{message}</p>}
     </div>
   );
 }

@@ -1,13 +1,4 @@
-/**
- * NodesDisplay Component
- * 
- * Displays a list of nodes with search functionality and filter tabs
- * Manages filtering and selection state
- * 
- * @component
- */
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectAllNodes, selectSelectedNodeId, selectNode } from '../../nodesSlice';
 import NodeCard from '../cards/NodeCard';
@@ -23,11 +14,11 @@ export default function NodesDisplay() {
     dispatch(selectNode(nodeId));
   };
 
-  // Filter nodes based on selection
-  const filteredNodes = nodes.filter(node => {
-    const matchesSearch = node.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          node.location.address.toLowerCase().includes(searchQuery.toLowerCase());
-    
+  const filteredNodes = nodes.filter((node) => {
+    const matchesSearch =
+      node.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      node.location.address.toLowerCase().includes(searchQuery.toLowerCase());
+
     if (filter === 'all') return matchesSearch;
     if (filter === 'online') return node.status === 'online' && matchesSearch;
     if (filter === 'offline') return node.status === 'offline' && matchesSearch;
@@ -35,62 +26,41 @@ export default function NodesDisplay() {
   });
 
   return (
-    <div
-      className="bg-safe-sidebar border border-safe-gray-light rounded-[13.684px] overflow-hidden flex flex-col flex-1 w-full"
-    >
-      {/* Header with Search and Filter Tabs */}
-      <div className="border-b border-safe-gray-light px-[13.255px] pt-[10px] pb-[8px]">
-        {/* Search Input */}
-        <div className="relative mb-[10px]">
-          <div
-            className="bg-safe-gray border border-safe-gray-light rounded-[6.628px] flex items-center pl-[26.513px] pr-[8.285px] py-[8px]"
-            style={{ height: '36px' }}
-          >
+    <div className="bg-safe-sidebar border border-safe-gray-light rounded-xl overflow-hidden flex flex-col flex-1 w-full">
+      <div className="border-b border-safe-gray-light px-3.5 pt-2.5 pb-2">
+        <div className="relative mb-2.5">
+          <div className="bg-safe-gray border border-safe-gray-light rounded-lg flex items-center h-9 px-3">
             <input
               type="text"
               placeholder="Search nodes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent w-full outline-none font-normal text-safe-text-primary placeholder-safe-text-muted"
-              style={{
-                fontSize: 'clamp(11px, 1.2vw, 12px)',
-                fontFamily: 'Arimo, sans-serif',
-              }}
+              className="bg-transparent w-full outline-none text-xs font-normal text-safe-text-primary placeholder-safe-text-muted"
             />
           </div>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex gap-[6px] mb-[8px]">
+        <div className="flex gap-1.5 mb-2">
           {['all', 'online', 'offline'].map((filterType) => (
             <button
               key={filterType}
               onClick={() => setFilter(filterType)}
-              className={`flex-1 rounded-[4.971px] flex items-center justify-center transition-all duration-200 font-medium ${
-                filter === filterType ? 'bg-safe-blue' : 'bg-safe-gray hover:bg-safe-gray-light/50'
+              className={`flex-1 h-7 rounded text-[10px] font-medium capitalize transition-all duration-200 ${
+                filter === filterType
+                  ? 'bg-safe-blue text-white'
+                  : 'bg-safe-gray text-safe-text-muted hover:bg-safe-gray-light/50'
               }`}
-              style={{ height: '28px' }}
             >
-              <span
-                className={`font-medium capitalize ${filter === filterType ? 'text-white' : 'text-safe-text-muted'}`}
-                style={{
-                  fontSize: 'clamp(10px, 1.1vw, 11px)',
-                  lineHeight: '13.671px',
-                  fontFamily: 'Arimo, sans-serif'
-                }}
-              >
-                {filterType}
-              </span>
+              {filterType}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Nodes List */}
-      <div className="overflow-y-auto px-[10px] pt-[10px] flex-1">
-        <div className="flex flex-col gap-[8px] pb-[10px]">
+      <div className="overflow-y-auto px-2.5 pt-2.5 flex-1">
+        <div className="flex flex-col gap-2 pb-2.5">
           {filteredNodes.length > 0 ? (
-            filteredNodes.map(node => (
+            filteredNodes.map((node) => (
               <NodeCard
                 key={node.id}
                 node={node}
@@ -99,10 +69,8 @@ export default function NodesDisplay() {
               />
             ))
           ) : (
-            <div className="flex items-center justify-center py-[20px] text-safe-text-muted">
-              <span style={{ fontSize: 'clamp(12px, 1.3vw, 14px)', fontFamily: 'Arimo, sans-serif' }}>
-                No nodes found
-              </span>
+            <div className="flex items-center justify-center py-5 text-safe-text-muted">
+              <span className="text-xs">No nodes found</span>
             </div>
           )}
         </div>

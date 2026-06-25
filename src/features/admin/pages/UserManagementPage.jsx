@@ -63,10 +63,7 @@ function UserManagementPage() {
 
   return (
     <div className="flex flex-col h-full bg-safe-bg overflow-hidden">
-      <UserManagementHeader
-        title="System Administration"
-        description="Manage users, Roles and System Settings"
-      />
+      <UserManagementHeader onRefresh={fetchUsers} />
 
       <div className="flex-1 overflow-y-auto mt-6 mx-7">
         <UserManagementCards />

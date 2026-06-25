@@ -1,64 +1,48 @@
-/**
- * Reusable List Item Component
- * 
- * Displays item with meta info and action buttons
- * Used for polygon lists, lane lists, etc.
- * 
- * @component
- */
-
-import { typography, fontFamily } from '../../styles/typography';
-
-function ListItem({ 
-  title, 
+function ListItem({
+  title,
   subtitle = null,
   actions = [],
   leadingIcon = null,
-  leadingColor = "#247cff",
-  leadingBg = "#e3f2fd",
-  className = '' 
+  leadingColor = '',
+  leadingBg = '',
+  className = '',
 }) {
   return (
-    <div className={`p-[10px] sm:p-[11px] md:p-[12px] border border-safe-gray-light rounded-[6px] sm:rounded-[7px] md:rounded-[8px] hover:bg-safe-gray transition-colors ${className}`}>
-      <div className="flex items-center justify-between gap-[6px] sm:gap-[8px]">
-        <div className="flex items-center gap-[8px] sm:gap-[10px] md:gap-[12px] min-w-0">
+    <div
+      className={`p-3 border border-safe-gray-light rounded-lg hover:bg-safe-gray transition-colors ${className}`}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-3 min-w-0">
           {leadingIcon && (
             <div
-              className="w-[24px] h-[24px] sm:w-[26px] sm:h-[26px] md:w-[28px] md:h-[28px] rounded-full flex items-center justify-center flex-shrink-0"
+              className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
               style={{ backgroundColor: leadingBg, color: leadingColor }}
             >
               {leadingIcon}
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <p className="font-bold text-safe-text-primary truncate" style={{ fontSize: 'clamp(12px, 1.3vw, 16px)', fontFamily }}>
-              {title}
-            </p>
+            <p className="text-sm font-bold text-safe-text-primary truncate">{title}</p>
             {subtitle && (
-              <p className="text-safe-text-muted truncate" style={{ fontSize: 'clamp(11px, 1vw, 12px)', fontFamily }}>
-                {subtitle}
-              </p>
+              <p className="text-xs text-safe-text-muted truncate">{subtitle}</p>
             )}
           </div>
         </div>
         {actions.length > 0 && (
-          <div className="flex gap-[4px] sm:gap-[5px] md:gap-[6px] flex-shrink-0 flex-wrap justify-end">
+          <div className="flex gap-1 flex-shrink-0 flex-wrap justify-end">
             {actions.map((action, idx) => (
               <button
                 key={idx}
                 onClick={action.onClick}
-                className={`px-[8px] sm:px-[9px] md:px-[10px] py-[4px] sm:py-[5px] md:py-[6px] font-medium rounded-[4px] sm:rounded-[5px] transition-colors whitespace-nowrap ${
+                className={`px-2.5 py-1 text-xs font-medium rounded transition-colors whitespace-nowrap ${
                   action.variant === 'danger'
                     ? 'text-safe-danger hover:bg-safe-danger/10'
                     : action.variant === 'primary'
                       ? 'text-white bg-safe-blue-btn hover:bg-safe-blue-light'
                       : 'text-safe-blue hover:bg-safe-blue/10'
                 }`}
-                style={{ fontSize: 'clamp(10px, 1vw, 12px)', fontFamily }}
               >
-                {action.icon && (
-                  <>{action.icon} </>
-                )}
+                {action.icon && <>{action.icon} </>}
                 {action.label}
               </button>
             ))}

@@ -7,7 +7,7 @@
  * @component
  */
 
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectNode, selectAllNodes, selectSelectedNodeId } from '../../nodesSlice';
 import Map from 'react-map-gl/maplibre';
@@ -53,12 +53,7 @@ export default function NetworkMapCard() {
       {/* Header */}
       <div className="border-b border-safe-gray-light flex items-center justify-between px-[12px] sm:px-[14px] md:px-[16px] h-[40px] sm:h-[44px] md:h-[48px] bg-safe-sidebar flex-shrink-0">
         <div className="flex items-center gap-3">
-          <h3
-            className="font-bold text-safe-text-primary"
-            style={{ fontSize: 'clamp(12px, 1.3vw, 13px)', lineHeight: '18.642px', fontFamily: 'Arimo, sans-serif' }}
-          >
-            Network Map
-          </h3>
+          <h3 className="text-xs font-bold text-safe-text-primary">Network Map</h3>
           <Button
             variant="ghost"
             size="sm"
@@ -76,8 +71,7 @@ export default function NetworkMapCard() {
           <div className="flex items-center gap-[4px] sm:gap-[6px]">
             <div className="w-[6px] h-[6px] sm:w-[7px] sm:h-[7px] rounded-full bg-safe-success flex-shrink-0" />
             <span
-              className="text-safe-text-muted font-medium"
-              style={{ fontSize: 'clamp(9px, 1vw, 9.114px)', lineHeight: '13.671px', fontFamily: 'Arimo, sans-serif' }}
+              className="text-[10px] text-safe-text-muted font-medium"
             >
               Online ({counts.online})
             </span>
@@ -87,8 +81,7 @@ export default function NetworkMapCard() {
           <div className="flex items-center gap-[4px] sm:gap-[6px]">
             <div className="w-[6px] h-[6px] sm:w-[7px] sm:h-[7px] rounded-full bg-safe-orange flex-shrink-0" />
             <span
-              className="text-safe-text-muted font-medium"
-              style={{ fontSize: 'clamp(9px, 1vw, 9.114px)', lineHeight: '13.671px', fontFamily: 'Arimo, sans-serif' }}
+              className="text-[10px] text-safe-text-muted font-medium"
             >
               Warning ({counts.warning})
             </span>
@@ -98,8 +91,7 @@ export default function NetworkMapCard() {
           <div className="flex items-center gap-[4px] sm:gap-[6px]">
             <div className="w-[6px] h-[6px] sm:w-[7px] sm:h-[7px] rounded-full bg-safe-danger flex-shrink-0" />
             <span
-              className="text-safe-text-muted font-medium"
-              style={{ fontSize: 'clamp(9px, 1vw, 9.114px)', lineHeight: '13.671px', fontFamily: 'Arimo, sans-serif' }}
+              className="text-[10px] text-safe-text-muted font-medium"
             >
               Offline ({counts.offline})
             </span>

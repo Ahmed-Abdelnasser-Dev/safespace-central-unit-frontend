@@ -30,7 +30,6 @@ import RoadStatusDisplay from "../components/sections/RoadStatusDisplay";
 import SpeedLimitConfig from "./SpeedLimitConfig";
 import AddLaneModal from "../components/AddLaneModal";
 import DeleteLaneModal from "../components/DeleteLaneModal";
-import { fontFamily } from "../styles/typography";
 import Button from "@/components/ui/Button.jsx";
 
 const LANE_STATUS_OPTIONS = [
@@ -95,9 +94,7 @@ function RoadConfigTab() {
     <div className="p-[12px] sm:p-[14px] md:p-[16px] lg:p-[18px] xl:p-[20px] space-y-[14px] sm:space-y-[16px] md:space-y-[18px] lg:space-y-[20px] h-full overflow-y-auto">
       {/* Node Display Output */}
       <div className="space-y-[8px] sm:space-y-[10px] md:space-y-[12px]">
-        <h4 className="font-bold text-safe-text-primary" style={{ fontSize: "clamp(14px, 1.5vw, 18px)", fontFamily }}>
-          Node Display Output
-        </h4>
+        <h4 className="text-base font-bold text-safe-text-primary">Node Display Output</h4>
         <RoadStatusDisplay
           roadName={node.location?.address || node.name}
           speedLimit={speedLimit}
@@ -142,7 +139,7 @@ function RoadConfigTab() {
             ))
           ) : (
             <div className="p-[10px] sm:p-[12px] md:p-[14px] bg-safe-gray border border-safe-gray-light rounded-[6px] sm:rounded-[7px] md:rounded-[8px] text-center">
-              <p className="text-safe-text-muted text-center" style={{ fontSize: "clamp(13px, 1.2vw, 16px)", fontFamily }}>
+              <p className="text-sm text-safe-text-muted text-center">
                 No lanes configured
               </p>
             </div>

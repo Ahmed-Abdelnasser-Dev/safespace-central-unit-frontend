@@ -1,8 +1,9 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 /**
- * Global search input with adaptive dark/light styling.
- * Single source of truth for all search fields across the app.
+ * SearchInput — canonical search field.
+ * Single source of truth for all search inputs across the app.
+ * Composes the base Input styling for consistency.
  */
 function SearchInput({
   placeholder = 'Search...',
@@ -11,6 +12,7 @@ function SearchInput({
   className = '',
   inputClassName = '',
   width,
+  disabled = false,
   ...rest
 }) {
   return (
@@ -24,7 +26,8 @@ function SearchInput({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className={`w-full pl-10 pr-4 py-2.5 rounded-lg border border-safe-border bg-safe-dark text-sm text-safe-text-primary placeholder:text-safe-text-muted focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn transition-colors ${inputClassName}`}
+        disabled={disabled}
+        className={`w-full pl-10 pr-4 py-2.5 rounded-lg border border-safe-border bg-safe-dark text-sm text-safe-text-primary placeholder:text-safe-text-muted focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn disabled:opacity-60 disabled:cursor-not-allowed transition-colors ${inputClassName}`}
         {...rest}
       />
     </div>

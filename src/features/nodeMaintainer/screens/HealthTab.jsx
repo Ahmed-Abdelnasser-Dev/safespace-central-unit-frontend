@@ -9,12 +9,10 @@
 import { useSelector } from 'react-redux';
 import { selectSelectedNode } from '../nodesSlice';
 import { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrochip, faMemory, faWifi, faDatabase } from '@fortawesome/free-solid-svg-icons';
 import MetricCard from '../components/cards/MetricCard';
 import SectionHeader from '../components/layout/SectionHeader';
 import HistoricalChartsGrid from '../components/grids/HistoricalChartsGrid';
-import { fontFamily } from '../styles/typography';
 
 function HealthTab() {
   const node = useSelector(selectSelectedNode);
@@ -46,7 +44,7 @@ function HealthTab() {
     return () => clearInterval(interval);
   }, [node]);
 
-  if (!node) return <div className="p-[16px] text-safe-text-muted" style={{ fontFamily: 'Arimo, sans-serif' }}>Select a node</div>;
+  if (!node) return <div className="p-4 text-sm text-safe-text-muted">Select a node</div>;
 
   return (
     <div className="p-[20px] space-y-[20px]">

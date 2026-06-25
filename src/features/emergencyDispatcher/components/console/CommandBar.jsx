@@ -17,13 +17,9 @@ function LiveClock() {
 export default function CommandBar({ activeCaseCount, availableUnitCount, dispatcherName = 'Dispatcher' }) {
   return (
     <div className="px-5 py-3 border-b border-safe-gray-light flex-shrink-0 flex items-center gap-4 bg-safe-sidebar/80 backdrop-blur-sm">
-      {/* Section identity */}
-      <div className="flex items-center gap-3 flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <FontAwesomeIcon icon="headset" className="text-safe-blue text-sm" />
-          <span className="text-sm font-semibold text-safe-text-primary">Dispatch Console</span>
-        </div>
-        <div className="w-px h-4 bg-safe-gray-light flex-shrink-0" />
+      {/* Dispatcher identity */}
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <FontAwesomeIcon icon="headset" className="text-safe-blue text-sm" />
         <span className="text-xs text-safe-text-muted">{dispatcherName}</span>
       </div>
 

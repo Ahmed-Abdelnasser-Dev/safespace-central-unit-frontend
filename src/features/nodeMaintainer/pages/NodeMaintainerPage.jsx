@@ -149,13 +149,9 @@ export default function NodeMaintainerPage() {
               <div className="text-center px-[20px]">
                 <FontAwesomeIcon
                   icon="circle-info"
-                  className="text-safe-text-muted mb-[12px]"
-                  style={{ width: 'clamp(32px, 5vw, 48px)', height: 'clamp(32px, 5vw, 48px)' }}
+                  className="text-safe-text-muted mb-3 text-4xl"
                 />
-                <p
-                  className="text-safe-text-muted"
-                  style={{ fontSize: 'clamp(12px, 1.2vw, 14px)', fontFamily: 'Arimo, sans-serif' }}
-                >
+                <p className="text-sm text-safe-text-muted">
                   Select a node from the list to view details
                 </p>
               </div>

@@ -1,150 +1,47 @@
-/**
- * NodeCard Component
- * 
- * Displays a single node with status badge, location, and health metrics
- * 
- * @component
- * @param {Object} props
- * @param {Object} props.node - Node data object with id, status, location, health
- * @param {string} props.node.id - Node identifier
- * @param {string} props.node.status - 'online' or 'offline'
- * @param {Object} props.node.location - { address: string }
- * @param {Object} props.node.health - { cpu, temperature, network }
- * @param {boolean} props.isSelected - Whether node is currently selected
- * @param {Function} props.onSelect - Callback when node is clicked
- */
-
-import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import StatusBadge from '@/components/ui/StatusBadge';
 
 export default function NodeCard({ node, isSelected, onSelect }) {
-  const statusColor = node.status === 'online' ? '#4caf50' : '#e83e3e';
-
   return (
     <button
       onClick={() => onSelect(node.id)}
-      className={`w-full rounded-[8.285px] border-[1.364px] text-left transition-all duration-200 ${
+      className={`w-full rounded-xl border text-left transition-all duration-200 ${
         isSelected
           ? 'bg-safe-blue/10 border-safe-blue'
           : 'bg-safe-gray border-transparent hover:bg-safe-gray-light/50'
       }`}
-      style={{ height: '90px' }}
     >
-      <div className="px-[14px] py-[12px]">
-        {/* Node ID and Status */}
-        <div className="flex items-center justify-between mb-[6px]">
-          <div className="flex items-center gap-[8px] flex-1 min-w-0">
-            <div 
-              className="rounded-full flex-shrink-0" 
-              style={{ 
-                width: '8px', 
-                height: '8px',
-                backgroundColor: statusColor 
-              }} 
+      <div className="px-3.5 py-3">
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <div
+              className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                node.status === 'online' ? 'bg-safe-success' : 'bg-safe-danger'
+              }`}
             />
-            <span 
-              className="font-bold text-safe-text-primary truncate"
-              style={{ 
-                fontSize: 'clamp(12px, 1.3vw, 14px)',
-                lineHeight: '16.157px',
-                fontFamily: 'Arimo, sans-serif'
-              }}
-            >
+            <span className="text-sm font-bold text-safe-text-primary truncate">
               {node.id}
             </span>
           </div>
-          <span 
-            className={`text-xs font-medium px-[8px] py-[3px] rounded-[4px] flex-shrink-0 ml-[8px] ${
-              node.status === 'online' ? 'bg-safe-success/15 text-safe-success' : 'bg-safe-danger/15 text-safe-danger'
-            }`}
-            style={{ 
-              fontSize: 'clamp(10px, 1.1vw, 11px)',
-              lineHeight: '13.671px',
-              fontFamily: 'Arimo, sans-serif'
-            }}
-          >
-            {node.status}
-          </span>
+          <StatusBadge status={node.status} className="ml-2" />
         </div>
 
-        {/* Location */}
-        <p 
-          className="text-safe-text-muted mb-[6px] truncate"
-          style={{ 
-            fontSize: 'clamp(11px, 1.2vw, 12px)',
-            lineHeight: '14.914px',
-            fontFamily: 'Arimo, sans-serif'
-          }}
-        >
+        <p className="text-xs text-safe-text-muted mb-1.5 truncate">
           {node.location.address}
         </p>
 
-        {/* Metrics */}
-        <div className="flex items-center gap-[14px] flex-wrap">
-          {/* CPU */}
-          <div className="flex items-center gap-[4px]">
-            <FontAwesomeIcon 
-              icon="microchip" 
-              className="text-safe-text-muted flex-shrink-0" 
-              style={{ 
-                width: 'clamp(9px, 1.2vw, 11px)',
-                height: 'clamp(9px, 1.2vw, 11px)'
-              }}
-            />
-            <span 
-              className="text-safe-text-muted whitespace-nowrap"
-              style={{ 
-                fontSize: 'clamp(10px, 1.1vw, 12px)',
-                lineHeight: '12.428px',
-                fontFamily: 'Arimo, sans-serif'
-              }}
-            >
-              {node.health.cpu}%
-            </span>
+        <div className="flex items-center gap-3.5 flex-wrap">
+          <div className="flex items-center gap-1">
+            <FontAwesomeIcon icon="microchip" className="text-safe-text-muted text-[10px]" />
+            <span className="text-xs text-safe-text-muted">{node.health.cpu}%</span>
           </div>
-
-          {/* Temperature */}
-          <div className="flex items-center gap-[4px]">
-            <FontAwesomeIcon 
-              icon="temperature-half" 
-              className="text-safe-text-muted flex-shrink-0" 
-              style={{ 
-                width: 'clamp(9px, 1.2vw, 11px)',
-                height: 'clamp(9px, 1.2vw, 11px)'
-              }}
-            />
-            <span 
-              className="text-safe-text-muted whitespace-nowrap"
-              style={{ 
-                fontSize: 'clamp(10px, 1.1vw, 12px)',
-                lineHeight: '12.428px',
-                fontFamily: 'Arimo, sans-serif'
-              }}
-            >
-              {node.health.temperature}°C
-            </span>
+          <div className="flex items-center gap-1">
+            <FontAwesomeIcon icon="temperature-half" className="text-safe-text-muted text-[10px]" />
+            <span className="text-xs text-safe-text-muted">{node.health.temperature}°C</span>
           </div>
-
-          {/* Network */}
-          <div className="flex items-center gap-[4px]">
-            <FontAwesomeIcon 
-              icon="wifi" 
-              className="text-safe-text-muted flex-shrink-0" 
-              style={{ 
-                width: 'clamp(9px, 1.2vw, 11px)',
-                height: 'clamp(9px, 1.2vw, 11px)'
-              }}
-            />
-            <span 
-              className="text-safe-text-muted whitespace-nowrap"
-              style={{ 
-                fontSize: 'clamp(10px, 1.1vw, 12px)',
-                lineHeight: '12.428px',
-                fontFamily: 'Arimo, sans-serif'
-              }}
-            >
-              {node.health.network}%
-            </span>
+          <div className="flex items-center gap-1">
+            <FontAwesomeIcon icon="wifi" className="text-safe-text-muted text-[10px]" />
+            <span className="text-xs text-safe-text-muted">{node.health.network}%</span>
           </div>
         </div>
       </div>

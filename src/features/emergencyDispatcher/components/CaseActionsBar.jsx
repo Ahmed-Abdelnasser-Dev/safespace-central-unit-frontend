@@ -80,8 +80,8 @@ function CaseActionsBar({
           onClick={() => setEscalateOpen(true)}
           colorClass={
             isEscalated
-              ? 'border-amber-500/20 bg-amber-500/5 text-amber-400 opacity-50'
-              : 'border-amber-500/30 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 hover:border-amber-500/50'
+              ? 'border-safe-orange/20 bg-safe-orange/5 text-safe-orange opacity-50'
+              : 'border-safe-orange/30 bg-safe-orange/10 text-safe-orange hover:bg-safe-orange/20 hover:border-safe-orange/50'
           }
         />
 

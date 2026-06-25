@@ -10,12 +10,11 @@
  * @component
  */
 
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { API_BASE_URL } from '@/lib/apiConfig';
 import { selectSelectedNode } from "../nodesSlice";
 import { useNodeVideoFeed } from "@/hooks/useNodeVideoFeed";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMicrochip,
   faMemory,
@@ -29,9 +28,7 @@ import {
 import MetricCard from "../components/cards/MetricCard";
 import SectionHeader from "../components/layout/SectionHeader";
 import NodeInfoRow from "../components/ui/NodeInfoRow";
-import ListItem from "../components/lists/ListItem";
 import RoadStatusDisplay from "../components/sections/RoadStatusDisplay";
-import { typography, fontFamily } from "../styles/typography";
 
 /**
  * Format uptime seconds into human-readable string
@@ -59,7 +56,7 @@ export default function OverviewTab() {
   const [displayImage, setDisplayImage] = useState(null);
   const feedRef = useRef(null);
   // Always use 640x640 for node camera
-  const [feedSize, setFeedSize] = useState({ width: 640, height: 640 });
+  const [feedSize] = useState({ width: 640, height: 640 });
 
   if (!node) return null;
 
@@ -100,15 +97,7 @@ export default function OverviewTab() {
     <div className="p-[12px] sm:p-[14px] md:p-[16px] lg:p-[18px] xl:p-[20px] space-y-[14px] sm:space-y-[16px] md:space-y-[18px] lg:space-y-[20px] h-full overflow-y-auto">
       {/* ===== SECTION 1: CAMERA FEED ===== */}
       <div className="space-y-[8px] sm:space-y-[10px] md:space-y-[12px]">
-        <h4
-          className="font-bold text-safe-text-primary"
-          style={{
-            fontSize: 'clamp(14px, 1.5vw, 18px)',
-            fontFamily,
-          }}
-        >
-          Live Camera Feed
-        </h4>
+        <h4 className="text-base font-bold text-safe-text-primary">Live Camera Feed</h4>
 
         <div
           ref={feedRef}
@@ -123,10 +112,7 @@ export default function OverviewTab() {
             />
           ) : (
             <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-[#111827]">
-              <span
-                className="text-white/70"
-                style={{ fontSize: 'clamp(12px, 1.2vw, 14px)', fontFamily }}
-              >
+              <span className="text-sm text-white/70">
                 {isConnected ? 'Waiting for video feed...' : 'Live stream not connected'}
               </span>
             </div>
@@ -141,13 +127,7 @@ export default function OverviewTab() {
               className={`bg-white rounded-full ${isConnected && node.status === 'online' ? 'animate-pulse' : 'opacity-40'}`}
               style={{ width: "4px", height: "4px" }}
             />
-            <span
-              className="text-white font-bold"
-              style={{
-                ...typography.labelSmall,
-                fontFamily,
-              }}
-            >
+            <span className="text-xs font-bold text-white">
               {isConnected && node.status === 'online' ? 'LIVE' : 'OFFLINE'}
             </span>
           </div>
@@ -158,13 +138,7 @@ export default function OverviewTab() {
               className="absolute bg-black bg-opacity-80 rounded-[3px] px-[8px] py-[4px]"
               style={{ bottom: "12px", left: "12px" }}
             >
-              <span
-                className="text-white font-normal"
-                style={{
-                  ...typography.caption,
-                  fontFamily,
-                }}
-              >
+              <span className="text-[10px] text-white font-normal">
                 {node.nodeSpecs.cameraResolution || '1920×1080'} @ {node.health.currentFps?.toFixed(1) || 0} FPS
               </span>
             </div>

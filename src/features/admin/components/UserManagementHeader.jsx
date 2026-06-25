@@ -1,53 +1,22 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 /**
- * Header for all screens
+ * User Management action bar — refresh button only.
+ * Search lives in UserManagementButtons (content area).
+ * Title lives in AppTopBar.
+ * Phase 3: migrate refresh to PageActions and delete this component.
  */
-function UserManagementHeader({ title, description}) {
+function UserManagementHeader({ onRefresh }) {
   return (
-    <header className="bg-safe-sidebar border-b border-safe-border px-8 py-5">
-      <div className="flex items-start justify-between">
-        {(title || description) && (
-          <div>
-            {title && (
-              <h1 className="text-2xl font-semibold text-safe-text-dark"> {title} </h1>
-            )}
-            {description && (
-              <p className="text-xs text-safe-text-gray mt-1">{description}</p>
-            )}
-          </div>
-        )}
-
-        
-        <div className="flex items-center gap-4">
-          {/* Search Bar */}
-          <div className="relative">
-            <FontAwesomeIcon 
-              icon="magnifying-glass" 
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-safe-text-gray text-sm"
-            />
-            <input
-              type="text"
-              placeholder="Search locations, units, incidents..."
-              className="pl-11 pr-4 py-2.5 w-[340px] rounded-lg border border-safe-border bg-safe-dark text-sm text-safe-text-primary placeholder:text-safe-text-muted focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn"
-            />
-          </div>
-
-          {/* Refresh Button */}
-          <button className="w-10 h-10 rounded-lg border border-safe-border flex items-center justify-center text-safe-text-gray hover:bg-safe-bg transition-colors">
-            <FontAwesomeIcon icon="rotate" className="text-sm" />
-          </button>
-
-          {/* Notifications */}
-          <button className="relative w-10 h-10 rounded-lg border border-safe-border flex items-center justify-center text-safe-text-gray hover:bg-safe-bg transition-colors">
-            <FontAwesomeIcon icon="bell" className="text-sm" />
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-safe-danger rounded-full text-white text-[10px] font-semibold flex items-center justify-center">
-              3
-            </span>
-          </button>
-        </div>
-      </div>
-    </header>
+    <div className="bg-safe-sidebar border-b border-safe-border px-6 py-3 flex items-center justify-end gap-3 flex-shrink-0">
+      <button
+        onClick={onRefresh}
+        title="Refresh"
+        className="w-9 h-9 rounded-lg border border-safe-border flex items-center justify-center text-safe-text-muted hover:bg-safe-gray transition-colors"
+      >
+        <FontAwesomeIcon icon="rotate" className="text-sm" />
+      </button>
+    </div>
   );
 }
 
