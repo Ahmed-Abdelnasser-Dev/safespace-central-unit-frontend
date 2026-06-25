@@ -11,6 +11,7 @@ import PersonalInfoCard from './PersonalInfoCard';
 import AccountInfoCard from './AccountInfoCard';
 import RecentActivityCard from './RecentActivityCard';
 import SecuritySettingsCard from './SecuritySettingsCard';
+import MFACard from './MFACard';
 import EditPersonalInfoModal from './EditPersonalInfoModal';
 import EditAccountInfoModal from '@/features/admin/components/EditAccountInfoModal';
 import ChangePasswordModal from './ChangePasswordModal';
@@ -201,6 +202,8 @@ function Profile({ onLogout }) {
         <RecentActivityCard activities={recentActivity} />
         <SecuritySettingsCard onChangePassword={() => setIsPasswordModalOpen(true)} onLogout={onLogout} />
       </div>
+
+      <MFACard />
 
       {/* Modals */}
       <EditPersonalInfoModal isOpen={isPersonalModalOpen} onClose={() => setIsPersonalModalOpen(false)} userData={user} onSubmit={handlePersonalInfoSubmit} />

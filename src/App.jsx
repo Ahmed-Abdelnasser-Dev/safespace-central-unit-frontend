@@ -37,6 +37,7 @@ const SignInPage = lazy(() => import('./features/auth/pages/SignInPage.jsx'));
 const TwoFactorAuthPage = lazy(() => import('./features/auth/pages/TwoFactorAuthPage.jsx'));
 const ForgotPasswordPage = lazy(() => import('./features/auth/pages/ForgotPasswordPage.jsx'));
 const CheckYourEmailPage = lazy(() => import('./features/auth/pages/CheckYourEmailPage.jsx'));
+const ResetPasswordPage = lazy(() => import('./features/auth/pages/ResetPasswordPage.jsx'));
 const YouAreAllSetPage = lazy(() => import('./features/auth/pages/YouAreAllSetPage.jsx'));
 
 // Placeholder pages
@@ -108,6 +109,7 @@ function App() {
           <Route path="/two-factor" element={<TwoFactorAuthPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/check-email" element={<CheckYourEmailPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/all-set" element={<YouAreAllSetPage />} />
 
           {/* ── Authenticated routes (with AppLayout) ────────────── */}

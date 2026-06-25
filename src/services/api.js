@@ -1,6 +1,13 @@
 /**
  * API Service
  * Centralized API client with authentication and error handling
+ *
+ * Auth model: tokens live in HttpOnly cookies set by the backend.
+ * The browser sends them automatically with every withCredentials request.
+ * We NEVER store accessToken / refreshToken in sessionStorage.
+ *
+ * sessionStorage / localStorage are only used for the user profile object
+ * (non-sensitive, used only to hydrate the Redux store on page reload).
  */
 
 import axios from 'axios';
@@ -13,22 +20,27 @@ const isAuthEndpoint = (url = '') => AUTH_ENDPOINTS.some((endpoint) => url.inclu
 // Create axios instance
 const api = axios.create({
   baseURL: API_URL,
+  withCredentials: true, // Required: backend uses HttpOnly cookies for auth tokens
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Include cookies with every request
 });
 
-// Request interceptor (no longer adds Bearer token)
+// ─── Request interceptor ──────────────────────────────────────────────────────
+// Tokens are in HttpOnly cookies — browser attaches them automatically.
 api.interceptors.request.use(
-  (config) => {
-    // Cookies are automatically included via withCredentials
-    return config;
-  },
+  (config) => config,
   (error) => Promise.reject(error)
 );
 
-// Response interceptor for cookie-based token refresh
+// ─── Response interceptor — silent token refresh ──────────────────────────────
+// Refresh tokens rotate server-side on every use (old one is revoked, a new
+// one issued). If two requests 401 at the same time and each independently
+// calls /auth/refresh, the second call races against an already-rotated
+// token and fails — wrongly logging out a still-valid session. This shared
+// promise makes every concurrent 401 retry await the *same* refresh call.
+let refreshPromise = null;
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -43,19 +55,23 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        // Attempt refresh with credentials (cookies are sent automatically)
-        await axios.post(
-          `${API_URL}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        );
+        // Reuse an in-flight refresh instead of starting a new one.
+        if (!refreshPromise) {
+          refreshPromise = axios
+            .post(`${API_URL}/auth/refresh`, {}, { withCredentials: true })
+            .finally(() => {
+              refreshPromise = null;
+            });
+        }
 
-        // Backend sets new cookies, no need to extract tokens from response
-        // Retry original request
+        await refreshPromise;
+
+        // Backend sets new cookies — retry original request
         return api(originalRequest);
       } catch (refreshError) {
         // Refresh failed, clear user state and redirect to login
         sessionStorage.removeItem('user');
+        localStorage.removeItem('user');
         window.location.href = '/sign-in';
         return Promise.reject(refreshError);
       }
@@ -80,7 +96,7 @@ export const authAPI = {
    */
   login: async (email, password, rememberMe = false) => {
     const { data } = await api.post('/auth/login', { email, password, rememberMe }, { withCredentials: true });
-    return data.data; // Extract from wrapper
+    return data.data;
   },
 
   /**
@@ -90,12 +106,11 @@ export const authAPI = {
    */
   refresh: async () => {
     const { data } = await api.post('/auth/refresh', {}, { withCredentials: true });
-    return data.data; // Extract from wrapper
+    return data.data;
   },
 
   /**
    * Logout - clears HTTP-only cookies server-side
-   * Credentials included automatically via withCredentials
    */
   logout: async () => {
     await api.post('/auth/logout', {}, { withCredentials: true });
@@ -110,17 +125,65 @@ export const authAPI = {
    */
   verifyMFA: async (userId, code, rememberMe = false) => {
     const { data } = await api.post('/auth/mfa/verify', { userId, code, rememberMe }, { withCredentials: true });
-    return data.data; // Extract from wrapper
+    return data.data;
   },
 
   /**
-   * Change password
-   * @param {string} userId
+   * Generate a new TOTP secret + QR code (call once per setup flow).
+   * User must be logged in.
+   * @returns {Promise<{qrCode: string, secret: string}>}
+   */
+  setupMFA: async () => {
+    const { data } = await api.post('/auth/mfa/setup', {}, { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * Confirm MFA setup by verifying the first TOTP code.
+   * @param {string} code - TOTP code from authenticator app
+   * @returns {Promise<{backupCodes: string[]}>}
+   */
+  enableMFA: async (code) => {
+    const { data } = await api.post('/auth/mfa/enable', { code }, { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * Disable MFA — requires password + current TOTP code.
+   * @param {string} password
+   * @param {string} code
+   */
+  disableMFA: async (password, code) => {
+    await api.post('/auth/mfa/disable', { password, code }, { withCredentials: true });
+  },
+
+  /**
+   * Change password. Identity comes from the authenticated session cookie.
    * @param {string} currentPassword
    * @param {string} newPassword
    */
-  changePassword: async (userId, currentPassword, newPassword) => {
-    await api.post('/auth/change-password', { userId, currentPassword, newPassword }, { withCredentials: true });
+  changePassword: async (currentPassword, newPassword) => {
+    await api.post('/auth/change-password', { currentPassword, newPassword }, { withCredentials: true });
+  },
+
+  /**
+   * Request a password reset link.
+   * Always resolves — backend never reveals whether the email is registered.
+   * @param {string} email
+   */
+  forgotPassword: async (email) => {
+    const { data } = await api.post('/auth/forgot-password', { email });
+    return data;
+  },
+
+  /**
+   * Complete password reset using the token from the email link.
+   * @param {string} token       — raw token from ?token= query parameter
+   * @param {string} newPassword
+   */
+  resetPassword: async (token, newPassword) => {
+    const { data } = await api.post('/auth/reset-password', { token, newPassword });
+    return data;
   },
 };
 
@@ -131,27 +194,22 @@ export const authAPI = {
 export const userAPI = {
   /**
    * Get current user profile
-   * @returns {Promise} User object
    */
   getMe: async () => {
     const { data } = await api.get('/users/me', { withCredentials: true });
-    return data.data; // Extract from wrapper
+    return data.data;
   },
 
   /**
    * Update current user profile
-   * @param {Object} updates - firstName, lastName, phone
-   * @returns {Promise} Updated user object
    */
   updateMe: async (updates) => {
     const { data } = await api.patch('/users/me', updates, { withCredentials: true });
-    return data.data; // Extract from wrapper
+    return data.data;
   },
 
   /**
    * Update profile photo
-   * @param {File} photoFile
-   * @returns {Promise} Updated user object
    */
   updatePhoto: async (photoFile) => {
     const formData = new FormData();
@@ -160,44 +218,35 @@ export const userAPI = {
       headers: { 'Content-Type': 'multipart/form-data' },
       withCredentials: true,
     });
-    return data.data; // Extract from wrapper
+    return data.data;
   },
 
   /**
    * List all users (admin only)
-   * @param {Object} params - page, limit, role, search, isActive
-   * @returns {Promise} { users, total, page, totalPages }
    */
   listUsers: async (params = {}) => {
     const { data } = await api.get('/users', { params, withCredentials: true });
-    return data.data; // Extract from wrapper
+    return data.data;
   },
 
   /**
    * Get user by ID (admin only)
-   * @param {string} userId
-   * @returns {Promise} User object
    */
   getUser: async (userId) => {
     const { data } = await api.get(`/users/${userId}`, { withCredentials: true });
-    return data.data; // Extract from wrapper
+    return data.data;
   },
 
   /**
    * Create new user (admin only)
-   * @param {Object} userData
-   * @returns {Promise} Created user object
    */
   createUser: async (userData) => {
     const { data } = await api.post('/users', userData, { withCredentials: true });
-    return data.data; // Extract from wrapper
+    return data.data;
   },
 
   /**
-   * Update user by admin (email, roleId)
-   * @param {string} userId
-   * @param {Object} updates - email, roleId
-   * @returns {Promise} Updated user object
+   * Update user by admin
    */
   updateUser: async (userId, updates) => {
     const { data } = await api.patch(`/users/${userId}`, updates, { withCredentials: true });
@@ -206,26 +255,37 @@ export const userAPI = {
 
   /**
    * Deactivate user (admin only)
-   * @param {string} userId
-   * @returns {Promise} Updated user object
    */
   deactivateUser: async (userId) => {
     const { data } = await api.patch(`/users/${userId}/deactivate`, {}, { withCredentials: true });
-    return data.data; // Extract from wrapper
+    return data.data;
   },
 
   /**
    * Reactivate user (admin only)
-   * @param {string} userId
-   * @returns {Promise} Updated user object
    */
   reactivateUser: async (userId) => {
     const { data } = await api.patch(`/users/${userId}/reactivate`, {}, { withCredentials: true });
-    return data.data; // Extract from wrapper
+    return data.data;
   },
 
-  deleteUser: async (userId) => {
-    const { data } = await api.delete(`/users/${userId}`, { withCredentials: true });
+  /**
+   * Admin reset a user's password.
+   * sendEmail=true  → backend emails reset link to user (preferred)
+   * sendEmail=false → backend returns a temp password to the admin
+   */
+  adminResetPassword: async (userId, { sendEmail = true } = {}) => {
+    const { data } = await api.post(`/users/${userId}/reset-password`, { sendEmail }, { withCredentials: true });
+    return data.data;
+  },
+
+  /**
+   * Permanently delete a user (admin only).
+   * Requires confirmEmail — must exactly match the target user's email.
+   * This is the server-side half of the "type the user's email to confirm" modal.
+   */
+  deleteUser: async (userId, confirmEmail) => {
+    const { data } = await api.delete(`/users/${userId}`, { data: { confirmEmail }, withCredentials: true });
     return data;
   },
 };
@@ -235,14 +295,9 @@ export const userAPI = {
 // ============================================================================
 
 export const activityLogsAPI = {
-  /**
-   * Get activity logs (admin only)
-   * @param {Object} params - page, limit, userId, eventType, action, startDate, endDate
-   * @returns {Promise} { logs, total, page, totalPages }
-   */
   getLogs: async (params = {}) => {
     const { data } = await api.get('/activity-logs', { params, withCredentials: true });
-    return data.data; // Extract from wrapper
+    return data.data;
   },
 };
 
@@ -262,9 +317,9 @@ export const metricsAPI = {
     const params = { type };
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
-    if (unit) params.unit = unit; // e.g., 'hour' or 'minute'
+    if (unit) params.unit = unit;
     const { data } = await api.get('/metrics/hourly', { params, withCredentials: true });
-    return data.data; // expected { labels: [], data: [] }
+    return data.data;
   }
 };
 

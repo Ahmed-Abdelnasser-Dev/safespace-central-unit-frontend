@@ -84,6 +84,7 @@ function UserManagementPage() {
           onRefresh={fetchUsers}
           onPageChange={(page) => setFilters((prev) => ({ ...prev, page }))}
           currentPage={filters.page}
+          currentUserId={user?.id}
         />
       </div>
     </div>

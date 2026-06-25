@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '@/services/api';
 import { showSuccess, showError } from '@/utils/toast';
@@ -15,7 +15,6 @@ import PasswordStrengthSection from './PasswordStrengthSection.jsx';
 function ChangePasswordModal({ isOpen, onClose, isMandatory = false }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
   
   const [formData, setFormData] = useState({
     currentPassword: '',
@@ -70,11 +69,11 @@ function ChangePasswordModal({ isOpen, onClose, isMandatory = false }) {
 
     setIsSubmitting(true);
     try {
-      await authAPI.changePassword(user.id, formData.currentPassword, formData.newPassword);
+      await authAPI.changePassword(formData.currentPassword, formData.newPassword);
       await dispatch(fetchCurrentUser()).unwrap();
       showSuccess('Password changed successfully! Redirecting...');
       handleClose();
-      navigate('/map-overview', { replace: true });
+      navigate('/map', { replace: true });
     } catch (error) {
       console.error('Password change error:', error);
       if (error.response?.status === 401) {
