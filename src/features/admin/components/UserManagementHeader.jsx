@@ -29,7 +29,7 @@ function UserManagementHeader({ title, description}) {
             <input
               type="text"
               placeholder="Search locations, units, incidents..."
-              className="pl-11 pr-4 py-2.5 w-[340px] rounded-lg border border-safe-border text-sm text-safe-text-dark placeholder:text-safe-text-gray focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn"
+              className="pl-11 pr-4 py-2.5 w-[340px] rounded-lg border border-safe-border bg-safe-dark text-sm text-safe-text-primary placeholder:text-safe-text-muted focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/20 focus:border-safe-blue-btn"
             />
           </div>
 

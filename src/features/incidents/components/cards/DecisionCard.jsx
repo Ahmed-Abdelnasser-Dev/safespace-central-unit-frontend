@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleCheck, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 
 function DecisionCard({
   originalSpeedLimit = 80,
@@ -17,22 +17,20 @@ function DecisionCard({
   const safeFinalStates = Array.isArray(finalLaneStates) && finalLaneStates.length > 0 ? finalLaneStates : safeNewStates;
   const safeLaneNames = Array.isArray(laneNames) ? laneNames : [];
   const maxLength = Math.max(safeOriginalStates.length, safeNewStates.length, safeFinalStates.length, safeLaneNames.length);
-  
+
   // Pad arrays to same length if needed
   const paddedOriginalStates = Array.from({ length: maxLength }, (_, i) => safeOriginalStates[i] || 'open');
   const paddedAiStates = Array.from({ length: maxLength }, (_, i) => safeNewStates[i] || 'open');
   const paddedFinalStates = Array.from({ length: maxLength }, (_, i) => safeFinalStates[i] || 'open');
   const paddedLaneNames = Array.from({ length: maxLength }, (_, i) => safeLaneNames[i] || `Lane ${i + 1}`);
-  
+
   const aiSpeedReduction = originalSpeedLimit - newSpeedLimit;
   const finalSpeedReduction = originalSpeedLimit - finalSpeedLimit;
-  const isModified = finalSpeedLimit !== newSpeedLimit || paddedFinalStates.some((state, i) => state !== paddedAiStates[i]);
-  
   // Return early if no data
   if (maxLength === 0) {
     return (
-      <div className="bg-white border border-[#e5e7eb] rounded-[8px] p-[16px]">
-        <div className="py-[20px] text-center text-[13px] text-[#9ca3af]">
+      <div className="bg-safe-sidebar border border-safe-border rounded-lg p-4">
+        <div className="py-5 text-center text-sm text-safe-text-muted">
           No decision data available
         </div>
       </div>
@@ -40,60 +38,58 @@ function DecisionCard({
   }
 
   return (
-    <div className="bg-white border border-[#e5e7eb] rounded-[8px] overflow-hidden">
-      
-
-      <div className="p-[16px]">
-        <div className="grid grid-cols-2 gap-[16px]">
+    <div className="bg-safe-sidebar border border-safe-border rounded-lg overflow-hidden">
+      <div className="p-4">
+        <div className="grid grid-cols-2 gap-4">
           {/* AI Suggestion Column */}
-          <div className="space-y-[12px]">
-            <div className="flex items-center gap-[8px] pb-[8px] border-b border-[#e5e7eb]">
-              <div className="w-[6px] h-[6px] rounded-full bg-[#3b82f6]" />
-              <h4 className="text-[12px] font-semibold text-[#3b82f6] uppercase tracking-wide">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-2 border-b border-safe-border">
+              <div className="w-1.5 h-1.5 rounded-full bg-safe-blue" />
+              <h4 className="text-[12px] font-semibold text-safe-blue uppercase tracking-wide">
                 AI Suggests
               </h4>
             </div>
-            
+
             {/* Speed Limit */}
             <div>
-              <div className="text-[11px] text-[#6b7280] mb-[4px]">Speed Limit</div>
-              <div className="flex items-baseline gap-[6px]">
-                <span className="text-[24px] font-bold text-[#111827]">{newSpeedLimit}</span>
-                <span className="text-[14px] text-[#6b7280]">km/h</span>
+              <div className="text-[11px] text-safe-text-muted mb-1">Speed Limit</div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl font-bold text-safe-text-primary">{newSpeedLimit}</span>
+                <span className="text-sm text-safe-text-muted">km/h</span>
                 {aiSpeedReduction > 0 && (
-                  <span className="text-[12px] font-medium text-[#ef4444] ml-[4px]">
+                  <span className="text-[12px] font-medium text-safe-danger ml-1">
                     -{aiSpeedReduction}
                   </span>
                 )}
               </div>
             </div>
-            
+
             {/* Lanes */}
             <div>
-              <div className="text-[11px] text-[#6b7280] mb-[6px]">Lanes</div>
-              <div className="space-y-[6px]">
+              <div className="text-[11px] text-safe-text-muted mb-1.5">Lanes</div>
+              <div className="space-y-1.5">
                 {paddedLaneNames.map((name, i) => {
                   const aiState = paddedAiStates[i];
                   const currentState = paddedOriginalStates[i];
                   const hasChanged = currentState !== aiState;
                   const aiConfig = statusConfig[aiState] || { icon: faCircleCheck, color: '#22c55e', bg: '#dcfce7' };
-                  
+
                   return (
-                    <div key={i} className="flex items-center gap-[8px]">
-                      <span className="text-[12px] text-[#6b7280] w-[60px] flex-shrink-0">
+                    <div key={i} className="flex items-center gap-2">
+                      <span className="text-[12px] text-safe-text-muted w-[60px] flex-shrink-0">
                         {name}
                       </span>
-                      <div className={`flex items-center gap-[6px] flex-1 px-[10px] py-[6px] rounded-[6px] ${
-                        hasChanged ? 'bg-[#eff6ff] border border-[#3b82f6]' : 'bg-[#f9fafb]'
+                      <div className={`flex items-center gap-1.5 flex-1 px-2.5 py-1.5 rounded-md ${
+                        hasChanged ? 'bg-safe-blue/10 border border-safe-blue' : 'bg-safe-gray'
                       }`}>
-                        <div 
-                          className="w-[20px] h-[20px] rounded-[4px] flex items-center justify-center flex-shrink-0"
+                        <div
+                          className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0"
                           style={{ backgroundColor: aiConfig.bg }}
                         >
                           <FontAwesomeIcon icon={aiConfig.icon} style={{ color: aiConfig.color, width: '10px', height: '10px' }} />
                         </div>
                         <span className={`text-[13px] capitalize ${
-                          hasChanged ? 'font-semibold text-[#111827]' : 'text-[#6b7280]'
+                          hasChanged ? 'font-semibold text-safe-text-primary' : 'text-safe-text-muted'
                         }`}>
                           {aiState}
                         </span>
@@ -106,62 +102,62 @@ function DecisionCard({
           </div>
 
           {/* Final Decision Column */}
-          <div className="space-y-[12px]">
-            <div className="flex items-center gap-[8px] pb-[8px] border-b border-[#e5e7eb]">
-              <FontAwesomeIcon icon={faCircleCheck} className="text-[#10b981]" size="sm" />
-              <h4 className="text-[12px] font-semibold text-[#10b981] uppercase tracking-wide">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 pb-2 border-b border-safe-border">
+              <FontAwesomeIcon icon={faCircleCheck} className="text-safe-success" size="sm" />
+              <h4 className="text-[12px] font-semibold text-safe-success uppercase tracking-wide">
                 Final Decision
               </h4>
             </div>
-            
+
             {/* Speed Limit */}
             <div>
-              <div className="text-[11px] text-[#6b7280] mb-[4px]">Speed Limit</div>
-              <div className="flex items-baseline gap-[6px]">
-                <span className="text-[24px] font-bold text-[#111827]">{finalSpeedLimit}</span>
-                <span className="text-[14px] text-[#6b7280]">km/h</span>
+              <div className="text-[11px] text-safe-text-muted mb-1">Speed Limit</div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl font-bold text-safe-text-primary">{finalSpeedLimit}</span>
+                <span className="text-sm text-safe-text-muted">km/h</span>
                 {finalSpeedReduction > 0 && (
-                  <span className="text-[12px] font-medium text-[#ef4444] ml-[4px]">
+                  <span className="text-[12px] font-medium text-safe-danger ml-1">
                     -{finalSpeedReduction}
                   </span>
                 )}
                 {finalSpeedLimit !== newSpeedLimit && (
-                  <span className="text-[11px] font-medium text-[#10b981] bg-[#d1fae5] px-[6px] py-[2px] rounded ml-[4px]">
+                  <span className="text-[11px] font-medium text-safe-success bg-safe-success/15 px-1.5 py-0.5 rounded ml-1">
                     Edited
                   </span>
                 )}
               </div>
             </div>
-            
+
             {/* Lanes */}
             <div>
-              <div className="text-[11px] text-[#6b7280] mb-[6px]">Lanes</div>
-              <div className="space-y-[6px]">
+              <div className="text-[11px] text-safe-text-muted mb-1.5">Lanes</div>
+              <div className="space-y-1.5">
                 {paddedLaneNames.map((name, i) => {
                   const finalState = paddedFinalStates[i];
                   const aiState = paddedAiStates[i];
                   const wasModified = finalState !== aiState;
                   const finalConfig = statusConfig[finalState] || { icon: faCircleCheck, color: '#22c55e', bg: '#dcfce7' };
-                  
+
                   return (
-                    <div key={i} className="flex items-center gap-[8px]">
-                      <span className="text-[12px] text-[#6b7280] w-[60px] flex-shrink-0">
+                    <div key={i} className="flex items-center gap-2">
+                      <span className="text-[12px] text-safe-text-muted w-[60px] flex-shrink-0">
                         {name}
                       </span>
-                      <div className={`flex items-center gap-[6px] flex-1 px-[10px] py-[6px] rounded-[6px] ${
-                        wasModified ? 'bg-[#d1fae5] border border-[#10b981]' : 'bg-[#f9fafb]'
+                      <div className={`flex items-center gap-1.5 flex-1 px-2.5 py-1.5 rounded-md ${
+                        wasModified ? 'bg-safe-success/10 border border-safe-success' : 'bg-safe-gray'
                       }`}>
-                        <div 
-                          className="w-[20px] h-[20px] rounded-[4px] flex items-center justify-center flex-shrink-0"
+                        <div
+                          className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0"
                           style={{ backgroundColor: finalConfig.bg }}
                         >
                           <FontAwesomeIcon icon={finalConfig.icon} style={{ color: finalConfig.color, width: '10px', height: '10px' }} />
                         </div>
-                        <span className="text-[13px] font-semibold capitalize text-[#111827]">
+                        <span className="text-[13px] font-semibold capitalize text-safe-text-primary">
                           {finalState}
                         </span>
                         {wasModified && (
-                          <span className="ml-auto text-[10px] font-medium text-[#10b981] bg-white px-[6px] py-[2px] rounded">
+                          <span className="ml-auto text-[10px] font-medium text-safe-success bg-safe-success/15 px-1.5 py-0.5 rounded">
                             Edited
                           </span>
                         )}

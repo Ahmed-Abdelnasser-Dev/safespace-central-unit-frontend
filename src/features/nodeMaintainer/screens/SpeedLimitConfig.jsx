@@ -14,7 +14,7 @@ export default function SpeedLimitConfig({ speedLimit, onChange }) {
             Speed Limit (km/h)
           </span>
           <span
-            className="font-bold text-[#247cff]"
+            className="font-bold text-safe-blue"
             style={{ fontSize: 'clamp(16px, 2vw, 20px)', fontFamily }}
           >
             {speedLimit} km/h
@@ -27,7 +27,7 @@ export default function SpeedLimitConfig({ speedLimit, onChange }) {
           step="5"
           value={speedLimit}
           onChange={(e) => onChange(parseInt(e.target.value))}
-          className="w-full h-2 bg-safe-gray-light rounded-lg appearance-none cursor-pointer accent-[#247cff]"
+          className="w-full h-2 bg-safe-gray-light rounded-lg appearance-none cursor-pointer accent-safe-blue-btn"
         />
         <div
           className="flex justify-between text-safe-text-muted mt-[8px] sm:mt-[10px]"

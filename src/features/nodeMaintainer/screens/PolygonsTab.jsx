@@ -61,8 +61,8 @@ function PolygonsTab({ onEditPolygon }) {
               title={lane.name}
               subtitle={
                 isEmpty 
-                  ? <span className="text-[#f59e0b] font-medium">⚠ Polygon not defined</span>
-                  : <span className="text-[#22c55e]">✓ {polygon.points?.length || 0} points</span>
+                  ? <span className="text-safe-orange font-medium">⚠ Polygon not defined</span>
+                  : <span className="text-safe-success">✓ {polygon.points?.length || 0} points</span>
               }
               actions={[
                 {

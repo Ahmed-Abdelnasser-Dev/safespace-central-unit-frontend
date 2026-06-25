@@ -82,13 +82,13 @@ function NodePopover({ node, onClose, onViewDetails }) {
         </div>
         {speedLimit != null && (
           <>
-            <span className="text-safe-gray-light text-[10px]">·</span>
+            <span className="text-safe-text-muted text-[10px]">·</span>
             <span className="text-[11px] text-safe-text-muted font-mono">{speedLimit} km/h</span>
           </>
         )}
         {lanes.length > 0 && (
           <>
-            <span className="text-safe-gray-light text-[10px]">·</span>
+            <span className="text-safe-text-muted text-[10px]">·</span>
             <span className="text-[11px] text-safe-text-muted">{lanes.length} lanes</span>
           </>
         )}

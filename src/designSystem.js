@@ -1,39 +1,11 @@
 /**
  * SafeSpace Design System Tokens
  * Single source of truth for all design values.
- * Aligned with tailwind.config.js color palette.
+ *
+ * Colors: defined as CSS custom properties in src/index.css (:root + .dark)
+ * and surfaced as Tailwind tokens in tailwind.config.js.
+ * Use the safe-* Tailwind classes directly; don't duplicate color values here.
  */
-
-// -- Colors (Tailwind class suffixes, use with bg-, text-, border-) ----------
-export const colors = {
-  // Core backgrounds
-  dark: 'safe-dark',
-  sidebar: 'safe-sidebar',
-  gray: 'safe-gray',
-  grayLight: 'safe-gray-light',
-  bg: 'safe-bg',
-  white: 'safe-white',
-
-  // Brand
-  blue: 'safe-blue',
-  blueLight: 'safe-blue-light',
-  blueBtn: 'safe-blue-btn',
-
-  // Semantic
-  success: 'safe-success',
-  danger: 'safe-danger',
-  accent: 'safe-accent',
-  orange: 'safe-orange',
-  info: 'safe-info',
-  green: 'safe-green',
-
-  // Text
-  textDark: 'safe-text-dark',
-  textGray: 'safe-text-gray',
-
-  // Border
-  border: 'safe-border',
-};
 
 // -- Spacing (raw values) ---------------------------------------------------
 export const spacing = {
@@ -52,7 +24,7 @@ export const typography = {
   h3: 'text-lg font-semibold',
   subtitle: 'text-sm font-medium',
   body: 'text-sm',
-  caption: 'text-xs text-gray-400',
+  caption: 'text-xs text-safe-text-muted',
   tiny: 'text-[11px] tracking-wide',
 };
 

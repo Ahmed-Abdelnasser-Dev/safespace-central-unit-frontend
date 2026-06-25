@@ -43,8 +43,8 @@ export default function NodeDetailPanel({
             <span
               className={`px-[10px] lg:px-[12px] py-[3px] lg:py-4px] rounded-[4px] lg:rounded-[6px] font-medium flex-shrink-0 ${
                 selectedNode.status === 'online'
-                  ? 'bg-[#e8f5e9] text-[#4caf50]'
-                  : 'bg-[#fce4ec] text-[#d63e4d]'
+                  ? 'bg-safe-success/15 text-safe-success'
+                  : 'bg-safe-danger/15 text-safe-danger'
               }`}
               style={{ fontSize: 'clamp(10px, 1.2vw, 11px)', fontFamily: 'Arimo, sans-serif' }}
             >

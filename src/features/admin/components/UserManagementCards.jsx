@@ -97,7 +97,7 @@ function UserManagementCards() {
                         </div>
                     </div>
 
-                    <div className="text-3xl font-bold text-safe-dark mb-5">
+                    <div className="text-3xl font-bold text-safe-text-primary mb-5">
                         {item.value}
                     </div>
 

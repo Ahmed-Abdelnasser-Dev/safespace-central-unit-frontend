@@ -100,7 +100,7 @@ function EditAccountInfoModal({ isOpen, onClose, onSubmit, userData, isAdmin = f
             <div className="p-4 bg-safe-accent/10 border border-safe-accent/30 rounded-lg">
               <div className="flex items-start gap-3">
                 <div className="flex-1">
-                  <span className="text-xs font-bold text-safe-dark/70 mb-1">Warning: </span>
+                  <span className="text-xs font-bold text-safe-accent mb-1">Warning: </span>
                   <span className="text-xs text-safe-text-gray">
                     Changing these fields will immediately affect the user's access permissions.
                   </span>

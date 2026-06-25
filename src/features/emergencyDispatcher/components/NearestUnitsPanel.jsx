@@ -78,7 +78,7 @@ function NearestUnitsPanel({
               className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-all duration-150 ${
                 selectedOnly
                   ? 'bg-safe-blue text-safe-text-primary'
-                  : 'bg-safe-gray-light/40 text-white/60 hover:bg-safe-gray-light/30 hover:text-safe-text-primary'
+                  : 'bg-safe-gray-light/40 text-safe-text-muted hover:bg-safe-gray-light/30 hover:text-safe-text-primary'
               }`}
             >
               <FontAwesomeIcon icon="check-square" className="mr-1.5 text-[10px]" />

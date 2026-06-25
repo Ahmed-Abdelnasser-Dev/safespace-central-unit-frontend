@@ -112,7 +112,7 @@ function RoadConfigTab() {
       <div className="space-y-[8px] sm:space-y-[10px] md:space-y-[12px] mt-[12px] sm:mt-[14px] lg:mt-[16px]">
         <div className="flex justify-between items-center">
           <span></span>
-          <Button variant="ghost" onClick={() => setIsAddLaneOpen(true)} className="!text-[#247cff] hover:!bg-blue-50">
+          <Button variant="ghost" onClick={() => setIsAddLaneOpen(true)} className="!text-safe-blue hover:!bg-safe-blue/10">
             + Add Lane
           </Button>
         </div>

@@ -62,7 +62,7 @@ function FilterBar({ statusFilter, severityFilter, onStatusChange, onSeverityCha
       <select
         value={statusFilter}
         onChange={(e) => onStatusChange(e.target.value)}
-        className="bg-safe-gray border border-safe-gray-light text-white text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-safe-blue transition-colors"
+        className="bg-safe-gray border border-safe-gray-light text-safe-text-primary text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-safe-blue transition-colors"
       >
         {STATUS_FILTER_OPTIONS.map((o) => (
           <option key={o.value} value={o.value}>{o.label}</option>
@@ -71,7 +71,7 @@ function FilterBar({ statusFilter, severityFilter, onStatusChange, onSeverityCha
       <select
         value={severityFilter}
         onChange={(e) => onSeverityChange(e.target.value)}
-        className="bg-safe-gray border border-safe-gray-light text-white text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-safe-blue transition-colors"
+        className="bg-safe-gray border border-safe-gray-light text-safe-text-primary text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-safe-blue transition-colors"
       >
         {SEVERITY_OPTIONS.map((o) => (
           <option key={o.value} value={o.value}>{o.label}</option>
@@ -96,7 +96,7 @@ function IncidentRow({ incident, onSelect }) {
 
       {/* Node + incident type */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-white truncate">{incident.nodeLabel ?? incident.nodeId ?? 'Unknown node'}</p>
+        <p className="text-sm font-medium text-safe-text-primary truncate">{incident.nodeLabel ?? incident.nodeId ?? 'Unknown node'}</p>
         <p className="text-[11px] text-safe-text-muted truncate">
           {incident.location?.address ?? 'Location unavailable'}
         </p>
@@ -134,7 +134,7 @@ function IncidentDetailModal({ incident, onClose }) {
         {/* Modal header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-safe-gray-light flex-shrink-0">
           <div>
-            <h2 className="font-display text-base font-semibold text-white">
+            <h2 className="font-display text-base font-semibold text-safe-text-primary">
               {incident.nodeLabel ?? incident.nodeId ?? 'Incident'}
             </h2>
             <p className="text-[11px] text-safe-text-muted mt-0.5">{formatDate(incident.occurredAt)}</p>
@@ -146,7 +146,7 @@ function IncidentDetailModal({ incident, onClose }) {
             <button
               type="button"
               onClick={onClose}
-              className="w-8 h-8 rounded-lg border border-safe-gray-light flex items-center justify-center text-safe-text-muted hover:text-white hover:bg-safe-gray-light/30 transition-colors"
+              className="w-8 h-8 rounded-lg border border-safe-gray-light flex items-center justify-center text-safe-text-muted hover:text-safe-text-primary hover:bg-safe-gray-light/30 transition-colors"
               aria-label="Close"
             >
               <FontAwesomeIcon icon="xmark" className="text-sm" />
@@ -160,21 +160,21 @@ function IncidentDetailModal({ incident, onClose }) {
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-safe-sidebar rounded-lg p-3">
               <p className="text-[10px] text-safe-text-muted uppercase tracking-wider mb-1">Severity</p>
-              <p className={`text-sm font-bold ${SEVERITY_STYLE[incident.severity] ?? 'text-white'}`}>
+              <p className={`text-sm font-bold ${SEVERITY_STYLE[incident.severity] ?? 'text-safe-text-primary'}`}>
                 {incident.severity ?? '—'}
               </p>
             </div>
             <div className="bg-safe-sidebar rounded-lg p-3">
               <p className="text-[10px] text-safe-text-muted uppercase tracking-wider mb-1">Reviewed at</p>
-              <p className="text-sm font-medium text-white">{formatDate(incident.reviewedAt) ?? '—'}</p>
+              <p className="text-sm font-medium text-safe-text-primary">{formatDate(incident.reviewedAt) ?? '—'}</p>
             </div>
             <div className="bg-safe-sidebar rounded-lg p-3">
               <p className="text-[10px] text-safe-text-muted uppercase tracking-wider mb-1">Location</p>
-              <p className="text-sm text-white">{incident.location?.address ?? '—'}</p>
+              <p className="text-sm text-safe-text-primary">{incident.location?.address ?? '—'}</p>
             </div>
             <div className="bg-safe-sidebar rounded-lg p-3">
               <p className="text-[10px] text-safe-text-muted uppercase tracking-wider mb-1">AI Confidence</p>
-              <p className="text-sm font-bold text-white">
+              <p className="text-sm font-bold text-safe-text-primary">
                 {incident.aiConfidence != null ? `${(incident.aiConfidence * 100).toFixed(0)}%` : '—'}
               </p>
             </div>
@@ -233,13 +233,13 @@ export default function IncidentHistoryPage() {
   useEffect(() => { setPage(1); }, [statusFilter, severityFilter]);
 
   return (
-    <div className="min-h-full bg-safe-dark text-white">
+    <div className="min-h-full bg-safe-dark text-safe-text-primary">
       <div className="max-w-5xl mx-auto px-6 py-8">
 
         {/* Page header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 pb-6 border-b border-safe-gray-light">
           <div>
-            <h1 className="font-display text-3xl font-bold text-white">Incident History</h1>
+            <h1 className="font-display text-3xl font-bold text-safe-text-primary">Incident History</h1>
             <p className="text-sm text-safe-text-muted mt-2">
               Incidents reviewed and decisions made during your sessions
             </p>
@@ -327,7 +327,7 @@ export default function IncidentHistoryPage() {
                 type="button"
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="px-3 py-1.5 text-xs rounded-lg border border-safe-gray-light text-safe-text-muted hover:text-white hover:bg-safe-gray-light/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1.5 text-xs rounded-lg border border-safe-gray-light text-safe-text-muted hover:text-safe-text-primary hover:bg-safe-gray-light/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 ← Previous
               </button>
@@ -335,7 +335,7 @@ export default function IncidentHistoryPage() {
                 type="button"
                 disabled={page >= meta.pages}
                 onClick={() => setPage((p) => Math.min(meta.pages, p + 1))}
-                className="px-3 py-1.5 text-xs rounded-lg border border-safe-gray-light text-safe-text-muted hover:text-white hover:bg-safe-gray-light/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1.5 text-xs rounded-lg border border-safe-gray-light text-safe-text-muted hover:text-safe-text-primary hover:bg-safe-gray-light/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 Next →
               </button>

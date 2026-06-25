@@ -75,7 +75,7 @@ export default function AddLaneModal({ isOpen, onClose, onConfirm, laneStatusOpt
                   onClick={() => setLaneStatus(status.value)}
                   className={`px-4 py-2 rounded-lg border transition-all flex items-center gap-2 ${
                     laneStatus === status.value
-                      ? 'border-[#247cff] bg-[#247cff]/10 text-[#247cff]'
+                      ? 'border-safe-blue bg-safe-blue/10 text-safe-blue'
                       : 'border-safe-gray-light text-safe-text-muted hover:bg-safe-gray-light/50'
                   }`}
                   style={{ ...typography.bodySmall, fontFamily }}

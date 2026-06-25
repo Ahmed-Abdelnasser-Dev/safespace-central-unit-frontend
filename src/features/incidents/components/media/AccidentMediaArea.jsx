@@ -11,7 +11,7 @@ export default function AccidentMediaArea({ incident }) {
 
   return (
     <div
-      className="bg-[#e5e7eb] rounded-[8px] overflow-hidden border border-[#d1d5db] relative max-w-[640px] mx-auto"
+      className="bg-safe-gray rounded-[8px] overflow-hidden border border-safe-border relative max-w-[640px] mx-auto"
       style={{ aspectRatio: '1 / 1', minHeight: '320px', maxHeight: '640px' }}
     >
       <MediaCarousel

@@ -82,15 +82,15 @@ export default function FullScreenMapDialog({ nodes, selectedNodeId, onClose }) 
             <h3 className="text-sm font-bold text-safe-text-primary mb-3">Status Legend</h3>
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-[#4caf50]" />
+                <div className="w-3 h-3 rounded-full bg-safe-success" />
                 <span className="text-safe-text-muted text-xs">Online</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-[#ff9800]" />
+                <div className="w-3 h-3 rounded-full bg-safe-orange" />
                 <span className="text-safe-text-muted text-xs">Warning</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-[#d63e4d]" />
+                <div className="w-3 h-3 rounded-full bg-safe-danger" />
                 <span className="text-safe-text-muted text-xs">Offline</span>
               </div>
             </div>

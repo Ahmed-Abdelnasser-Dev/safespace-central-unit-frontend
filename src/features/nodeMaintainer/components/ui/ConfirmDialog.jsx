@@ -82,8 +82,8 @@ function ConfirmDialog({
             onClick={onConfirm}
             className={`px-[16px] py-[10px] rounded-[6px] text-white font-medium transition-all duration-200 ${
               isDangerous
-                ? 'bg-[#d63e4d] hover:bg-[#b82c3a]'
-                : 'bg-[#247cff] hover:bg-[#1a5dcc]'
+                ? 'bg-safe-danger hover:bg-safe-danger/90'
+                : 'bg-safe-blue-btn hover:bg-safe-blue-light'
             }`}
             style={{
               fontSize: 'clamp(12px, 1.2vw, 13px)',

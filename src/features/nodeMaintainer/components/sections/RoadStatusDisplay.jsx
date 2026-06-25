@@ -22,7 +22,7 @@ function RoadStatusDisplay({
   const fontFamily = 'Arimo, sans-serif';
 
   return (
-    <div className="rounded-[8px] sm:rounded-[10px] lg:rounded-[12px] border border-[#e5e7eb] bg-gradient-to-br from-[#0f172a] via-[#111827] to-[#0b1220] p-[12px] sm:p-[14px] md:p-[16px] lg:p-[18px]">
+    <div className="rounded-[8px] sm:rounded-[10px] lg:rounded-[12px] border border-safe-border bg-gradient-to-br from-[#0f172a] via-[#111827] to-[#0b1220] p-[12px] sm:p-[14px] md:p-[16px] lg:p-[18px]">
       {/* Header: Road Name + Speed Limit */}
       <div className="flex flex-wrap items-center justify-between gap-[8px] sm:gap-[10px] lg:gap-[12px]">
         <div className="space-y-[2px] sm:space-y-[3px] lg:space-y-[4px]">

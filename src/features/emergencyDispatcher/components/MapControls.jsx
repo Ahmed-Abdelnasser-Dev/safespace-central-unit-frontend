@@ -27,15 +27,15 @@ function MapControls({
   const btnBase =
     'h-8 px-2.5 flex items-center gap-1.5 rounded-lg text-xs font-medium transition-all duration-150 select-none';
   const btnActive = 'bg-safe-blue text-safe-text-primary shadow-sm';
-  const btnInactive = 'bg-safe-gray-light/40 text-white/60 hover:bg-safe-gray-light/30 hover:text-safe-text-primary';
+  const btnInactive = 'bg-safe-gray-light/40 text-safe-text-muted hover:bg-safe-gray-light/30 hover:text-safe-text-primary';
   const iconBtn =
-    'w-8 h-8 flex items-center justify-center rounded-lg text-white/60 hover:text-safe-text-primary hover:bg-safe-gray-light/30 transition-all duration-150';
+    'w-8 h-8 flex items-center justify-center rounded-lg text-safe-text-muted hover:text-safe-text-primary hover:bg-safe-gray-light/30 transition-all duration-150';
 
   return (
     <div className="absolute top-3 left-3 right-3 z-10 flex items-center gap-2 pointer-events-none min-w-0">
       {/* Filter bar — glass pill; min-w-0 lets it shrink so zoom controls always stay visible */}
       <div className="min-w-0 flex-1 flex items-center gap-1.5 px-2.5 py-1.5 bg-safe-dark/90 backdrop-blur-sm border border-safe-gray-light rounded-xl shadow-xl pointer-events-auto overflow-x-auto scrollbar-none">
-        <span className="text-[10px] font-semibold text-white/40 uppercase tracking-widest flex-shrink-0 mr-1">
+        <span className="text-[10px] font-semibold text-safe-text-muted uppercase tracking-widest flex-shrink-0 mr-1">
           Filter
         </span>
 

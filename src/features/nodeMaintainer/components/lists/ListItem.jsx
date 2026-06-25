@@ -49,10 +49,10 @@ function ListItem({
                 onClick={action.onClick}
                 className={`px-[8px] sm:px-[9px] md:px-[10px] py-[4px] sm:py-[5px] md:py-[6px] font-medium rounded-[4px] sm:rounded-[5px] transition-colors whitespace-nowrap ${
                   action.variant === 'danger'
-                    ? 'text-[#d63e4d] hover:bg-[#fee2e2]'
+                    ? 'text-safe-danger hover:bg-safe-danger/10'
                     : action.variant === 'primary'
-                      ? 'text-white bg-[#247cff] hover:bg-[#1a5dcc]'
-                      : 'text-[#247cff] hover:bg-[#e3f2fd]'
+                      ? 'text-white bg-safe-blue-btn hover:bg-safe-blue-light'
+                      : 'text-safe-blue hover:bg-safe-blue/10'
                 }`}
                 style={{ fontSize: 'clamp(10px, 1vw, 12px)', fontFamily }}
               >

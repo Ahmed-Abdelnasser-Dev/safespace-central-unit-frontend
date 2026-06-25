@@ -21,7 +21,7 @@ function EmptyState({
       {icon && (
         <FontAwesomeIcon 
           icon={icon} 
-          className="text-[#d0d5dd] mb-[12px] block " 
+          className="text-safe-text-muted mb-[12px] block "
           style={{ width: '32px', height: '32px' }} 
         />
       )}

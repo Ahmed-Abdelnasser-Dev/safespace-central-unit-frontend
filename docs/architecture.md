@@ -4,6 +4,21 @@ This documents the actual architecture of the codebase as it exists today, groun
 
 ---
 
+## Theming
+
+**Single source of truth:** `src/index.css` defines adaptive `safe-*` color tokens as RGB triplets in `:root` (light values) and `.dark` (dark values). `tailwind.config.js` maps those CSS vars to Tailwind tokens using the `rgb(var(--color-*) / <alpha-value>)` format so opacity modifiers work (e.g. `bg-safe-blue/10`).
+
+**Toggle:** `src/contexts/ThemeContext.jsx` adds/removes `.dark` on `<html>` and persists to `localStorage['safespace-theme']`. Default is **dark**. `index.html` has an inline pre-paint script that reads localStorage before first render to prevent FOUC.
+
+**Token rules:**
+- Use `text-safe-text-primary` and `text-safe-text-muted` for all text on adaptive surfaces.
+- Surface tokens (`safe-dark`, `safe-gray`, etc.) are **never** used as text colors — they are background/border values.
+- `text-white` is only valid on fixed non-adaptive backgrounds (blue/red buttons, dark gradients, video viewfinders).
+- Never use raw Tailwind grays (`text-gray-400`, etc.) or raw hex (`text-[#...]`) in JSX `className` strings.
+- See `DESIGN.md §2` and `docs/design.md` for the full adaptive token table and WCAG contrast verification.
+
+---
+
 ## State management
 
 Redux Toolkit is the only state library. The store (`src/app/store.js`) registers **three slices**:

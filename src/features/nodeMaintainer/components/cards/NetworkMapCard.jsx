@@ -74,7 +74,7 @@ export default function NetworkMapCard() {
         <div className="flex items-center gap-[8px] sm:gap-[10px] md:gap-[12px]">
           {/* Green nodes */}
           <div className="flex items-center gap-[4px] sm:gap-[6px]">
-            <div className="w-[6px] h-[6px] sm:w-[7px] sm:h-[7px] rounded-full bg-[#4caf50] flex-shrink-0" />
+            <div className="w-[6px] h-[6px] sm:w-[7px] sm:h-[7px] rounded-full bg-safe-success flex-shrink-0" />
             <span
               className="text-safe-text-muted font-medium"
               style={{ fontSize: 'clamp(9px, 1vw, 9.114px)', lineHeight: '13.671px', fontFamily: 'Arimo, sans-serif' }}
@@ -85,7 +85,7 @@ export default function NetworkMapCard() {
 
           {/* Orange nodes */}
           <div className="flex items-center gap-[4px] sm:gap-[6px]">
-            <div className="w-[6px] h-[6px] sm:w-[7px] sm:h-[7px] rounded-full bg-[#ff9800] flex-shrink-0" />
+            <div className="w-[6px] h-[6px] sm:w-[7px] sm:h-[7px] rounded-full bg-safe-orange flex-shrink-0" />
             <span
               className="text-safe-text-muted font-medium"
               style={{ fontSize: 'clamp(9px, 1vw, 9.114px)', lineHeight: '13.671px', fontFamily: 'Arimo, sans-serif' }}
@@ -96,7 +96,7 @@ export default function NetworkMapCard() {
 
           {/* Red nodes */}
           <div className="flex items-center gap-[4px] sm:gap-[6px]">
-            <div className="w-[6px] h-[6px] sm:w-[7px] sm:h-[7px] rounded-full bg-[#d63e4d] flex-shrink-0" />
+            <div className="w-[6px] h-[6px] sm:w-[7px] sm:h-[7px] rounded-full bg-safe-danger flex-shrink-0" />
             <span
               className="text-safe-text-muted font-medium"
               style={{ fontSize: 'clamp(9px, 1vw, 9.114px)', lineHeight: '13.671px', fontFamily: 'Arimo, sans-serif' }}

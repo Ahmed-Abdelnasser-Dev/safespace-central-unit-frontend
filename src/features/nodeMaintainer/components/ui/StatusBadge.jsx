@@ -12,13 +12,13 @@
 function StatusBadge({ status, className = '' }) {
   const statusConfig = {
     online: {
-      bg: 'bg-[#e8f5e9]',
-      text: 'text-[#4caf50]',
+      bg: 'bg-safe-success/15',
+      text: 'text-safe-success',
       label: 'online'
     },
     offline: {
-      bg: 'bg-[#fee2e2]',
-      text: 'text-[#d63e4d]',
+      bg: 'bg-safe-danger/15',
+      text: 'text-safe-danger',
       label: 'offline'
     }
   };

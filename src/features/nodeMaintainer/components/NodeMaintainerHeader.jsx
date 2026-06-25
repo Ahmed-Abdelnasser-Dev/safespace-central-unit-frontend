@@ -50,7 +50,7 @@ export default function NodeMaintainerHeader({ onAddNode }) {
           {/* Search Bar */}
           <div className="relative group">
             <div
-              className="bg-safe-gray border border-safe-gray-light rounded-[8.258px] flex items-center pl-[41.29px] pr-[12.387px] py-[4.129px] transition-all duration-200 group-focus-within:border-[#247cff] group-hover:border-safe-gray-light"
+              className="bg-safe-gray border border-safe-gray-light rounded-[8.258px] flex items-center pl-[41.29px] pr-[12.387px] py-[4.129px] transition-all duration-200 group-focus-within:border-safe-blue group-hover:border-safe-gray-light"
               style={{ width: '396.387px', height: '41.29px' }}
             >
               <input
@@ -60,7 +60,7 @@ export default function NodeMaintainerHeader({ onAddNode }) {
                 style={{ fontSize: '14.452px', fontFamily: 'Arimo, sans-serif' }}
               />
             </div>
-            <div className="absolute left-[12.39px] top-[12.39px] pointer-events-none group-focus-within:text-[#247cff] transition-colors duration-200">
+            <div className="absolute left-[12.39px] top-[12.39px] pointer-events-none group-focus-within:text-safe-blue transition-colors duration-200">
               <FontAwesomeIcon
                 icon="magnifying-glass"
                 className="text-safe-text-muted"
@@ -96,7 +96,7 @@ export default function NodeMaintainerHeader({ onAddNode }) {
               />
             </button>
             <div
-              className="absolute bg-[#d63e4d] rounded-[8.258px] flex items-center justify-center text-white font-bold shadow-sm"
+              className="absolute bg-safe-danger rounded-[8.258px] flex items-center justify-center text-white font-bold shadow-sm"
               style={{
                 width: '20.645px',
                 height: '20.645px',

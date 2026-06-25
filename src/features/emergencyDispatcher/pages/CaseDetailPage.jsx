@@ -108,7 +108,7 @@ function CaseDetailPage() {
                 ? 'bg-safe-success/15 text-safe-success'
                 : statusStyle.variant === 'info'
                 ? 'bg-safe-info/15 text-safe-info'
-                : 'bg-safe-gray-light/40 text-white/60'
+                : 'bg-safe-gray-light/40 text-safe-text-muted'
             }`}
           >
             {statusStyle.label}

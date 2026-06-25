@@ -55,7 +55,7 @@ export default function NodeCard({ node, isSelected, onSelect }) {
           </div>
           <span 
             className={`text-xs font-medium px-[8px] py-[3px] rounded-[4px] flex-shrink-0 ml-[8px] ${
-              node.status === 'online' ? 'bg-[#e8f5e9] text-[#4caf50]' : 'bg-[#fee2e2] text-[#d63e4d]'
+              node.status === 'online' ? 'bg-safe-success/15 text-safe-success' : 'bg-safe-danger/15 text-safe-danger'
             }`}
             style={{ 
               fontSize: 'clamp(10px, 1.1vw, 11px)',

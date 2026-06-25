@@ -73,7 +73,7 @@ function SystemTestPage() {
   useState(() => { testBackendConnection(); });
 
   return (
-    <div className="min-h-full bg-safe-dark text-white">
+    <div className="min-h-full bg-safe-dark text-safe-text-primary">
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="bg-safe-gray-light/40 backdrop-blur-sm rounded-xl p-8 mb-8 border border-safe-gray-light shadow-card">
           <h2 className="text-2xl font-semibold mb-2 text-safe-blue">System Test Dashboard</h2>

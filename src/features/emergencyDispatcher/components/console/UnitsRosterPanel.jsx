@@ -70,7 +70,7 @@ export default function UnitsRosterPanel({ units, onCenterOnUnit }) {
           <h2 className="text-sm font-semibold text-safe-text-primary">Units</h2>
           <div className="flex items-center gap-1.5">
             <span className="text-[11px] text-safe-success font-mono font-semibold">{availableCount} avail</span>
-            <span className="text-white/20 text-xs">/</span>
+            <span className="text-safe-border text-xs">/</span>
             <span className="text-[11px] text-safe-text-muted font-mono">{totalActive} active</span>
           </div>
         </div>

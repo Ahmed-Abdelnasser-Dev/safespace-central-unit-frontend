@@ -53,7 +53,7 @@ function PageLoader() {
     <div className="flex items-center justify-center min-h-screen bg-safe-dark">
       <div className="text-center">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-safe-blue mx-auto mb-3" />
-        <p className="text-gray-400 text-sm">Loading...</p>
+        <p className="text-safe-text-muted text-sm">Loading...</p>
       </div>
     </div>
   );
@@ -93,7 +93,7 @@ function App() {
       <div className="flex items-center justify-center min-h-screen bg-safe-dark">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-safe-blue mx-auto mb-3" />
-          <p className="text-gray-400 text-sm">Loading...</p>
+          <p className="text-safe-text-muted text-sm">Loading...</p>
         </div>
       </div>
     );

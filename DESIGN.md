@@ -105,10 +105,13 @@ components:
 
 A 24/7 highway-operations control room, not a SaaS product. Operators sit in dim
 ambient light, attention split across live feeds and this screen, acting on real
-emergencies under time pressure. The interface is built on a single fixed dark
-surface — there is no light/dark toggle, because the room never gets bright. Every
-visual decision answers one question: does this help an operator act correctly,
-faster? If not, it doesn't belong.
+emergencies under time pressure. The interface ships in **both dark and light mode**
+via a user-toggleable theme (sun/moon button in the sidebar). Every visual decision
+answers one question: does this help an operator act correctly, faster? If not, it
+doesn't belong.
+
+**Default theme:** dark (preferred for low-light control rooms). The toggle persists
+to `localStorage['safespace-theme']`; dark is used when no preference is stored.
 
 This system explicitly rejects the generic SaaS-dashboard look: no gradient
 hero-metric blocks, no marketing-style identical card grids, no playful illustration,
@@ -117,7 +120,7 @@ consistency, not decoration. Urgency lives in the data — a red severity badge,
 pulsing unread indicator — never in the chrome around it.
 
 **Key Characteristics:**
-- Fixed dark navy operating surface; light surfaces appear only inside modals, forms, and contained light-content areas (maps, tables).
+- Dual-theme adaptive surface system (`safe-*` tokens driven by CSS custom properties). A `.dark` class on `<html>` flips all surfaces — no `dark:` Tailwind variants needed in component code.
 - One brand blue carries primary actions and selection; all other color is semantic state.
 - DM Sans for structure (headings, page titles), Poppins for everything operators read at length, Space Mono for technical/tiny labels.
 - Flat by default — shadows are rare and reserved for floating/overlay elements, not ambient decoration.
@@ -125,26 +128,29 @@ pulsing unread indicator — never in the chrome around it.
 
 ## 2. Colors
 
-A single committed dark navy surface with one primary blue and a tight semantic
-vocabulary for state — not a decorative palette.
+One primary blue and a tight semantic vocabulary for state — not a decorative palette. All neutral surfaces are **adaptive** (CSS custom properties that flip between modes).
+
+### Adaptive Neutral Tokens (the operating canvas)
+
+| Token | Light value | Dark value | Purpose |
+|-------|-------------|------------|---------|
+| `safe-dark` | `#f5f7fa` | `#111111` | Primary page canvas / body bg |
+| `safe-sidebar` | `#ffffff` | `#1a1a1a` | Sidebar, header, card surfaces |
+| `safe-gray` | `#edf1f6` | `#242424` | Subtle inner panel, hover bg |
+| `safe-gray-light` / `safe-border` | `#d1dbe7` | `#333333` | Borders and separators |
+| `safe-text-primary` | `#0f1419` | `#ffffff` | Headings and body text |
+| `safe-text-muted` | `#475569` | `#8b99b5` | Secondary / descriptive text |
+
+`safe-text-muted` passes WCAG AA (≥4.5:1) in both modes. Use `text-safe-text-primary` / `text-safe-text-muted` exclusively — never raw gray values (`text-gray-400`, etc.).
+
+**Surface tokens are never text colors.** `text-safe-dark`, `text-safe-gray`, etc. are invisible in light mode. Only `safe-text-primary` and `safe-text-muted` are valid for text.
+
+**`text-white` rule:** keep only on elements whose parent has a *fixed non-adaptive* background (blue/red action buttons, gradient headers, dark video viewfinders, fixed-color alert banners). On any `safe-*` adaptive surface, always use `text-safe-text-primary` or `text-safe-text-muted`.
 
 ### Primary
-- **Operational Blue** (#3b7cff): the one accent. Primary actions, current selection, links, focus rings. Used sparingly — reserved for "the thing to act on," not decoration.
-- **Blue Light** (#5a96ff): hover state for Operational Blue.
-- **Blue Button** (#2563eb): slightly deeper blue used specifically for active nav items and solid call-to-action buttons in light (modal) contexts.
-
-### Neutral — Dark Surfaces (the default operating canvas)
-- **Void Navy** (#0a1119): primary page background. The room's ambient dark.
-- **Sidebar Navy** (#121820): the fixed 74px navigation rail, one step lighter than Void Navy to separate chrome from content.
-- **Card Navy** (#1a1f2e): feature surface/card background on the dark canvas.
-- **Elevated Navy** (#2a3142): one step up — input backgrounds, borders, hover surfaces, elevated panels within a card.
-
-### Neutral — Light Surfaces (contained light contexts only: modals, forms, tables)
-- **Paper** (#f0f4f8): light content-area background — used inside maps, tables, and other contained light panels, never as the page canvas.
-- **White** (#ffffff): modal and card interiors, form fields.
-- **Ink** (#0f1419): primary text on light surfaces.
-- **Slate** (#64748b): secondary/muted text on light surfaces.
-- **Hairline** (#e2e8f0): borders on light surfaces.
+- **Operational Blue** (#3b7cff → `safe-blue`): the one accent. Primary actions, current selection, links, focus rings.
+- **Blue Light** (#5a96ff → `safe-blue-light`): hover state for Operational Blue.
+- **Blue Button** (#2563eb → `safe-blue-btn`): solid call-to-action buttons.
 
 ### State Semantics (the real color vocabulary of this system)
 - **Danger / Critical** (#ef4444, icon variant #dc2626): errors, destructive actions, HIGH severity.
@@ -183,11 +189,10 @@ distinctly "system-generated" data.
 
 ## 4. Elevation
 
-Flat by default. The dark canvas relies on **tonal layering** (Void Navy → Sidebar
-Navy → Card Navy → Elevated Navy, each one step lighter) to convey depth and
-hierarchy, not shadows — shadows barely register on a near-black background. Shadows
-are reserved for elements that visually float above the flat surface: modals and
-their backdrop blur.
+Flat by default. The canvas relies on **tonal layering** (page bg → sidebar → card surface → gray panel, each one adaptive step) to convey depth without shadows. Shadows are reserved for elements that visually float above the surface: modals and their backdrop blur.
+
+**Dark mode:** `safe-dark (#111)` → `safe-sidebar (#1a1a1a)` → `safe-gray (#242424)` → `safe-gray-light (#333)` elevated.
+**Light mode:** `safe-dark (#f5f7fa)` → `safe-sidebar (#fff)` → `safe-gray (#edf1f6)` → `safe-gray-light (#d1dbe7)` borders.
 
 ### Shadow Vocabulary
 - **card** (`box-shadow: 0 8px 24px -2px rgba(0,0,0,0.08)`): subtle lift for light-surface cards (modal content, form panels) — not used on the dark canvas.

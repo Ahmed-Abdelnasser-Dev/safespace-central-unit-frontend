@@ -21,7 +21,7 @@ function SectionLabel({
       {icon && (
         <FontAwesomeIcon 
           icon={icon} 
-          className="text-[#247cff]" 
+          className="text-safe-blue"
           style={{ width: 'clamp(12px, 1.5vw, 16px)', height: 'clamp(12px, 1.5vw, 16px)' }} 
         />
       )}
