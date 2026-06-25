@@ -72,7 +72,7 @@ function DecisionCard({
                   const aiState = paddedAiStates[i];
                   const currentState = paddedOriginalStates[i];
                   const hasChanged = currentState !== aiState;
-                  const aiConfig = statusConfig[aiState] || { icon: faCircleCheck, color: '#22c55e', bg: '#dcfce7' };
+                  const aiConfig = statusConfig[aiState] || { icon: faCircleCheck, color: 'rgb(var(--color-safe-success))', bg: 'rgba(var(--color-safe-success), 0.12)' };
 
                   return (
                     <div key={i} className="flex items-center gap-2">
@@ -137,7 +137,7 @@ function DecisionCard({
                   const finalState = paddedFinalStates[i];
                   const aiState = paddedAiStates[i];
                   const wasModified = finalState !== aiState;
-                  const finalConfig = statusConfig[finalState] || { icon: faCircleCheck, color: '#22c55e', bg: '#dcfce7' };
+                  const finalConfig = statusConfig[finalState] || { icon: faCircleCheck, color: 'rgb(var(--color-safe-success))', bg: 'rgba(var(--color-safe-success), 0.12)' };
 
                   return (
                     <div key={i} className="flex items-center gap-2">

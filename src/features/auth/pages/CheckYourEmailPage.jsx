@@ -39,7 +39,7 @@ function CheckYourEmail() {
         <p className="font-medium text-safe-info mb-2">💡 Tip:</p>
         <p>Didn&apos;t see the email? Check your spam or promotions folder. You can also request a new code if needed.</p>
       </div>
- font-semibold
+
       {/* Back to sign-in */}
       <Button
         variant="primary"

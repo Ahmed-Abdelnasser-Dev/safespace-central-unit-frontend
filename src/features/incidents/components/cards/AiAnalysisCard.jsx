@@ -1,19 +1,31 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRobot } from '@fortawesome/free-solid-svg-icons';
 
-function AiAnalysisCard({ aiData }) {
-  const getSeverityColor = (severity) => {
-    if (severity >= 4) return '#dc2626';
-    if (severity >= 3) return '#ea580c';
-    if (severity >= 2) return '#f59e0b';
-    return '#16a34a';
-  };
+const SEVERITY_CONFIG = [
+  { textClass: 'text-safe-success', barClass: 'bg-safe-success' },        // 0-1
+  { textClass: 'text-safe-success', barClass: 'bg-safe-success' },        // 1
+  { textClass: 'text-safe-orange',  barClass: 'bg-safe-orange/60' },      // 2
+  { textClass: 'text-safe-orange',  barClass: 'bg-safe-orange' },         // 3
+  { textClass: 'text-safe-danger',  barClass: 'bg-safe-danger' },         // 4
+  { textClass: 'text-safe-danger',  barClass: 'bg-safe-danger' },         // 5
+];
 
-  const getInjuryRiskColor = (risk) => {
-    if (risk === 'high') return '#dc2626';
-    if (risk === 'medium') return '#f97316';
-    return '#16a34a';
-  };
+const RISK_CLASS = {
+  high: 'text-safe-danger',
+  medium: 'text-safe-orange',
+};
+
+function getSeverityConfig(severity) {
+  const level = Math.min(Math.max(Math.floor(severity || 0), 0), 5);
+  return SEVERITY_CONFIG[level];
+}
+
+function getInjuryRiskClass(risk) {
+  return RISK_CLASS[risk] ?? 'text-safe-success';
+}
+
+function AiAnalysisCard({ aiData }) {
+  const severityConfig = getSeverityConfig(aiData?.severity);
 
   return (
     <div className="bg-safe-sidebar border border-safe-border rounded-lg p-4">
@@ -35,22 +47,18 @@ function AiAnalysisCard({ aiData }) {
             <div>
               <p className="text-[11px] font-medium text-safe-text-muted uppercase tracking-wide mb-1">Severity</p>
               <div className="flex items-center gap-1.5">
-                <span
-                  className="text-sm font-bold"
-                  style={{ color: getSeverityColor(aiData.severity || 0) }}
-                >
+                <span className={`text-sm font-bold ${severityConfig.textClass}`}>
                   {aiData.severity || 0}/5
                 </span>
                 <div className="flex gap-0.5">
-                  {[1, 2, 3, 4, 5].map(level => (
+                  {[1, 2, 3, 4, 5].map((level) => (
                     <div
                       key={level}
-                      className="w-1 h-4 rounded-full"
-                      style={{
-                        backgroundColor: level <= (aiData.severity || 0)
-                          ? getSeverityColor(aiData.severity || 0)
-                          : 'rgb(var(--color-safe-gray-light))'
-                      }}
+                      className={`w-1 h-4 rounded-full ${
+                        level <= (aiData.severity || 0)
+                          ? getSeverityConfig(aiData.severity).barClass
+                          : 'bg-safe-gray-light'
+                      }`}
                     />
                   ))}
                 </div>
@@ -69,10 +77,7 @@ function AiAnalysisCard({ aiData }) {
             {aiData.injuryRisk && (
               <div>
                 <p className="text-[11px] font-medium text-safe-text-muted uppercase tracking-wide mb-1">Injury Risk</p>
-                <p
-                  className="text-sm font-bold capitalize"
-                  style={{ color: getInjuryRiskColor(aiData.injuryRisk) }}
-                >
+                <p className={`text-sm font-bold capitalize ${getInjuryRiskClass(aiData.injuryRisk)}`}>
                   {aiData.injuryRisk}
                 </p>
               </div>

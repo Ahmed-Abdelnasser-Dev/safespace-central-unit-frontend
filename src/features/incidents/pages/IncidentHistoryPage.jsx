@@ -236,16 +236,13 @@ export default function IncidentHistoryPage() {
     <div className="min-h-full bg-safe-dark text-safe-text-primary">
       <div className="max-w-5xl mx-auto px-6 py-8">
 
-        {/* Page header */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 pb-6 border-b border-safe-gray-light">
-          <div>
-            <h1 className="font-display text-3xl font-bold text-safe-text-primary">Incident History</h1>
-            <p className="text-sm text-safe-text-muted mt-2">
-              Incidents reviewed and decisions made during your sessions
-            </p>
-          </div>
+        {/* Sub-header: description + total count */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6 pb-4 border-b border-safe-gray-light">
+          <p className="text-sm text-safe-text-muted">
+            Incidents reviewed and decisions made during your sessions
+          </p>
           {meta.total > 0 && (
-            <span className="text-xs text-safe-text-muted font-mono">
+            <span className="text-xs text-safe-text-muted font-mono flex-shrink-0">
               {meta.total} total
             </span>
           )}

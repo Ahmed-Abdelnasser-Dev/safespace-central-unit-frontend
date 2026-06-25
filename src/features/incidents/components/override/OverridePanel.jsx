@@ -18,9 +18,9 @@ function OverridePanel({
   return (
     <div className="space-y-2">
       <h4 className="font-bold text-[13px] sm:text-[14px] text-safe-text-gray uppercase tracking-[0.4px]">Override Configuration</h4>
-      <div className="border-2 border-safe-orange rounded-lg overflow-hidden bg-amber-50">
-        <div className="w-full flex items-center justify-between px-3 py-2.5 bg-orange-200 font-bold text-[13px] sm:text-[14px]">
-          <span className="flex items-center gap-2 text-amber-800">
+      <div className="border-2 border-safe-orange rounded-lg overflow-hidden bg-safe-orange/5">
+        <div className="w-full flex items-center justify-between px-3 py-2.5 bg-safe-orange/20 font-bold text-[13px] sm:text-[14px]">
+          <span className="flex items-center gap-2 text-safe-orange">
             <FontAwesomeIcon icon="exclamation" className="w-3 h-3 text-orange-600" />
             Override
           </span>
@@ -37,7 +37,7 @@ function OverridePanel({
         </div>
 
         {overrideOpen && (
-          <div className="border-t border-orange-200 p-3 space-y-3 bg-white">
+          <div className="border-t border-safe-orange/20 p-3 space-y-3 bg-safe-gray">
             <div className="space-y-2.5">
               {Array.from({ length: defaultLaneCount }).map((_, idx) => {
                 const currentState = tempLaneConfig[idx] || laneConfigStates[idx] || 'open';
@@ -83,7 +83,7 @@ function OverridePanel({
             <div className="space-y-1.5 border-t border-safe-border pt-2.5">
               <div className="flex justify-between items-center">
                 <label className="font-bold text-[12px] sm:text-[13px] text-safe-text-primary">New Speed Limit</label>
-                <span className="px-2 py-0.5 rounded-sm font-bold text-[11px] bg-red-100 text-safe-danger">{tempSpeedLimit} km/h</span>
+                <span className="px-2 py-0.5 rounded-sm font-bold text-[11px] bg-safe-danger/10 text-safe-danger">{tempSpeedLimit} km/h</span>
               </div>
               <input
                 type="range"
@@ -117,7 +117,7 @@ function OverridePanel({
         )}
 
         {!overrideOpen && (
-          <div className="border-t border-orange-200 p-3 bg-white">
+          <div className="border-t border-safe-orange/20 p-3 bg-safe-gray">
             <div className="text-[12px] text-safe-text-gray">Override is off. Toggle to edit lane states and speed.</div>
           </div>
         )}
