@@ -15,7 +15,8 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import MapHeader from '../components/MapHeader.jsx';
+import PageActions from '@/components/ui/PageActions.jsx';
+import SearchInput from '@/components/ui/SearchInput.jsx';
 import FilterChips from '../components/FilterTabs.jsx';
 import MapView from '../components/MapView.jsx';
 import KPICards from '../components/KPICards.jsx';
@@ -58,13 +59,11 @@ function MapOverviewPage() {
   const dispatch = useDispatch();
   const { nodes, isLoading: nodesLoading } = useSelector((state) => state.nodes);
   const { unreadCount } = useSelector((state) => state.notifications);
-  const { user } = useSelector((state) => state.auth);
 
   // ── local state ──
   const [filter, setFilter] = useState('all');
   const [focusedNodeId, setFocusedNodeId] = useState(null);
   const [notifPanelOpen, setNotifPanelOpen] = useState(false);
-  const [lastRefresh, setLastRefresh] = useState(null);
 
   // Active incidents accumulated this session (cleared on page unmount)
   const [activeIncidents, setActiveIncidents] = useState([]); // array of incident payloads
@@ -86,7 +85,6 @@ function MapOverviewPage() {
   const fetchAll = useCallback(async () => {
     try {
       await dispatch(fetchNodes());
-      setLastRefresh(new Date());
     } catch (_) { /* nodes error surfaced via Redux */ }
 
     try {
@@ -181,18 +179,35 @@ function MapOverviewPage() {
   return (
     <div className="flex flex-col h-full overflow-hidden bg-safe-dark">
 
-      {/* ── Header ───────────────────────────────────────────────────────── */}
-      <MapHeader
-        observerName={user?.fullName ?? null}
-        unreadCount={unreadCount}
-        notifOpen={notifPanelOpen}
-        onToggleNotif={() => setNotifPanelOpen((o) => !o)}
-        isLoading={nodesLoading}
-        onRefresh={fetchAll}
-        lastRefresh={lastRefresh}
-        nodesOnline={onlineNodes.length}
-        nodesOffline={offlineNodes.length}
-      />
+      {/* ── Page actions → AppTopBar slot ────────────────────────────────── */}
+      <PageActions>
+        <SearchInput placeholder="Search locations, units, incidents..." width="260px" />
+        <button
+          onClick={fetchAll}
+          disabled={nodesLoading}
+          title="Refresh"
+          className="w-9 h-9 rounded-lg border border-safe-border flex items-center justify-center text-safe-text-muted hover:bg-safe-gray transition-colors disabled:opacity-50"
+        >
+          <FontAwesomeIcon icon="rotate" className={`text-sm ${nodesLoading ? 'animate-spin' : ''}`} />
+        </button>
+        <button
+          onClick={() => setNotifPanelOpen((o) => !o)}
+          title="Map Alerts"
+          aria-pressed={notifPanelOpen}
+          className={`relative w-9 h-9 rounded-lg border flex items-center justify-center transition-colors ${
+            notifPanelOpen
+              ? 'border-safe-blue bg-safe-blue/10 text-safe-blue'
+              : 'border-safe-border text-safe-text-muted hover:bg-safe-gray'
+          }`}
+        >
+          <FontAwesomeIcon icon="map-pin" className="text-sm" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-safe-danger rounded-full text-white text-[10px] font-bold flex items-center justify-center">
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </span>
+          )}
+        </button>
+      </PageActions>
 
       {/* ── Main content ─────────────────────────────────────────────────── */}
       <div className="flex-1 flex overflow-hidden min-h-0">

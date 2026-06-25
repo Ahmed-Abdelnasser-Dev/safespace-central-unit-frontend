@@ -111,7 +111,7 @@ function ResetPasswordModal({ user, isOpen, onClose }) {
           {tempResult ? (
             /* ── Temp password result ── */
             <>
-              <p className="text-[13px] text-safe-text-gray leading-relaxed border-l-2 border-amber-400 pl-3">
+              <p className="text-[13px] text-safe-text-gray leading-relaxed border-l-2 border-safe-orange pl-3">
                 This password is shown <strong className="text-safe-text-dark font-medium">once only</strong> and cannot be retrieved again.
                 Share it with the user through a secure channel.
               </p>
@@ -207,7 +207,7 @@ function ResetPasswordModal({ user, isOpen, onClose }) {
                         A one-time password shown to you. Share through a secure channel.
                       </p>
                     </div>
-                    <span className={`flex-shrink-0 transition-colors ${mode === 'manual' ? 'text-amber-500' : 'text-safe-text-gray'}`}>
+                    <span className={`flex-shrink-0 transition-colors ${mode === 'manual' ? 'text-safe-orange' : 'text-safe-text-gray'}`}>
                       <IconShield />
                     </span>
                   </div>
