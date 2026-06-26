@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import LoginLayout from '../components/LoginLayout.jsx';
 import Button from '@/components/ui/Button.jsx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function CheckYourEmail() {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ function CheckYourEmail() {
       subtitle="We've sent password reset instructions to your email"
       icon={
         <div className="w-20 h-20 rounded-full bg-safe-success/10 flex items-center justify-center animate-scaleIn">
-          <i className="bi bi-envelope-check text-safe-success text-5xl" />
+          <FontAwesomeIcon icon="envelope-circle-check" className="text-safe-success text-5xl" />
         </div>
       }
       leftTitle={'Account Recovery'}

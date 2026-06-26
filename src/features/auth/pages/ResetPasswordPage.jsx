@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { resetPassword, clearPasswordResetState } from '../authSlice';
 import LoginLayout from '../components/LoginLayout.jsx';
 import Button from '@/components/ui/Button.jsx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 // Password rules — must match backend auth.schema.js strongPassword
 const RULES = [
@@ -73,7 +74,7 @@ function ResetPassword() {
         subtitle="Your password has been updated successfully."
         icon={
           <div className="w-20 h-20 rounded-full bg-safe-success/10 flex items-center justify-center">
-            <i className="bi bi-check2-circle text-safe-success text-5xl" />
+            <FontAwesomeIcon icon="circle-check" className="text-safe-success text-5xl" />
           </div>
         }
         leftTitle={'Account Recovery'}
@@ -122,7 +123,7 @@ function ResetPassword() {
         {passwordResetError && (
           <div className="rounded-lg border border-safe-danger/20 bg-safe-danger/5 px-4 py-3">
             <div className="flex items-start gap-3">
-              <i className="bi bi-exclamation-circle text-safe-danger text-lg mt-0.5" />
+              <FontAwesomeIcon icon="circle-exclamation" className="text-safe-danger text-lg mt-0.5 flex-shrink-0" />
               <div className="text-sm text-safe-text-dark">
                 <p className="font-semibold mb-1">Reset Failed</p>
                 <p>{passwordResetError}</p>
@@ -141,7 +142,7 @@ function ResetPassword() {
           <label className="text-xs font-medium text-safe-text-dark">New Password</label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-safe-text-gray/60">
-              <i className="bi bi-lock text-xs" />
+              <FontAwesomeIcon icon="lock" className="text-xs" />
             </span>
             <input
               type={showNew ? 'text' : 'password'}
@@ -158,7 +159,7 @@ function ResetPassword() {
             />
             <button type="button" onClick={() => setShowNew(!showNew)} disabled={passwordResetLoading}
               className="absolute inset-y-0 right-0 pr-3 flex items-center text-safe-text-gray/70 text-xs hover:text-safe-text-gray">
-              <i className={`bi bi-eye${showNew ? '-slash' : ''}`} />
+              <FontAwesomeIcon icon={showNew ? 'eye-slash' : 'eye'} />
             </button>
           </div>
           {newPassError && <p className="text-xs text-safe-danger mt-1">{newPassError}</p>}
@@ -169,7 +170,7 @@ function ResetPassword() {
           <label className="text-xs font-medium text-safe-text-dark">Confirm New Password</label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-safe-text-gray/60">
-              <i className="bi bi-lock-fill text-xs" />
+              <FontAwesomeIcon icon="lock" className="text-xs" />
             </span>
             <input
               type={showConfirm ? 'text' : 'password'}
@@ -186,7 +187,7 @@ function ResetPassword() {
             />
             <button type="button" onClick={() => setShowConfirm(!showConfirm)} disabled={passwordResetLoading}
               className="absolute inset-y-0 right-0 pr-3 flex items-center text-safe-text-gray/70 text-xs hover:text-safe-text-gray">
-              <i className={`bi bi-eye${showConfirm ? '-slash' : ''}`} />
+              <FontAwesomeIcon icon={showConfirm ? 'eye-slash' : 'eye'} />
             </button>
           </div>
           {confirmError && <p className="text-xs text-safe-danger mt-1">{confirmError}</p>}
@@ -200,11 +201,10 @@ function ResetPassword() {
               const passing = newPassword ? rule.test(newPassword) : null;
               return (
                 <li key={rule.label} className="flex items-center gap-2 text-[11px]">
-                  <i className={`bi text-xs ${
-                    passing === null ? 'bi-circle text-safe-text-gray/40'
-                    : passing        ? 'bi-check-circle-fill text-safe-success'
-                                     : 'bi-x-circle-fill text-safe-danger'
-                  }`} />
+                  <FontAwesomeIcon
+                    icon={passing === null ? 'circle' : passing ? 'circle-check' : 'circle-xmark'}
+                    className={`text-xs ${passing === null ? 'text-safe-text-gray/40' : passing ? 'text-safe-success' : 'text-safe-danger'}`}
+                  />
                   <span className={passing ? 'text-safe-success' : 'text-safe-text-gray'}>
                     {rule.label}
                   </span>

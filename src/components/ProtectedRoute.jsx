@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function ProtectedRoute({ children, allowedRoles = null }) {
   const location = useLocation();
@@ -36,7 +37,7 @@ function ProtectedRoute({ children, allowedRoles = null }) {
         <div className="flex items-center justify-center min-h-screen bg-safe-bg">
           <div className="text-center max-w-md p-8 bg-safe-sidebar border border-safe-border rounded-xl shadow-xl">
             <div className="w-16 h-16 bg-safe-danger/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i className="bi bi-shield-x text-3xl text-safe-danger" />
+              <FontAwesomeIcon icon="shield-halved" className="text-3xl text-safe-danger" />
             </div>
             <h2 className="text-2xl font-bold text-safe-text-primary mb-2">Access Denied</h2>
             <p className="text-safe-text-muted mb-6">

@@ -1,6 +1,7 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
 import {
   Chart,
+  LineController,
   CategoryScale,
   LinearScale,
   PointElement,
@@ -10,7 +11,7 @@ import {
 } from 'chart.js';
 import { metricsAPI } from '@/services/api';
 
-Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
+Chart.register(LineController, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
 
 // Hex values are required here — canvas can't use CSS classes (sanctioned exception)
 const CHART_COLORS = {
@@ -96,6 +97,10 @@ function ChartWrapper({ type, refreshKey = 0, emptyLabel = 'No data available', 
     mountedRef.current = true;
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    // Guard against React StrictMode double-invoke: destroy any existing chart
+    // on this canvas before creating a new one (avoids "Canvas is already in use")
+    Chart.getChart(canvas)?.destroy();
 
     chartRef.current = new Chart(canvas.getContext('2d'), {
       type: 'line',

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginLayout from '../components/LoginLayout.jsx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function YouAreAllSet() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ function YouAreAllSet() {
     subtitle="You have successfully verified your account"
     icon={
       <div className="w-20 h-20 rounded-full bg-safe-success/10 flex items-center justify-center animate-scaleIn">
-        <i className="bi bi-check-circle-fill text-safe-success text-6xl animate-bounce" />
+        <FontAwesomeIcon icon="circle-check" className="text-safe-success text-6xl animate-bounce" />
       </div>
     }
     leftTitle={"You're All Set!"}

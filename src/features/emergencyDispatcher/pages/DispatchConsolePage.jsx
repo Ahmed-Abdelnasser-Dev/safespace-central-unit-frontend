@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatcherData } from '../hooks/useDispatcherData';
-import CommandBar from '../components/console/CommandBar';
+import PageActions from '@/components/ui/PageActions';
 import QueuePanel from '../components/console/QueuePanel';
 import ConsoleMap from '../components/console/ConsoleMap';
 import UnitsRosterPanel from '../components/console/UnitsRosterPanel';
@@ -31,7 +31,6 @@ export default function DispatchConsolePage() {
     pendingAssignment,
     incomingCase,
     dismissAssignment,
-    currentDispatcher,
   } = useDispatcherData();
 
   const [activeTab, setActiveTab] = useState('sos');
@@ -114,12 +113,32 @@ export default function DispatchConsolePage() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-safe-dark">
-      {/* Top command bar */}
-      <CommandBar
-        activeCaseCount={activeCaseCount}
-        availableUnitCount={availableUnitCount}
-        dispatcherName={currentDispatcher?.name ?? 'Dispatcher'}
-      />
+      <PageActions>
+        {/* Live indicator */}
+        <div className="flex items-center gap-1.5">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-safe-success opacity-75 animate-ping motion-reduce:animate-none" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-safe-success" />
+          </span>
+          <span className="text-xs text-safe-success font-medium">Live</span>
+        </div>
+
+        <div className="w-px h-5 bg-safe-gray-light" />
+
+        {/* Active cases */}
+        <div className="flex items-center gap-1.5">
+          <FontAwesomeIcon icon="circle-exclamation" className="text-safe-text-muted text-xs" />
+          <span className="text-xs text-safe-text-muted">Active</span>
+          <span className="text-xs font-semibold text-safe-text-primary font-mono tabular-nums">{activeCaseCount}</span>
+        </div>
+
+        {/* Available units */}
+        <div className="flex items-center gap-1.5">
+          <FontAwesomeIcon icon="truck-medical" className="text-safe-text-muted text-xs" />
+          <span className="text-xs text-safe-text-muted">Available</span>
+          <span className="text-xs font-semibold text-safe-success font-mono tabular-nums">{availableUnitCount}</span>
+        </div>
+      </PageActions>
 
       {/* Three-zone console grid */}
       <div className="flex-1 overflow-hidden flex flex-col xl:grid xl:grid-cols-[minmax(300px,360px)_1fr_minmax(300px,360px)]">

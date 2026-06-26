@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { userAPI } from '@/services/api';
 import { showError } from '@/utils/toast';
-import UserManagementHeader from '../components/UserManagementHeader';
+import PageActions from '@/components/ui/PageActions';
 import UserManagementCards from '../components/UserManagementCards';
 import UserManagementButtons from '../components/UserManagementButtons';
 import UserManagementTable from '../components/UserManagementTable';
@@ -63,7 +64,16 @@ function UserManagementPage() {
 
   return (
     <div className="flex flex-col h-full bg-safe-bg overflow-hidden">
-      <UserManagementHeader onRefresh={fetchUsers} />
+      <PageActions>
+        <button
+          onClick={fetchUsers}
+          disabled={loading}
+          title="Refresh"
+          className="w-9 h-9 rounded-lg border border-safe-border flex items-center justify-center text-safe-text-muted hover:bg-safe-gray transition-colors"
+        >
+          <FontAwesomeIcon icon="rotate" className={`text-sm ${loading ? 'animate-spin' : ''}`} />
+        </button>
+      </PageActions>
 
       <div className="flex-1 overflow-y-auto mt-6 mx-7">
         <UserManagementCards />

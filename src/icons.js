@@ -20,6 +20,7 @@ import {
   faHouseChimney, faUserCheck, faSatelliteDish, faCircleDot,
   faCircleExclamation,
   faSun, faMoon, faFingerprint,
+  faClipboard, faQrcode, faEnvelopeCircleCheck,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -43,4 +44,5 @@ library.add(
   faHouseChimney, faUserCheck, faSatelliteDish, faCircleDot,
   faCircleExclamation,
   faSun, faMoon, faFingerprint,
+  faClipboard, faQrcode, faEnvelopeCircleCheck,
 );

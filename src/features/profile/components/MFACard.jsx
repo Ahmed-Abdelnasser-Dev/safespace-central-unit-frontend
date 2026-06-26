@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setupMFA, enableMFA, disableMFA, resetMfaSetup } from '@/features/auth/authSlice';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 // ─── Small sub-components ─────────────────────────────────────────────────────
 
@@ -89,7 +90,7 @@ function MFACard() {
       <div className="bg-safe-sidebar rounded-xl border border-safe-border p-6 space-y-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-safe-success/10 flex items-center justify-center">
-            <i className="bi bi-check2-circle text-safe-success text-xl" />
+            <FontAwesomeIcon icon="circle-check" className="text-safe-success text-xl" />
           </div>
           <div>
             <h3 className="text-sm font-semibold text-safe-text-dark">2FA Enabled Successfully!</h3>
@@ -99,7 +100,7 @@ function MFACard() {
 
         <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
           <div className="flex items-start gap-2 text-xs text-amber-800">
-            <i className="bi bi-exclamation-triangle mt-0.5" />
+            <FontAwesomeIcon icon="triangle-exclamation" className="mt-0.5 flex-shrink-0" />
             <span>These codes are shown <strong>only once</strong>. Each code can be used once if you lose access to your authenticator app.</span>
           </div>
         </div>
@@ -116,7 +117,7 @@ function MFACard() {
           onClick={() => copyToClipboard(mfaBackupCodes.join('\n'), setCopiedCodes)}
           className="w-full flex items-center justify-center gap-2 text-xs text-safe-blue-btn border border-safe-blue-btn/30 rounded-lg py-2 hover:bg-safe-blue-btn/5 transition-colors"
         >
-          <i className={`bi bi-${copiedCodes ? 'check' : 'clipboard'}`} />
+          <FontAwesomeIcon icon={copiedCodes ? 'check' : 'clipboard'} />
           {copiedCodes ? 'Copied!' : 'Copy all codes'}
         </button>
 
@@ -133,7 +134,7 @@ function MFACard() {
       <div className="bg-safe-sidebar rounded-xl border border-safe-border p-6 space-y-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-safe-blue-btn/10 flex items-center justify-center">
-            <i className="bi bi-qr-code text-safe-blue-btn text-xl" />
+            <FontAwesomeIcon icon="qrcode" className="text-safe-blue-btn text-xl" />
           </div>
           <div>
             <h3 className="text-sm font-semibold text-safe-text-dark">Set Up Authenticator App</h3>
@@ -168,7 +169,7 @@ function MFACard() {
 
         {mfaSetupError && (
           <div className="flex items-center gap-2 text-xs text-safe-danger bg-safe-danger/5 border border-safe-danger/20 rounded-lg px-3 py-2">
-            <i className="bi bi-exclamation-circle" />
+            <FontAwesomeIcon icon="circle-exclamation" className="flex-shrink-0" />
             {mfaSetupError}
           </div>
         )}
@@ -203,7 +204,7 @@ function MFACard() {
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${mfaEnabled ? 'bg-safe-success/10' : 'bg-safe-bg'}`}>
-            <i className={`bi bi-shield-${mfaEnabled ? 'check' : 'exclamation'} text-xl ${mfaEnabled ? 'text-safe-success' : 'text-safe-text-muted'}`} />
+            <FontAwesomeIcon icon="shield-halved" className={`text-xl ${mfaEnabled ? 'text-safe-success' : 'text-safe-text-muted'}`} />
           </div>
           <div>
             <h3 className="text-sm font-semibold text-safe-text-dark">Two-Factor Authentication</h3>
@@ -221,7 +222,7 @@ function MFACard() {
 
       {mfaSetupError && !mfaSetupStep && (
         <div className="flex items-center gap-2 text-xs text-safe-danger bg-safe-danger/5 border border-safe-danger/20 rounded-lg px-3 py-2">
-          <i className="bi bi-exclamation-circle" />
+          <FontAwesomeIcon icon="circle-exclamation" className="flex-shrink-0" />
           {mfaSetupError}
         </div>
       )}
@@ -240,7 +241,7 @@ function MFACard() {
             </span>
           ) : (
             <span className="flex items-center justify-center gap-2">
-              <i className="bi bi-shield-plus" />
+              <FontAwesomeIcon icon="shield-halved" />
               Enable Two-Factor Authentication
             </span>
           )}
@@ -256,7 +257,7 @@ function MFACard() {
               className="w-full py-2.5 rounded-lg border border-safe-danger/30 text-safe-danger text-sm font-medium hover:bg-safe-danger/5 transition-colors"
             >
               <span className="flex items-center justify-center gap-2">
-                <i className="bi bi-shield-x" />
+                <FontAwesomeIcon icon="shield-halved" />
                 Disable Two-Factor Authentication
               </span>
             </button>
@@ -275,7 +276,7 @@ function MFACard() {
                     className="w-full px-3 pr-9 py-2 text-sm rounded-lg border border-safe-border bg-safe-bg text-safe-text-dark focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/20"
                   />
                   <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-safe-text-gray text-xs">
-                    <i className={`bi bi-eye${showPass ? '-slash' : ''}`} />
+                    <FontAwesomeIcon icon={showPass ? 'eye-slash' : 'eye'} />
                   </button>
                 </div>
               </div>
@@ -287,7 +288,7 @@ function MFACard() {
 
               {mfaSetupError && (
                 <div className="flex items-center gap-2 text-xs text-safe-danger">
-                  <i className="bi bi-exclamation-circle" />
+                  <FontAwesomeIcon icon="circle-exclamation" className="flex-shrink-0" />
                   {mfaSetupError}
                 </div>
               )}

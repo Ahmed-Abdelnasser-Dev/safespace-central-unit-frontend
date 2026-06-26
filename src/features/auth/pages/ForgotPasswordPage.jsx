@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { forgotPassword, clearPasswordResetState } from '../authSlice';
 import LoginLayout from '../components/LoginLayout.jsx';
 import Button from '@/components/ui/Button.jsx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function ForgotPassword() {
   const [email,      setEmail]      = useState('');
@@ -56,7 +57,7 @@ function ForgotPassword() {
         {passwordResetError && (
           <div className="rounded-lg border border-safe-danger/20 bg-safe-danger/5 px-4 py-3">
             <div className="flex items-start gap-3">
-              <i className="bi bi-exclamation-circle text-safe-danger text-lg mt-0.5" />
+              <FontAwesomeIcon icon="circle-exclamation" className="text-safe-danger text-lg mt-0.5 flex-shrink-0" />
               <div className="text-sm text-safe-text-dark">
                 <p className="font-semibold mb-1">Request Failed</p>
                 <p>{passwordResetError}</p>
@@ -73,7 +74,7 @@ function ForgotPassword() {
           </label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-safe-text-gray/50">
-              <i className="bi bi-envelope text-sm" />
+              <FontAwesomeIcon icon="envelope" className="text-sm" />
             </span>
             <input
               type="email"

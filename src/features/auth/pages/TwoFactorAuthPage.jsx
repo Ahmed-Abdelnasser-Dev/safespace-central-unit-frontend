@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { verifyMFACode } from '../authSlice';
 import LoginLayout from '../components/LoginLayout.jsx';
 import Button from '@/components/ui/Button.jsx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function TwoFactorAuth() {
   const navigate = useNavigate();
@@ -101,7 +102,7 @@ function TwoFactorAuth() {
       subtitle="Enter the 6-digit code sent to your email"
       icon={
         <div className="w-16 h-16 rounded-full bg-safe-blue/10 flex items-center justify-center">
-          <i className="bi bi-shield-check text-safe-blue text-3xl" />
+          <FontAwesomeIcon icon="shield-halved" className="text-safe-blue text-3xl" />
         </div>
       }
       leftTitle={'Two-Factor\nAuthentication'}
@@ -116,7 +117,7 @@ function TwoFactorAuth() {
       {error && (
         <div className="rounded-lg border border-safe-danger/30 bg-safe-danger/5 px-4 py-3 animate-slideUp mb-6">
           <div className="flex items-start gap-3">
-            <i className="bi bi-exclamation-circle text-safe-danger text-lg mt-0.5 flex-shrink-0" />
+            <FontAwesomeIcon icon="circle-exclamation" className="text-safe-danger text-lg mt-0.5 flex-shrink-0" />
             <div className="text-sm text-safe-danger/80 flex-1">
               <p className="font-semibold mb-1">Verification Failed</p>
               <p className="text-xs opacity-90">{error}</p>

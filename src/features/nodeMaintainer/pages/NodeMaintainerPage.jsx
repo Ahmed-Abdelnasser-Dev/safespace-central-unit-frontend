@@ -16,7 +16,9 @@ import {
   selectCurrentTab,
   setCurrentTab,
 } from '../nodesSlice';
-import NodeMaintainerHeader from '../components/NodeMaintainerHeader.jsx';
+import PageActions from '@/components/ui/PageActions';
+import SearchInput from '@/components/ui/SearchInput.jsx';
+import Button from '@/components/ui/Button.jsx';
 import NetworkMapCard from '../components/cards/NetworkMapCard.jsx';
 import NodesListCard from '../components/NodesList.jsx';
 import NodeDetailPanel from '../components/NodeDetailPanel.jsx';
@@ -118,9 +120,21 @@ export default function NodeMaintainerPage() {
     <div
       className="flex h-full w-full overflow-hidden bg-safe-dark"
     >
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <NodeMaintainerHeader onAddNode={() => setShowAddNodeModal(true)} />
+      <PageActions>
+        <SearchInput placeholder="Search nodes, locations..." width="260px" />
+        <Button variant="primary" size="sm" icon="plus" onClick={() => setShowAddNodeModal(true)}>
+          Add Node
+        </Button>
+        <button
+          onClick={() => dispatch(fetchNodes())}
+          title="Refresh"
+          className="w-9 h-9 rounded-lg border border-safe-border flex items-center justify-center text-safe-text-muted hover:bg-safe-gray transition-colors"
+        >
+          <FontAwesomeIcon icon="arrows-rotate" className="text-sm" />
+        </button>
+      </PageActions>
 
+      <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex gap-[12px] lg:gap-[16px] xl:gap-[20px] px-[12px] lg:px-[16px] xl:px-[20px] py-[12px] lg:py-[16px] xl:py-[20px] overflow-hidden flex-1 h-full">
           {/* Left Section: Map and Nodes List */}
           <div className="w-[35%] lg:w-[38%] xl:w-[40%] 2xl:w-[42%] flex flex-col gap-[8px] lg:gap-[12px] xl:gap-[16px] overflow-hidden">

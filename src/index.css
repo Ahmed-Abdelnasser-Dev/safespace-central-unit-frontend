@@ -7,10 +7,10 @@
 /* ── Theme CSS custom properties ──────────────────────────────────────────── */
 /* Light mode defaults — space-separated RGB values for Tailwind opacity support */
 :root {
-  --color-safe-dark:       245 247 250;   /* #f5f7fa — page canvas (slightly cooler) */
+  --color-safe-dark:       245 245 246;   /* #f5f5f6 — page canvas, neutral gray */
   --color-safe-sidebar:    255 255 255;   /* #ffffff — sidebar / header */
-  --color-safe-gray:       237 241 246;   /* #edf1f6 — card surface */
-  --color-safe-gray-light: 209 219 231;   /* #d1dbe7 — elevated / border */
+  --color-safe-gray:       238 239 241;   /* #eeeef1 — card surface, neutral */
+  --color-safe-gray-light: 215 215 218;   /* #d7d7da — elevated / border, neutral */
   --color-text-primary:    15 20 25;      /* #0f1419 — body text */
   --color-text-muted:      71 85 105;     /* #475569 — muted text (6.1:1 on card, passes WCAG AA) */
 }

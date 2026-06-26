@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser, clearError } from '../authSlice';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { validateEmail } from '@/utils/egyptianValidation';
 import LoginLayout from '../components/LoginLayout.jsx';
 import Button from '@/components/ui/Button.jsx';
@@ -142,7 +143,7 @@ function SignIn() {
         {error && (
           <div className="rounded-lg border border-safe-danger/30 bg-safe-danger/5 px-4 py-3 animate-slideUp">
             <div className="flex items-start gap-3">
-              <i className="bi bi-exclamation-circle text-safe-danger text-lg mt-0.5 flex-shrink-0" />
+              <FontAwesomeIcon icon="circle-exclamation" className="text-safe-danger text-lg mt-0.5 flex-shrink-0" />
               <div className="text-sm text-safe-danger/80 flex-1">
                 <p className="font-semibold mb-1">Sign In Failed</p>
                 <p className="text-xs opacity-90">{error}</p>
@@ -158,7 +159,7 @@ function SignIn() {
           </label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-safe-text-gray/50">
-              <i className="bi bi-envelope text-sm" />
+              <FontAwesomeIcon icon="envelope" className="text-sm" />
             </span>
             <input
               type="email"
@@ -183,7 +184,7 @@ function SignIn() {
           </label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-safe-text-gray/50">
-              <i className="bi bi-lock text-sm" />
+              <FontAwesomeIcon icon="lock" className="text-sm" />
             </span>
             <input
               type={showPassword ? 'text' : 'password'}
@@ -202,7 +203,7 @@ function SignIn() {
               disabled={loading || isSubmitting}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              <i className={`bi bi-eye${showPassword ? '-slash' : ''} text-sm`} />
+              <FontAwesomeIcon icon={showPassword ? 'eye-slash' : 'eye'} className="text-sm" />
             </button>
           </div>
           {passwordError && (
@@ -238,7 +239,7 @@ function SignIn() {
         {/* Security info */}
         <div className="flex items-start gap-3 rounded-lg border border-safe-info/20 bg-safe-info/5 px-4 py-3">
           <div className="w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <i className="bi bi-shield-check text-safe-info text-sm font-bold" />
+            <FontAwesomeIcon icon="shield-halved" className="text-safe-info text-sm" />
           </div>
           <div className="text-xs leading-relaxed text-safe-text-dark">
             <p className="font-semibold text-safe-text-dark/90 mb-1">
