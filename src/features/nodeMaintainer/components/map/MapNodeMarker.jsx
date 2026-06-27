@@ -7,10 +7,10 @@ function MapNodeMarker({ node, isSelected, onSelect, onHoverStart, onHoverEnd })
   if (latitude == null || longitude == null) return null;
 
   const statusColor = getNodeStatusColors(node.status).dot;
+  const shouldPulse = isSelected || node.status === 'offline' || node.status === 'warning';
 
   return (
     <Marker
-      key={node.id}
       longitude={longitude}
       latitude={latitude}
       anchor="center"
@@ -24,17 +24,19 @@ function MapNodeMarker({ node, isSelected, onSelect, onHoverStart, onHoverEnd })
         onMouseEnter={() => onHoverStart?.(node.id)}
         onMouseLeave={() => onHoverEnd?.()}
       >
+        {/* Pulse ring — status-driven */}
         <div
-          className={`absolute rounded-full ${isSelected ? 'animate-ping' : ''}`}
+          className={`absolute rounded-full ${shouldPulse ? 'animate-ping' : ''}`}
           style={{
             width: '26.368px',
             height: '26.368px',
             backgroundColor: statusColor,
             opacity: 0.4,
             left: '-8.21px',
-            top: '-8.21px'
+            top: '-8.21px',
           }}
         />
+        {/* Core dot */}
         <div
           className="rounded-full border-[1.364px] border-white"
           style={{
@@ -42,7 +44,7 @@ function MapNodeMarker({ node, isSelected, onSelect, onHoverStart, onHoverEnd })
             height: '14.912px',
             backgroundColor: statusColor,
             marginLeft: '-2.49px',
-            marginTop: '-2.49px'
+            marginTop: '-2.49px',
           }}
         />
       </div>

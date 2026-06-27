@@ -88,11 +88,11 @@ export default function AddNodeModal({ isOpen, onClose, onSubmit, existingNodeId
             </div>
             <div className="space-y-2">
               <label className="text-sm font-semibold text-safe-text-primary">Latitude</label>
-              <Input value={newNode.latitude} onChange={updateField('latitude')} placeholder="40.7128" />
+              <Input value={newNode.latitude} onChange={updateField('latitude')} placeholder="30.0131" />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-semibold text-safe-text-primary">Longitude</label>
-              <Input value={newNode.longitude} onChange={updateField('longitude')} placeholder="-74.0060" />
+              <Input value={newNode.longitude} onChange={updateField('longitude')} placeholder="32.5498" />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-semibold text-safe-text-primary">Speed Limit (km/h)</label>

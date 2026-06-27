@@ -185,11 +185,12 @@ export default function NodeMaintainerPage() {
             <>
               {/* Left Section: Map and Nodes List */}
               <div className="w-[35%] lg:w-[38%] xl:w-[40%] 2xl:w-[42%] flex flex-col gap-[8px] lg:gap-[12px] xl:gap-[16px] overflow-hidden">
-                <div className="h-1/2 overflow-hidden">
+                {/* Map — dominant (60%) */}
+                <div className="h-[60%] overflow-hidden">
                   <NetworkMapCard />
                 </div>
-                <div className="h-1/2 overflow-hidden">
-                  {/* Pass page-level search to node list */}
+                {/* Node list — compact (40%) */}
+                <div className="h-[40%] overflow-hidden">
                   <NodesListCard externalSearch={pageSearch} />
                 </div>
               </div>
