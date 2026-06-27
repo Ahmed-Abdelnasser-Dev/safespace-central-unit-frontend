@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectAllNodes, selectSelectedNodeId, selectNode } from '../../nodesSlice';
 import NodeCard from '../cards/NodeCard';
 
-export default function NodesDisplay() {
+export default function NodesDisplay({ externalSearch }) {
   const dispatch = useDispatch();
   const nodes = useSelector(selectAllNodes);
   const selectedNodeId = useSelector(selectSelectedNodeId);
   const [filter, setFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [internalSearch, setInternalSearch] = useState('');
+
+  const effectiveSearch = externalSearch !== undefined ? externalSearch : internalSearch;
 
   const handleSelectNode = (nodeId) => {
     dispatch(selectNode(nodeId));
@@ -16,8 +18,8 @@ export default function NodesDisplay() {
 
   const filteredNodes = nodes.filter((node) => {
     const matchesSearch =
-      node.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      node.location.address.toLowerCase().includes(searchQuery.toLowerCase());
+      node.id.toLowerCase().includes(effectiveSearch.toLowerCase()) ||
+      node.location.address.toLowerCase().includes(effectiveSearch.toLowerCase());
 
     if (filter === 'all') return matchesSearch;
     if (filter === 'online') return node.status === 'online' && matchesSearch;
@@ -28,17 +30,20 @@ export default function NodesDisplay() {
   return (
     <div className="bg-safe-sidebar border border-safe-gray-light rounded-xl overflow-hidden flex flex-col flex-1 w-full">
       <div className="border-b border-safe-gray-light px-3.5 pt-2.5 pb-2">
-        <div className="relative mb-2.5">
-          <div className="bg-safe-gray border border-safe-gray-light rounded-lg flex items-center h-9 px-3">
-            <input
-              type="text"
-              placeholder="Search nodes..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent w-full outline-none text-xs font-normal text-safe-text-primary placeholder-safe-text-muted"
-            />
+        {/* Only show internal search if not driven by external search */}
+        {externalSearch === undefined && (
+          <div className="relative mb-2.5">
+            <div className="bg-safe-gray border border-safe-gray-light rounded-lg flex items-center h-9 px-3">
+              <input
+                type="text"
+                placeholder="Search nodes..."
+                value={internalSearch}
+                onChange={(e) => setInternalSearch(e.target.value)}
+                className="bg-transparent w-full outline-none text-xs font-normal text-safe-text-primary placeholder-safe-text-muted"
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex gap-1.5 mb-2">
           {['all', 'online', 'offline'].map((filterType) => (

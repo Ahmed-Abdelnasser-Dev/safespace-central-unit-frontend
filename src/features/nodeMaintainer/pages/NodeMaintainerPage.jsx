@@ -1,6 +1,5 @@
 /**
- * Node Maintainer Dashboard - Responsive Design
- * @component
+ * Node Maintainer Dashboard
  */
 
 import { useEffect, useState } from 'react';
@@ -19,6 +18,7 @@ import {
 import PageActions from '@/components/ui/PageActions';
 import SearchInput from '@/components/ui/SearchInput.jsx';
 import Button from '@/components/ui/Button.jsx';
+import Tabs from '@/components/ui/Tabs.jsx';
 import NetworkMapCard from '../components/cards/NetworkMapCard.jsx';
 import NodesListCard from '../components/NodesList.jsx';
 import NodeDetailPanel from '../components/NodeDetailPanel.jsx';
@@ -31,13 +31,25 @@ import PolygonEditorDialog from '../components/PolygonEditorDialog.jsx';
 import ConfirmDialog from '../components/ui/ConfirmDialog.jsx';
 import EditNodeModal from '../components/EditNodeModal.jsx';
 import AddNodeModal from '../components/AddNodeModal.jsx';
+import CameraViewPlaceholder from '../components/CameraViewPlaceholder.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+const PAGE_VIEWS = [
+  { id: 'nodes', label: 'Nodes', icon: 'server' },
+  { id: 'cameras', label: 'Cameras', icon: 'video' },
+];
 
 export default function NodeMaintainerPage() {
   const dispatch = useDispatch();
   const nodes = useSelector(selectAllNodes);
   const selectedNode = useSelector(selectSelectedNode);
   const currentTab = useSelector(selectCurrentTab);
+
+  // Page-level view: 'nodes' | 'cameras'
+  const [activeView, setActiveView] = useState('nodes');
+  // Page-level search (wired to active view's content)
+  const [pageSearch, setPageSearch] = useState('');
+
   const [showPolygonEditor, setShowPolygonEditor] = useState(false);
   const [editingPolygon, setEditingPolygon] = useState(null);
   const [showAddNodeModal, setShowAddNodeModal] = useState(false);
@@ -52,6 +64,12 @@ export default function NodeMaintainerPage() {
     dispatch(fetchNodes());
   }, [dispatch]);
 
+  // Clear search when switching views
+  const handleViewChange = (viewId) => {
+    setActiveView(viewId);
+    setPageSearch('');
+  };
+
   const renderTabContent = () => {
     switch (currentTab) {
       case 'overview':
@@ -63,10 +81,14 @@ export default function NodeMaintainerPage() {
       case 'health':
         return <HealthTab />;
       case 'polygons':
-        return <PolygonsTab onEditPolygon={(poly) => {
-          setEditingPolygon(poly);
-          setShowPolygonEditor(true);
-        }} />;
+        return (
+          <PolygonsTab
+            onEditPolygon={(poly) => {
+              setEditingPolygon(poly);
+              setShowPolygonEditor(true);
+            }}
+          />
+        );
       default:
         return null;
     }
@@ -117,14 +139,36 @@ export default function NodeMaintainerPage() {
   };
 
   return (
-    <div
-      className="flex h-full w-full overflow-hidden bg-safe-dark"
-    >
+    <div className="flex h-full w-full overflow-hidden bg-safe-dark">
       <PageActions>
-        <SearchInput placeholder="Search nodes, locations..." width="260px" />
-        <Button variant="primary" size="sm" icon="plus" onClick={() => setShowAddNodeModal(true)}>
-          Add Node
-        </Button>
+        {/* Page-level view tabs */}
+        <Tabs
+          tabs={PAGE_VIEWS}
+          activeTab={activeView}
+          onChange={handleViewChange}
+          size="sm"
+        />
+
+        {/* Search — filters active view */}
+        <SearchInput
+          placeholder={activeView === 'nodes' ? 'Search nodes, locations…' : 'Search cameras…'}
+          value={pageSearch}
+          onChange={(e) => setPageSearch(e.target.value)}
+          width="240px"
+        />
+
+        {/* View-specific action */}
+        {activeView === 'nodes' ? (
+          <Button variant="primary" size="sm" icon="plus" onClick={() => setShowAddNodeModal(true)}>
+            Add Node
+          </Button>
+        ) : (
+          <Button variant="primary" size="sm" icon="plus" onClick={() => { /* Task 8 */ }}>
+            Add Camera
+          </Button>
+        )}
+
+        {/* Refresh */}
         <button
           onClick={() => dispatch(fetchNodes())}
           title="Refresh"
@@ -136,44 +180,54 @@ export default function NodeMaintainerPage() {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex gap-[12px] lg:gap-[16px] xl:gap-[20px] px-[12px] lg:px-[16px] xl:px-[20px] py-[12px] lg:py-[16px] xl:py-[20px] overflow-hidden flex-1 h-full">
-          {/* Left Section: Map and Nodes List */}
-          <div className="w-[35%] lg:w-[38%] xl:w-[40%] 2xl:w-[42%] flex flex-col gap-[8px] lg:gap-[12px] xl:gap-[16px] overflow-hidden">
-            <div className="h-1/2 overflow-hidden">
-              <NetworkMapCard />
-            </div>
-            <div className="h-1/2 overflow-hidden">
-              <NodesListCard />
-            </div>
-          </div>
 
-          {/* Right Section: Node Details or Empty State */}
-          {selectedNode ? (
-            <NodeDetailPanel
-              selectedNode={selectedNode}
-              currentTab={currentTab}
-              onTabChange={(tabId) => dispatch(setCurrentTab(tabId))}
-              onEdit={() => setShowEditModal(true)}
-              onDelete={() => setShowDeleteConfirm(true)}
-              isEditing={isEditing}
-              isDeleting={isDeleting}
-              renderTabContent={renderTabContent}
-            />
-          ) : (
-            <div className="flex-1 flex items-center justify-center bg-safe-sidebar border border-safe-gray-light rounded-[8px] lg:rounded-[10px] xl:rounded-[13.684px]">
-              <div className="text-center px-[20px]">
-                <FontAwesomeIcon
-                  icon="circle-info"
-                  className="text-safe-text-muted mb-3 text-4xl"
-                />
-                <p className="text-sm text-safe-text-muted">
-                  Select a node from the list to view details
-                </p>
+          {activeView === 'nodes' ? (
+            <>
+              {/* Left Section: Map and Nodes List */}
+              <div className="w-[35%] lg:w-[38%] xl:w-[40%] 2xl:w-[42%] flex flex-col gap-[8px] lg:gap-[12px] xl:gap-[16px] overflow-hidden">
+                <div className="h-1/2 overflow-hidden">
+                  <NetworkMapCard />
+                </div>
+                <div className="h-1/2 overflow-hidden">
+                  {/* Pass page-level search to node list */}
+                  <NodesListCard externalSearch={pageSearch} />
+                </div>
               </div>
-            </div>
+
+              {/* Right Section: Node Details or Empty State */}
+              {selectedNode ? (
+                <NodeDetailPanel
+                  selectedNode={selectedNode}
+                  currentTab={currentTab}
+                  onTabChange={(tabId) => dispatch(setCurrentTab(tabId))}
+                  onEdit={() => setShowEditModal(true)}
+                  onDelete={() => setShowDeleteConfirm(true)}
+                  isEditing={isEditing}
+                  isDeleting={isDeleting}
+                  renderTabContent={renderTabContent}
+                />
+              ) : (
+                <div className="flex-1 flex items-center justify-center bg-safe-sidebar border border-safe-gray-light rounded-[8px] lg:rounded-[10px] xl:rounded-[13.684px]">
+                  <div className="text-center px-[20px]">
+                    <FontAwesomeIcon
+                      icon="circle-info"
+                      className="text-safe-text-muted mb-3 text-4xl"
+                    />
+                    <p className="text-sm text-safe-text-muted">
+                      Select a node from the list to view details
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            /* Cameras view — full-width placeholder, replaced in Task 8 */
+            <CameraViewPlaceholder searchQuery={pageSearch} />
           )}
         </div>
       </div>
 
+      {/* Modals — always rendered regardless of active view */}
       <EditNodeModal
         isOpen={showEditModal}
         onClose={() => { setShowEditModal(false); setEditError(''); }}
@@ -191,7 +245,7 @@ export default function NodeMaintainerPage() {
             ? `This will permanently remove ${selectedNode.id} and all related configuration.`
             : 'This will permanently remove the selected node.'
         }
-        confirmText={isDeleting ? 'Deleting...' : 'Delete'}
+        confirmText={isDeleting ? 'Deleting…' : 'Delete'}
         cancelText="Cancel"
         onConfirm={handleDeleteNode}
         onCancel={() => { setShowDeleteConfirm(false); setDeleteError(''); }}
