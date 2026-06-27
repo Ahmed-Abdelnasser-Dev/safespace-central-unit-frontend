@@ -544,4 +544,82 @@ export const observerAPI = {
   },
 };
 
+// ============================================================================
+// Node Maintainer APIs
+// ============================================================================
+
+export const nodeAPI = {
+  getNodes: async () => {
+    const { data } = await api.get('/nodes');
+    return data.data || [];
+  },
+  registerNode: async (payload) => {
+    const { data } = await api.post('/nodes/register', payload);
+    return data.data;
+  },
+  updateNode: async (nodeId, updates) => {
+    const { data } = await api.patch(`/nodes/${nodeId}`, updates);
+    return data.data;
+  },
+  updateNodePolygons: async (nodeId, lanePolygons) => {
+    const { data } = await api.patch(`/nodes/${nodeId}`, { lanePolygons });
+    return data.data;
+  },
+  updateRoadConfig: async (nodeId, { lanes, speedLimit }) => {
+    const { data } = await api.patch(`/nodes/${nodeId}`, { roadRules: { lanes, speedLimit } });
+    return data.data;
+  },
+  deleteNode: async (nodeId) => {
+    await api.delete(`/nodes/${nodeId}`);
+  },
+  /**
+   * Fetch node health history. Returns null gracefully if not yet implemented (404/501).
+   * @param {string} nodeId
+   * @param {string} range - e.g. '1h', '6h', '24h', '7d'
+   * @returns {Promise<HealthHistory|null>}
+   */
+  getHealthHistory: async (nodeId, range = '24h') => {
+    try {
+      const { data } = await api.get(`/nodes/${nodeId}/health-history`, { params: { range } });
+      return data.data || null;
+    } catch (err) {
+      // Endpoint not yet implemented — degrade gracefully, no console.error
+      if (err.response?.status === 404 || err.response?.status === 501 || err.response?.status === 405) {
+        return null;
+      }
+      throw err;
+    }
+  },
+  /**
+   * Geocode a text query (backend proxies to geocoder — DMZ-safe).
+   * Returns null gracefully if the backend endpoint doesn't exist yet.
+   */
+  geocode: async (query) => {
+    try {
+      const { data } = await api.get('/geocode', { params: { q: query } });
+      return data.data || null;
+    } catch (err) {
+      if (err.response?.status === 404 || err.response?.status === 501 || err.response?.status === 405) {
+        return null;
+      }
+      throw err;
+    }
+  },
+  /**
+   * Reverse geocode lat/lng to an address.
+   * Returns null gracefully if the backend endpoint doesn't exist yet.
+   */
+  reverseGeocode: async (lat, lng) => {
+    try {
+      const { data } = await api.get('/reverse-geocode', { params: { lat, lng } });
+      return data.data || null;
+    } catch (err) {
+      if (err.response?.status === 404 || err.response?.status === 501 || err.response?.status === 405) {
+        return null;
+      }
+      throw err;
+    }
+  },
+};
+
 export default api;
