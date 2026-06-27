@@ -13,7 +13,7 @@ The `docs/` folder is the source of truth for current project state. Update it w
 | [`docs/plan.md`](./docs/plan.md) | Completed / remaining / not-started — check before planning work |
 | [`docs/bugs.md`](./docs/bugs.md) | Known bugs with file:line — check before modifying named areas |
 | [`docs/target-architecture.md`](./docs/target-architecture.md) | Intended end-state (Overview 2) vs current + migration priority |
-| [`docs/design.md`](./docs/design.md) | safe-* color tokens, UI primitives, typography, animations |
+| [`docs/design-system.md`](./docs/design-system.md) | safe-* color tokens, UI primitives, typography, spacing, responsive layout |
 | [`docs/techstack.md`](./docs/techstack.md) | Exact deps + versions, build config, env vars |
 | [`docs/system-context.md`](./docs/system-context.md) | Full Safe Space system (3 layers) — where this dashboard fits |
 

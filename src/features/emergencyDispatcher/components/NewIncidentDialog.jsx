@@ -89,7 +89,7 @@ export default function NewIncidentDialog() {
           <div className="bg-safe-gray rounded-xl border border-safe-gray-light px-4 py-3 space-y-2.5">
             {/* Case ID row */}
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-semibold text-safe-text-muted/70 uppercase tracking-wider">
+              <span className="text-[10px] font-semibold text-safe-text-muted/70">
                 {isSOS ? 'SOS Request' : 'Incident'}
               </span>
               <span className="ml-auto font-mono text-[10px] text-safe-text-muted/45">{id}</span>
@@ -106,7 +106,7 @@ export default function NewIncidentDialog() {
                 )}
               </div>
               <div className="text-right flex-shrink-0">
-                <p className="text-[10px] font-medium text-safe-text-muted/60 uppercase tracking-wide">Received</p>
+                <p className="text-[10px] font-medium text-safe-text-muted/60">Received</p>
                 <p className="text-xs font-mono text-safe-text-primary mt-0.5">
                   <LiveTimeSince receivedAt={receivedAt} />
                 </p>

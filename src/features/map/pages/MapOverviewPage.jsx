@@ -1,12 +1,16 @@
 /**
  * MapOverviewPage — Road Observer Monitoring Console
  *
- * Dark-canvas control-room view that replaces the old light-themed mock page.
+ * Dark-canvas control-room view.
  * Real data sources:
- *  - nodes: Redux `nodes` slice (GET /nodes, 30 s refresh)
+ *  - nodes:         Redux `nodes` slice (GET /nodes, 30 s refresh)
+ *  - cameras:       Redux `cameras` slice (GET /cameras via streamApi)
  *  - observer stats: observerAPI.getStats() (reviewed today, pending — degrades gracefully)
- *  - notifications: notificationsSlice (socket-live + backend-persisted)
- *  - incidents: socket events (incident-assigned, accident-detected)
+ *  - notifications:  notificationsSlice (socket-live + backend-persisted)
+ *  - incidents:      socket events (incident-assigned, accident-detected)
+ *
+ * Notification UI: relies solely on the global bell in AppTopBar — the old
+ * duplicate map-pin "Map Alerts" button has been removed.
  *
  * @module features/map/pages/MapOverviewPage
  */
@@ -20,11 +24,12 @@ import SearchInput from '@/components/ui/SearchInput.jsx';
 import FilterChips from '../components/FilterTabs.jsx';
 import MapView from '../components/MapView.jsx';
 import KPICards from '../components/KPICards.jsx';
-import NodesList, { NodeDetailDialog } from '../components/NodesList.jsx';
-import NotificationPanel from '../components/NotificationPanel.jsx';
+import NodesList from '../components/NodesList.jsx';
+import { NodeDetailDialog } from '../components/NodeDetailDialog.jsx';
 import AccidentDialog from '@/features/incidents/components/AccidentDialog.jsx';
 
 import { fetchNodes } from '@/features/nodeMaintainer/nodesSlice.js';
+import { fetchCameras } from '@/features/cameras/cameraSlice.js';
 import { fetchNotifications, addLiveNotification } from '@/features/notifications/notificationsSlice.js';
 import { observerAPI } from '@/services/api.js';
 import {
@@ -58,34 +63,30 @@ function buildNotificationFromIncident(payload, type = 'incident_assigned') {
 function MapOverviewPage() {
   const dispatch = useDispatch();
   const { nodes, isLoading: nodesLoading } = useSelector((state) => state.nodes);
-  const { unreadCount } = useSelector((state) => state.notifications);
+  // cameras might be null/non-array if stream service returns unexpected data
+  const cameras = useSelector((state) => Array.isArray(state.cameras.cameras) ? state.cameras.cameras : []);
 
   // ── local state ──
   const [filter, setFilter] = useState('all');
   const [focusedNodeId, setFocusedNodeId] = useState(null);
-  const [notifPanelOpen, setNotifPanelOpen] = useState(false);
 
-  // Active incidents accumulated this session (cleared on page unmount)
-  const [activeIncidents, setActiveIncidents] = useState([]); // array of incident payloads
+  const [activeIncidents, setActiveIncidents] = useState([]);
   const [showAccident, setShowAccident] = useState(false);
   const [currentIncident, setCurrentIncident] = useState(null);
 
-  // Node detail dialog (opened from map popover or node rail)
   const [detailNode, setDetailNode] = useState(null);
 
-  // Decision toast
   const [decisionToast, setDecisionToast] = useState(null);
   const toastTimerRef = useRef(null);
 
-  // Observer stats (fails gracefully — backend endpoint may not exist yet)
+  // Observer stats (fails gracefully)
   const [observerStats, setObserverStats] = useState({ reviewedToday: null, pendingReview: null });
 
   // ── data fetching ─────────────────────────────────────────────────────────
 
   const fetchAll = useCallback(async () => {
-    try {
-      await dispatch(fetchNodes());
-    } catch (_) { /* nodes error surfaced via Redux */ }
+    try { await dispatch(fetchNodes()); } catch (_) { /* nodes error surfaced via Redux */ }
+    try { await dispatch(fetchCameras()); } catch (_) { /* cameras error surfaced via Redux */ }
 
     try {
       const stats = await observerAPI.getStats();
@@ -93,9 +94,8 @@ function MapOverviewPage() {
         reviewedToday: stats.reviewedToday ?? null,
         pendingReview: stats.pendingReview ?? null,
       });
-    } catch (_) { /* observer stats endpoint not yet available — show — */ }
+    } catch (_) { /* observer stats endpoint not yet available */ }
 
-    // Load persisted notification history
     dispatch(fetchNotifications({ limit: 30 }));
   }, [dispatch]);
 
@@ -112,11 +112,8 @@ function MapOverviewPage() {
     const socket = getSocket();
 
     const handleIncident = (payload) => {
-      // Add to live notification feed
       dispatch(addLiveNotification(buildNotificationFromIncident(payload, 'incident_assigned')));
-      // Accumulate for filter count
       setActiveIncidents((prev) => [...prev, payload]);
-      // Open AccidentDialog if no active one
       if (!currentIncident) {
         setCurrentIncident(payload);
         setShowAccident(true);
@@ -144,15 +141,18 @@ function MapOverviewPage() {
 
   // ── derived values ───────────────────────────────────────────────────────
 
-  const onlineNodes = nodes.filter((n) => n.status === 'online');
+  const onlineNodes  = nodes.filter((n) => n.status === 'online');
   const offlineNodes = nodes.filter((n) => n.status !== 'online');
   const activeIncidentNodeIds = activeIncidents.map((i) => i.nodeId).filter(Boolean);
 
+  const onlineCameras  = cameras.filter((c) => c.status === 'ONLINE');
+  const offlineCameras = cameras.filter((c) => c.status !== 'ONLINE');
+
   const filterCounts = {
-    all: nodes.length,
-    online: onlineNodes.length,
+    all:     nodes.length,
+    online:  onlineNodes.length,
     offline: offlineNodes.length,
-    active: activeIncidentNodeIds.length,
+    active:  activeIncidentNodeIds.length,
   };
 
   // ── handlers ─────────────────────────────────────────────────────────────
@@ -160,7 +160,6 @@ function MapOverviewPage() {
   const handleCloseAccident = () => { setShowAccident(false); setCurrentIncident(null); };
 
   const handleDecisionMade = (decision) => {
-    // Remove the resolved incident from active incidents
     setActiveIncidents((prev) =>
       prev.filter((i) => i.incidentId !== decision.incidentId)
     );
@@ -170,7 +169,6 @@ function MapOverviewPage() {
 
   const handleSelectNode = (node) => {
     setFocusedNodeId(node.id);
-    // Reset after flyTo fires to allow re-selecting
     setTimeout(() => setFocusedNodeId(null), 2000);
   };
 
@@ -179,7 +177,7 @@ function MapOverviewPage() {
   return (
     <div className="flex flex-col h-full overflow-hidden bg-safe-dark">
 
-      {/* ── Page actions → AppTopBar slot ────────────────────────────────── */}
+      {/* Page actions → AppTopBar slot (no duplicate notification button) */}
       <PageActions>
         <SearchInput placeholder="Search locations, units, incidents..." width="260px" />
         <button
@@ -190,40 +188,26 @@ function MapOverviewPage() {
         >
           <FontAwesomeIcon icon="rotate" className={`text-sm ${nodesLoading ? 'animate-spin' : ''}`} />
         </button>
-        <button
-          onClick={() => setNotifPanelOpen((o) => !o)}
-          title="Map Alerts"
-          aria-pressed={notifPanelOpen}
-          className={`relative w-9 h-9 rounded-lg border flex items-center justify-center transition-colors ${
-            notifPanelOpen
-              ? 'border-safe-blue bg-safe-blue/10 text-safe-blue'
-              : 'border-safe-border text-safe-text-muted hover:bg-safe-gray'
-          }`}
-        >
-          <FontAwesomeIcon icon="map-pin" className="text-sm" />
-          {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-safe-danger rounded-full text-white text-[10px] font-bold flex items-center justify-center">
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </span>
-          )}
-        </button>
       </PageActions>
 
-      {/* ── Main content ─────────────────────────────────────────────────── */}
+      {/* KPI strip */}
+      <div className="flex-shrink-0 px-4 pt-3 pb-2">
+        <KPICards
+          nodesOnline={onlineNodes.length}
+          nodesOffline={offlineNodes.length}
+          pendingReview={observerStats.pendingReview}
+          reviewedToday={observerStats.reviewedToday}
+          camerasOnline={cameras.length ? onlineCameras.length : null}
+          camerasOffline={cameras.length ? offlineCameras.length : null}
+          loading={nodesLoading && nodes.length === 0}
+        />
+      </div>
+
+      {/* Main content area */}
       <div className="flex-1 flex overflow-hidden min-h-0">
 
-        {/* Left: KPI strip + filter chips + map */}
+        {/* Left: filter chips + map */}
         <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-          {/* KPI strip — compact, inline above map */}
-          <div className="flex-shrink-0 px-4 pt-3 pb-2">
-            <KPICards
-              nodesOnline={onlineNodes.length}
-              nodesOffline={offlineNodes.length}
-              pendingReview={observerStats.pendingReview}
-              reviewedToday={observerStats.reviewedToday}
-              loading={nodesLoading && nodes.length === 0}
-            />
-          </div>
           <FilterChips
             activeFilter={filter}
             onFilterChange={setFilter}
@@ -240,9 +224,10 @@ function MapOverviewPage() {
           </div>
         </div>
 
-        {/* Right: node status rail — full height */}
+        {/* Right: node + camera status rail */}
         <NodesList
           nodes={nodes}
+          cameras={cameras}
           filter={filter}
           activeIncidentNodeIds={activeIncidentNodeIds}
           onSelectNode={handleSelectNode}
@@ -250,18 +235,12 @@ function MapOverviewPage() {
         />
       </div>
 
-      {/* ── Notification panel (fixed dropdown) ──────────────────────────── */}
-      <NotificationPanel
-        open={notifPanelOpen}
-        onClose={() => setNotifPanelOpen(false)}
-      />
-
-      {/* ── Node detail dialog (from map popover or node rail) ───────────── */}
+      {/* Node detail dialog */}
       {detailNode && (
         <NodeDetailDialog node={detailNode} onClose={() => setDetailNode(null)} />
       )}
 
-      {/* ── AccidentDialog ────────────────────────────────────────────────── */}
+      {/* AccidentDialog */}
       <AccidentDialog
         open={showAccident}
         onClose={handleCloseAccident}
@@ -269,7 +248,7 @@ function MapOverviewPage() {
         incident={currentIncident}
       />
 
-      {/* ── Decision toast ────────────────────────────────────────────────── */}
+      {/* Decision toast */}
       {decisionToast && (
         <div className="fixed top-4 right-4 z-40 animate-fadeIn pointer-events-none">
           <div className={`px-5 py-3.5 rounded-xl shadow-xl border-l-4 flex items-center gap-3 ${
@@ -280,7 +259,11 @@ function MapOverviewPage() {
               : 'bg-safe-gray border-safe-danger text-safe-text-primary'
           }`}>
             <FontAwesomeIcon
-              icon={decisionToast.status === 'CONFIRMED' ? 'circle-check' : decisionToast.status === 'MODIFIED' ? 'pen-to-square' : 'ban'}
+              icon={
+                decisionToast.status === 'CONFIRMED' ? 'circle-check'
+                : decisionToast.status === 'MODIFIED' ? 'pen-to-square'
+                : 'ban'
+              }
               className={
                 decisionToast.status === 'CONFIRMED' ? 'text-safe-green'
                 : decisionToast.status === 'MODIFIED' ? 'text-safe-blue'

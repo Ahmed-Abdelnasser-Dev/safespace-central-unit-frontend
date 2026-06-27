@@ -330,6 +330,88 @@ Separate from user preferences (handled via `PATCH /api/users/me`).
 
 ---
 
+## 12. Node Detail Live Stream (WebSocket)
+
+**Status: `add`** — the `NodeDetailDialog` (Road Observer screen) now opens a dedicated
+WebSocket to the stream-service to show a live camera feed for any detection node. This
+endpoint does not yet exist on the stream-service.
+
+### Context
+
+When the Road Observer clicks a node in the right-side rail, a detail dialog opens.
+The left half of the dialog shows a live video feed from the node's onboard camera.
+The frontend opens a WebSocket directly to the stream-service (not via Socket.IO).
+
+### Required endpoint
+
+```
+WS /ws/nodes?client=dashboard
+```
+
+This lives on the stream-service (port 4001), not the backend (port 5000).
+
+### Protocol (JSON text frames, both directions)
+
+**Client → Server (subscribe):**
+```json
+{ "type": "dashboard_subscribe", "nodeIds": ["<nodeId>"] }
+```
+
+Send immediately after the WebSocket `open` event. `nodeIds` is always an array; the
+dialog subscribes to exactly one node at a time. The server should begin streaming frames
+for the requested node IDs.
+
+**Server → Client (video frame):**
+```json
+{
+  "type": "video_frame",
+  "nodeId": "<nodeId>",
+  "frameData": "<base64-encoded JPEG string>"
+}
+```
+
+- `frameData` is a raw base64 string (no `data:image/jpeg;base64,` prefix — the frontend
+  adds the prefix itself).
+- The server should send frames at whatever rate the node produces them (typically 10–30
+  fps). The frontend renders each frame immediately using an `<img>` element.
+- If the node goes offline, close the WebSocket; the frontend will show an "Offline" badge.
+
+### DMZ deployment — nginx routing
+
+The existing `/stream-service/` nginx location handles this automatically **if**
+`VITE_NODE_VIDEO_WS_URL` is set at build time:
+
+```env
+# In your build .env for DMZ production
+VITE_NODE_VIDEO_WS_URL=ws://<DMZ_IP>/stream-service
+```
+
+With this value the frontend constructs:
+```
+ws://<DMZ_IP>/stream-service/ws/nodes?client=dashboard
+```
+
+nginx strips the `/stream-service/` prefix and forwards to:
+```
+ws://STREAM_HOST:4001/ws/nodes?client=dashboard
+```
+
+**If `VITE_NODE_VIDEO_WS_URL` is left unset** (the default), the frontend uses the API
+base URL, producing `ws://<DMZ_IP>/ws/nodes` — a path that has no nginx proxy rule and
+will return 404. **Always set this variable in production.**
+
+### Status codes / lifecycle
+
+| State | Meaning |
+|-------|---------|
+| WS connecting | Frontend shows "CONNECTING" badge |
+| First `video_frame` received | Frontend shows "LIVE" badge |
+| WS closed or error | Frontend shows "OFFLINE" badge |
+
+The frontend closes the WebSocket when the dialog is closed (React `useEffect` cleanup).
+
+---
+
 ## Summary Table
 
 | # | Endpoint | Status | Priority |
@@ -345,3 +427,4 @@ Separate from user preferences (handled via `PATCH /api/users/me`).
 | 9 | Messages CRUD + socket | `add` | Low |
 | 10 | Reports export | `add` | Low |
 | 11 | `GET/PATCH /api/settings/system` | `add` | Low |
+| 12 | `WS /ws/nodes` node live stream (stream-service) | `add` | High |

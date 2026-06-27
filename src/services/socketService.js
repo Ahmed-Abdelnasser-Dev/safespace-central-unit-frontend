@@ -207,3 +207,18 @@ export function onDispatcherAssigned(callback) {
 export function offDispatcherAssigned(callback) {
   getSocket().off('dispatcher:assigned', callback);
 }
+
+// ── Dashboard realtime events ──────────────────────────────────────────────────
+
+/**
+ * A new system alert arrived (new incident detected on a node).
+ * Payload: { id, title, severity, nodeId, occurredAt, read }
+ * Severity: "critical" | "warning" | "info"
+ * @param {Function} callback
+ */
+export function onAlertNew(callback) {
+  getSocket().on('alert:new', callback);
+}
+export function offAlertNew(callback) {
+  getSocket().off('alert:new', callback);
+}

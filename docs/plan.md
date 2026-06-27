@@ -1,6 +1,6 @@
 # Project Plan
 
-Status as of 2026-06-09. Update this file as work lands.
+Status as of 2026-06-26. Update this file as work lands.
 
 ---
 
@@ -19,17 +19,18 @@ Status as of 2026-06-09. Update this file as work lands.
 - [x] URL config (`lib/apiConfig.js`) — single source of env vars
 - [x] Node heartbeat timeout (offline detection every 10s, 60s threshold)
 - [x] ErrorBoundary
+- [x] Design unification (Phases 0–5): unified top bar, safe-* token cleanup, unified stat cards across admin/dashboard/map
 
 ### Features
 - [x] **auth** — Sign in, 2FA, change-password flow, session refresh
-- [x] **admin** — User management (CRUD, filters, pagination) + Activity logs
+- [x] **admin** — User management (CRUD, filters, pagination) + Activity logs (in-page tab switching — no route jump)
 - [x] **cameras** — Camera list, CRUD modals, live stream view, start/stop
-- [x] **dashboard** — Socket-driven charts (heartbeat + accident series), date range controls, hourly metrics API integration
+- [x] **dashboard** — Full-width admin-style layout, StatCard tiles (real data: users/nodes/cameras from Redux), Chart.js charts via metricsAPI, date range controls
 - [x] **incidents** — `AccidentDialog`: AI analysis, decision comparison, admin override, confirm/reject dispatch
-- [x] **map** — `MapOverviewPage` with MapLibre, node markers, KPI cards, incident dialog trigger
+- [x] **map** — `MapOverviewPage` with MapLibre, node markers, KPI cards (nodes + cameras), working filter chips (All/Online/Offline/Active), right-rail with nodes AND cameras, `NodeDetailDialog` (live WebSocket stream), `CameraDetailDialog`
 - [x] **node-maintainer** — Full node management: map, detail tabs (Overview/Health/Road Config/Node Config/Polygons), CRUD, lane polygon editor, video feed player
 - [x] **profile** — Profile view, change password, edit personal info, photo upload, recent activity
-- [x] **emergency-dispatcher** — Case list (SOS + incidents, tabs, unread badges), case detail (3-col map/info/dispatch layout), nearest-units panel with Haversine ranking, dispatch confirm modal, live assignment tracking, notes timeline, callback modal, escalate/close actions. Mock-data UI shell — backend seam ready for swap (see `docs/features/emergencyDispatcher.md`)
+- [x] **emergency-dispatcher** — `DispatchConsolePage` (3-col queue/map/units layout, live ticker, command bar, new-incident dialog), `CaseDetailPage` (3-col info/map/dispatch), nearest-units panel, dispatch confirm modal, assignment tracking, notes timeline, callback modal, escalate/close actions, visual redesign complete. Mock-data UI shell — backend seam ready for swap (see `docs/features/emergencyDispatcher.md`)
 
 ---
 
@@ -45,7 +46,7 @@ Status as of 2026-06-09. Update this file as work lands.
 
 ### Incomplete features
 - [ ] **Forgot password flow** — `ForgotPasswordPage` submits no API call; no `forgotPassword` method in `api.js`; `CheckYourEmailPage`/`YouAreAllSetPage` show hardcoded `example@gmail.com` instead of real user email
-- [ ] **Dashboard KPIs** — `statsTop` cards (active users, incidents today, API latency) and "Recent Alerts" list are hardcoded mock data; need to connect to real backend endpoints
+- [ ] **Dashboard performance metrics + recent alerts** — performance row (API Latency, Message Queue Lag, Uptime, Geo Events/min) and "Recent Alerts" list are still hardcoded mock; needs `/api/dashboard/summary` and `/api/alerts` endpoints (see `backend-integration-dashboard.md` §1, §3, §4)
 - [ ] **2FA resend code** — "Resend Code" button has no `onClick` handler (non-functional)
 - [ ] **npm test script** — no `test` script in `package.json`; no vitest config in `vite.config.js`; `jest-dom` has no setup file
 - [ ] **nodesSlice.js:361** — `console.error` used as an info log; should be `console.log` or removed

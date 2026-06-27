@@ -1,6 +1,6 @@
 # Known Bugs and Inconsistencies
 
-Catalogued from code exploration. Check this file before modifying any of the named areas. These are **not yet fixed** — document-only task.
+Catalogued from code exploration. Check this file before modifying any of the named areas. Update status when bugs are fixed.
 
 ---
 
@@ -8,6 +8,7 @@ Catalogued from code exploration. Check this file before modifying any of the na
 
 **File:** `src/features/auth/pages/CheckYourEmailPage.jsx:42`
 **Severity:** Medium (visible text artifact on screen)
+**Status:** Open
 
 A bare string ` font-semibold` sits between JSX elements and will render as visible page text (React renders bare strings). Likely a botched className-to-JSX edit.
 
@@ -19,6 +20,7 @@ A bare string ` font-semibold` sits between JSX elements and will render as visi
 
 **File:** `src/features/cameras/pages/CameraFeedsPage.jsx:15`
 **Severity:** High (feature regression — Add/Edit/Delete camera buttons never appear for any user)
+**Status:** Open
 
 ```js
 // Wrong — state.auth.operator does not exist
@@ -37,6 +39,7 @@ Also see Bug #6 — even after fixing the selector path, `roleUtils.js` uses the
 
 **File:** `src/features/systemTest/pages/SystemTestPage.jsx:73`
 **Severity:** Medium (test runs once on initial render but is semantically wrong; has no cleanup, cannot be re-triggered)
+**Status:** Open
 
 ```js
 // Wrong — useState initializer runs once but is not the right hook for side effects
@@ -53,6 +56,7 @@ useEffect(() => { testBackendConnection(); }, []);
 
 **File:** `src/features/systemTest/pages/SystemTestPage.jsx:137-139`
 **Severity:** High (likely causes a runtime/compile error or broken UI output)
+**Status:** Open
 
 Unbalanced closing tags and stray `)}` around the backend-status conditional block. The JSX structure is malformed.
 
@@ -65,6 +69,7 @@ Unbalanced closing tags and stray `)}` around the backend-status conditional blo
 **File:** `src/features/auth/pages/ForgotPasswordPage.jsx`
 **Related:** No `forgotPassword` method exists in `src/services/api.js`
 **Severity:** High (feature is completely non-functional)
+**Status:** Open
 
 The form `onSubmit` calls `e.preventDefault()` and then navigates directly to `/check-email`. No API call is made. The backend never receives the reset request.
 
@@ -78,6 +83,7 @@ Additionally, `CheckYourEmailPage` and `YouAreAllSetPage` display hardcoded `exa
 
 **File:** `src/shared/utils/roleUtils.js`
 **Severity:** High (breaks any component that uses this utility)
+**Status:** Open
 
 ```js
 // Wrong — these names do not match the canonical role names from the backend
@@ -96,15 +102,19 @@ export const CAN_MANAGE_CAMERAS = ['ADMINISTRATOR', 'NODE_MAINTAINER'];
 ## Bug #7 — Hardcoded mock data in production UI
 
 **Severity:** Medium (misleading to operators)
+**Status:** Partially fixed
 
 Two areas display static placeholder data:
 
-a) `src/features/dashboard/pages/DashboardPage.jsx` — KPI cards (`statsTop`): Active Users, Incidents Today, API Latency, Uptime are hardcoded values (e.g. `1289`, `7`, `124`). "Recent Alerts" is a hardcoded static list.
+**a) `src/features/dashboard/pages/DashboardPage.jsx`**
 
-b) `src/features/auth/pages/TwoFactorAuthPage.jsx`, `CheckYourEmailPage.jsx`, `YouAreAllSetPage.jsx` — display `example@gmail.com` instead of the actual user's email.
+- **Top KPI row** (users, nodes online, cameras online, active users): **FIXED** — now pulls from real Redux state via `userAPI.listUsers`, `state.nodes`, and `state.cameras`.
+- **Performance metrics row** (API Latency, Message Queue Lag, Uptime, Geo Events/min): Still hardcoded. Needs `GET /api/dashboard/summary` (see `backend-integration-dashboard.md` §1, §3).
+- **"Recent Alerts" list**: Still hardcoded. Needs `GET /api/alerts` + `"alert:new"` socket event (see `backend-integration-dashboard.md` §4).
 
-**Fix (a):** Connect KPI cards to real backend endpoints (likely `metricsAPI` or a new stats endpoint).
-**Fix (b):** Pass the real email through router state from the login/forgot-password flow.
+**b) `src/features/auth/pages/TwoFactorAuthPage.jsx`, `CheckYourEmailPage.jsx`, `YouAreAllSetPage.jsx`**
+
+Display `example@gmail.com` instead of the actual user's email. Still unfixed. Fix: pass real email through router state from the login/forgot-password flow.
 
 ---
 
@@ -112,6 +122,7 @@ b) `src/features/auth/pages/TwoFactorAuthPage.jsx`, `CheckYourEmailPage.jsx`, `Y
 
 **File:** `src/features/nodeMaintainer/nodesSlice.js:361`
 **Severity:** Low (cosmetic; creates noise in browser DevTools error console)
+**Status:** Open
 
 ```js
 console.error("🔴 Marking node ... OFFLINE")  // not actually an error
@@ -128,6 +139,7 @@ console.error("🔴 Marking node ... OFFLINE")  // not actually an error
 - `src/features/incidents/services/incidentDecisionService.js` — `POST /accident-decision`
 
 **Severity:** Medium (silent auth failures on token expiry; no 401 → refresh → retry; `withCredentials` not set)
+**Status:** Open
 
 Both files import raw `axios` and call `API_URL` directly, bypassing the configured Axios instance in `src/services/api.js` that has the refresh interceptor and `withCredentials: true`.
 

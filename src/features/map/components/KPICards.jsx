@@ -1,103 +1,91 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-const METRICS_CONFIG = [
-  {
-    id: 'online',
-    icon: 'server',
-    iconBg: 'bg-safe-green/15',
-    iconColor: 'text-safe-green',
-    valueColor: 'text-safe-green',
-    label: 'Nodes Online',
-    emptyValue: '—',
-  },
-  {
-    id: 'offline',
-    icon: 'exclamation-triangle',
-    iconBg: 'bg-safe-danger/15',
-    iconColor: 'text-safe-danger',
-    valueColor: 'text-safe-danger',
-    label: 'Nodes Offline',
-    emptyValue: '—',
-  },
-  {
-    id: 'pending',
-    icon: 'circle-dot',
-    iconBg: 'bg-safe-accent/15',
-    iconColor: 'text-safe-accent',
-    valueColor: 'text-safe-accent',
-    label: 'Pending Review',
-    emptyValue: '—',
-  },
-  {
-    id: 'reviewed',
-    icon: 'circle-check',
-    iconBg: 'bg-safe-blue/15',
-    iconColor: 'text-safe-blue',
-    valueColor: 'text-safe-blue',
-    label: 'Reviewed Today',
-    emptyValue: '—',
-  },
-];
+import StatCard from '@/components/ui/StatCard';
 
 /**
- * KPICards — status strip for the Road Observer monitoring console.
+ * KPICards — compact status tiles for the Road Observer monitoring console.
+ * Uses the shared StatCard component (compact variant) so the visual vocabulary
+ * matches Admin and Dashboard.
  *
- * @param {Object}  props
- * @param {number}  props.nodesOnline   — count of online nodes (from Redux)
- * @param {number}  props.nodesOffline  — count of offline nodes (from Redux)
- * @param {number}  [props.pendingReview]   — pending incidents (observer API)
- * @param {number}  [props.reviewedToday]   — reviewed today (observer API)
- * @param {boolean} props.loading       — show skeletons while fetching
+ * @param {number}  props.nodesOnline     — online nodes (from Redux)
+ * @param {number}  props.nodesOffline    — offline nodes (from Redux)
+ * @param {number}  [props.pendingReview] — pending observer reviews (observer API)
+ * @param {number}  [props.reviewedToday] — reviewed today (observer API)
+ * @param {number}  [props.camerasOnline] — online cameras (cameras slice)
+ * @param {number}  [props.camerasOffline]— offline cameras (cameras slice)
+ * @param {boolean} props.loading         — show skeletons while fetching
  */
 function KPICards({
   nodesOnline = 0,
   nodesOffline = 0,
   pendingReview,
   reviewedToday,
+  camerasOnline,
+  camerasOffline,
   loading = false,
 }) {
-  const values = {
-    online: nodesOnline,
-    offline: nodesOffline,
-    pending: pendingReview,
-    reviewed: reviewedToday,
-  };
+  const tiles = [
+    {
+      id: 'online',
+      icon: 'server',
+      iconColor: 'text-safe-green',
+      label: 'Nodes Online',
+      value: loading ? '...' : String(nodesOnline),
+      trend: nodesOnline > 0 ? 'active' : 'none active',
+    },
+    {
+      id: 'offline',
+      icon: 'triangle-exclamation',
+      iconColor: 'text-safe-danger',
+      label: 'Nodes Offline',
+      value: loading ? '...' : String(nodesOffline),
+      trend: nodesOffline > 0 ? 'require attention' : 'all healthy',
+    },
+    {
+      id: 'cameras-online',
+      icon: 'video',
+      iconColor: 'text-safe-teal',
+      label: 'Cameras Live',
+      value: camerasOnline == null ? '—' : String(camerasOnline),
+      trend: camerasOnline != null ? 'feeds active' : 'unavailable',
+    },
+    {
+      id: 'cameras-offline',
+      icon: 'video-slash',
+      iconColor: 'text-safe-orange',
+      label: 'Cameras Offline',
+      value: camerasOffline == null ? '—' : String(camerasOffline),
+      trend: camerasOffline != null ? (camerasOffline > 0 ? 'require attention' : 'all feeds live') : 'unavailable',
+    },
+    {
+      id: 'pending',
+      icon: 'circle-dot',
+      iconColor: 'text-safe-accent',
+      label: 'Pending Review',
+      value: pendingReview == null ? '—' : String(pendingReview),
+      trend: 'incidents awaiting',
+    },
+    {
+      id: 'reviewed',
+      icon: 'circle-check',
+      iconColor: 'text-safe-blue-btn',
+      label: 'Reviewed Today',
+      value: reviewedToday == null ? '—' : String(reviewedToday),
+      trend: 'decisions made',
+    },
+  ];
 
   return (
-    <div className="flex gap-2">
-      {METRICS_CONFIG.map((metric) => {
-        const value = values[metric.id];
-        const isUnavailable = value === undefined || value === null;
-
-        return (
-          <div
-            key={metric.id}
-            className="flex-1 min-w-0 bg-safe-gray border border-safe-gray-light rounded-lg px-3 py-2 flex items-center gap-2.5"
-          >
-            <div className={`w-7 h-7 ${metric.iconBg} rounded-md flex items-center justify-center flex-shrink-0`}>
-              <FontAwesomeIcon icon={metric.icon} className={`${metric.iconColor} text-xs`} />
-            </div>
-
-            <div className="min-w-0">
-              {loading ? (
-                <>
-                  <div className="h-4 w-8 bg-safe-gray-light/50 rounded animate-pulse mb-0.5" />
-                  <div className="h-2.5 w-16 bg-safe-gray-light/40 rounded animate-pulse" />
-                </>
-              ) : (
-                <>
-                  <div className={`text-base font-bold leading-none tabular-nums ${isUnavailable ? 'text-safe-text-muted' : metric.valueColor}`}>
-                    {isUnavailable ? metric.emptyValue : value}
-                  </div>
-                  <div className="text-[10px] text-safe-text-muted leading-none mt-0.5 truncate">
-                    {metric.label}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        );
-      })}
+    <div className="grid grid-cols-3 lg:grid-cols-6 gap-3">
+      {tiles.map((tile) => (
+        <StatCard
+          key={tile.id}
+          label={tile.label}
+          value={tile.value}
+          trend={tile.trend}
+          icon={tile.icon}
+          iconColor={tile.iconColor}
+          size="compact"
+        />
+      ))}
     </div>
   );
 }

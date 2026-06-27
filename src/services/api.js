@@ -451,6 +451,40 @@ export const dispatcherAPI = {
 };
 
 // ============================================================================
+// Dashboard APIs
+// ============================================================================
+
+export const dashboardAPI = {
+  /**
+   * Get aggregated KPIs and performance metrics for the admin dashboard.
+   * @returns {Promise<{ activeUsers, incidentsToday, systemHealth, alerts24h,
+   *                     updatedAt, performance: { apiLatencyMs, messageQueueLag,
+   *                     uptimeDays, geoEventsPerMin } }>}
+   */
+  getSummary: async () => {
+    const { data } = await api.get('/dashboard/summary', { withCredentials: true });
+    return data.data;
+  },
+};
+
+// ============================================================================
+// Alerts APIs
+// ============================================================================
+
+export const alertsAPI = {
+  /**
+   * List recent system alerts (derived from incident records).
+   * @param {Object} [params] - limit (default 10), sort (always desc)
+   * @returns {Promise<{ data: AlertDTO[], meta: { total: number, unread: number } }>}
+   */
+  list: async (params = {}) => {
+    const { data } = await api.get('/alerts', { params, withCredentials: true });
+    // Return the full envelope so callers can access both data[] and meta
+    return { data: data.data, meta: data.meta };
+  },
+};
+
+// ============================================================================
 // Road Observer APIs
 // ============================================================================
 

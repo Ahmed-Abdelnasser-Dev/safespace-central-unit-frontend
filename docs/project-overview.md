@@ -8,11 +8,11 @@ It is the **only human interface to the system's operational core** — no mobil
 
 ---
 
-## Status snapshot (as of 2026-06-09)
+## Status snapshot (as of 2026-06-26)
 
 | Category | Count | Details |
 |---|---|---|
-| Features completed | 8 | auth, admin, cameras, dashboard, incidents, map, node-maintainer, profile |
+| Features completed | 9 | auth, admin, cameras, dashboard, incidents, map, node-maintainer, profile, emergency-dispatcher (UI shell) |
 | Features partial | 1 | system-test (broken on mount, malformed JSX) |
 | Features not started | 4 | alerts, messages, reports, settings (all "Coming Soon" stubs) |
 | Operator roles implemented | 4 of 5 | admin, emergency_dispatcher, road_observer, node_maintenance_crew (Data Analyst not started) |
@@ -26,8 +26,8 @@ It is the **only human interface to the system's operational core** — no mobil
 | Role | Primary purpose |
 |------|----------------|
 | `admin` | Full system access: user management, config, all features |
-| `emergency_dispatcher` | SOS cases, dashboard charts, alerts |
-| `road_observer` | Incident review + map (incident-driven workflow) |
+| `emergency_dispatcher` | SOS cases + incident triage, dispatch, assignment tracking |
+| `road_observer` | Incident review + live node/camera map view |
 | `node_maintenance_crew` | Node map, health monitoring, configuration, polygon editor |
 
 ---
@@ -54,19 +54,21 @@ npx vitest
 
 | Variable | Purpose | Default |
 |---|---|---|
-| `VITE_API_URL` | Full API base including `/api` | `http://localhost:5000/api` |
-| `VITE_SOCKET_URL` | Socket.IO origin | derived from `VITE_API_URL` |
-| `VITE_NODE_VIDEO_WS_URL` | WebSocket base for node video feeds | derived from `VITE_API_URL` |
+| `VITE_API_URL` | API base URL | `/api` (same-origin proxy) |
+| `VITE_SOCKET_URL` | Socket.IO origin | current origin |
+| `VITE_NODE_VIDEO_WS_URL` | WebSocket base for node video feeds | derived from API URL |
 | `VITE_ENABLE_DEV_PROXY` | Set `true` to proxy `/api` + `/socket.io` via Vite | (unset = false) |
 | `VITE_DEV_PROXY_TARGET` | Proxy destination | `http://localhost:5000` |
 
-See `.env.example` for a filled template.
+See `.env.example` for a filled template. For DMZ production deployment, see [`backend-integration.md`](./backend-integration.md).
 
 ---
 
 ## Deployment
 
-GitHub Actions on push to `main` → SSH into EC2 → `docker compose up --build`. See `.github/workflows/deploy.yml`. The SPA is containerized and served by Nginx (`nginx.conf` in root).
+**Legacy (EC2):** GitHub Actions on push to `main` → SSH into EC2 → `docker compose up --build`. See `.github/workflows/deploy.yml`.
+
+**DMZ (3-VM):** nginx container on DMZ VM serves the SPA and reverse-proxies all API/socket/video traffic to the protected backend VM. Browser only talks to DMZ IP on port 80. See [`docs/deployment-dmz.md`](./deployment-dmz.md) for the full guide.
 
 ---
 
@@ -77,14 +79,14 @@ src/
   app/store.js              Redux store (3 slices: auth, cameras, nodes)
   features/<name>/          Feature modules (pages, components, slice, hooks)
   components/layout/        AppLayout, Sidebar, PageHeader
-  components/ui/            Reusable UI primitives (8 components)
+  components/ui/            Reusable UI primitives (Button, Card, Modal, StatCard, …)
   components/               ProtectedRoute, ErrorBoundary
   services/api.js           Primary Axios client + all API namespaces
   services/streamApi.js     Separate Axios client for the stream microservice
   services/socketService.js Socket.IO singleton
   lib/apiConfig.js          URL config (VITE_* env vars → exported constants)
   config/navigation.js      Role-based nav items + default paths
-  hooks/                    App-root hooks (heartbeat, video feed, geolocation)
+  hooks/                    App-root hooks (heartbeat, video feed, geolocation, map style)
   shared/utils/             Cross-feature utilities (roleUtils — has naming bug)
   utils/                    Helpers (toast wrappers, Egyptian field validation)
   designSystem.js           Design token constants (advisory, not enforced)

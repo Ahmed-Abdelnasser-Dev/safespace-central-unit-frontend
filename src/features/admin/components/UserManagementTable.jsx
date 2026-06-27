@@ -232,7 +232,7 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
             {user.id !== currentUserId && (
               <button
                 onClick={() => setResetTarget(user)}
-                className="px-3 py-1.5 text-xs font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors"
+                className="px-3 py-1.5 text-xs font-medium text-safe-orange bg-safe-orange/10 hover:bg-safe-orange/20 border border-safe-orange/20 rounded-lg transition-colors"
               >
                 Reset Password
               </button>

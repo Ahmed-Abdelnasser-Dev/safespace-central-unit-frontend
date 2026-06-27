@@ -33,11 +33,27 @@ function Modal({ open, onClose, children, size = 'lg' }) {
   );
 }
 
+Modal.Header = function ModalHeader({ title, onClose }) {
+  return (
+    <div className="flex items-center justify-between px-8 py-5 bg-safe-surface border-b border-safe-border rounded-t-xl">
+      <div className="text-base font-semibold text-safe-text-primary">{title}</div>
+      {onClose && (
+        <Button variant="ghost" size="sm" onClick={onClose} aria-label="Close">✕</Button>
+      )}
+    </div>
+  );
+};
+
+Modal.Content = function ModalContent({ children }) {
+  return <div className="px-8 py-6 bg-safe-surface">{children}</div>;
+};
+
 Modal.Footer = function ModalFooter({ children }) {
   return <div className="flex items-center justify-end gap-3 px-8 py-5 bg-safe-bg/40 border-t border-safe-border rounded-b-xl">{children}</div>;
 };
 
 Modal.CloseButton = function ModalCloseButton({ onClick }) {
-  return <Button variant="ghost" size="sm" onClick={onClick}>Close</Button>; };
+  return <Button variant="ghost" size="sm" onClick={onClick}>Close</Button>;
+};
 
 export default Modal;

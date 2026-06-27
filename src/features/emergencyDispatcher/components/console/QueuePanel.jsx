@@ -78,7 +78,19 @@ export default function QueuePanel({
   const activeAssignedToMe = assignedToMe.filter((c) => ACTIVE_STATUSES.includes(c.status));
 
   return (
-    <div className="flex flex-col h-full overflow-hidden bg-safe-dark">
+    <div className="flex flex-col h-full overflow-hidden bg-safe-sidebar border-r border-safe-gray-light">
+      {/* Panel header — matches UnitsRosterPanel header style */}
+      <div className="px-4 py-3 border-b border-safe-gray-light flex-shrink-0 flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-safe-text-primary">Case Queue</h2>
+        <div className="flex items-center gap-1.5">
+          {tabCases.length > 0 && (
+            <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-safe-blue/15 text-safe-blue text-[10px] font-bold">
+              {tabCases.length}
+            </span>
+          )}
+        </div>
+      </div>
+
       {/* Assigned-to-me — only shown when assignments exist */}
       {activeAssignedToMe.length > 0 && (
         <div className="flex-shrink-0 border-b border-safe-gray-light bg-safe-blue/5">

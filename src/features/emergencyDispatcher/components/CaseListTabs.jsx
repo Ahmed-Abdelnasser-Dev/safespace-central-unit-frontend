@@ -1,8 +1,9 @@
 /**
- * SOS Cases / Incidents tab switcher for CaseListPage.
+ * SOS Cases / Incidents tab switcher for the Dispatch Console.
  *
- * Active tab uses a full bottom border + bold text, not a colored side
- * stripe (DESIGN.md ban). Unread counts only render when non-zero.
+ * Uses the same pill-style button tabs as the admin page (solid blue fill for active,
+ * transparent for inactive) so the dispatcher feels native to the system vocabulary.
+ * Unread counts only render when non-zero.
  */
 function CaseListTabs({ activeTab, onChange, unreadCounts }) {
   const tabs = [
@@ -11,7 +12,7 @@ function CaseListTabs({ activeTab, onChange, unreadCounts }) {
   ];
 
   return (
-    <div className="flex items-center gap-1 border-b border-safe-gray-light" role="tablist">
+    <div className="flex items-center gap-2 py-2.5 px-1" role="tablist">
       {tabs.map((tab) => {
         const isActive = tab.key === activeTab;
         return (
@@ -21,15 +22,17 @@ function CaseListTabs({ activeTab, onChange, unreadCounts }) {
             role="tab"
             aria-selected={isActive}
             onClick={() => onChange(tab.key)}
-            className={`relative flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors duration-200 border-b-2 -mb-px ${
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-150 ${
               isActive
-                ? 'border-safe-blue text-safe-text-primary'
-                : 'border-transparent text-safe-text-gray hover:text-safe-text-primary'
+                ? 'bg-safe-blue text-white shadow-sm'
+                : 'text-safe-text-gray hover:text-safe-text-primary hover:bg-safe-gray-light/30'
             }`}
           >
             {tab.label}
             {tab.unread > 0 && (
-              <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-safe-danger text-safe-text-primary text-xs font-bold">
+              <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-bold ${
+                isActive ? 'bg-white/25 text-white' : 'bg-safe-danger text-white'
+              }`}>
                 {tab.unread}
               </span>
             )}

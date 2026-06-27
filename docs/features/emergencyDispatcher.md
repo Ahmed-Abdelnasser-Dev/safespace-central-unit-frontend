@@ -1,8 +1,8 @@
 # Feature: emergency-dispatcher
 
-**Status:** Completed (UI shell — mock data, no backend wired yet)
+**Status:** Completed (UI shell — mock data, backend seam ready)
 **Path:** `src/features/emergencyDispatcher/`
-**Redux slice:** None — state lives in `useDispatcherData` hook (`useReducer`-backed seam)
+**Redux slice:** `dispatcherSlice.js` — registered in store as `dispatcher` (seam for backend wiring)
 **Access:** `emergency_dispatcher` and `admin` roles only (route guard via `ProtectedRoute`)
 
 ---
@@ -31,24 +31,29 @@ log notes and callbacks, escalate, and close cases.
 ```
 src/features/emergencyDispatcher/
   pages/
-    CaseListPage.jsx            — Tabbed SOS/Incidents list; newest-first; skeleton/empty/error states
+    DispatchConsolePage.jsx     — 3-col queue/map/units layout with CommandBar; new-incident global dialog
     CaseDetailPage.jsx          — 3-column layout (info | map | dispatch) at ≥xl; stacked below xl
   components/
-    CaseListTabs.jsx            — Tab switcher with unread-count badges
-    CaseCard.jsx                — Dense list row; unread ring+pulse; no side-stripe border
+    CaseListTabs.jsx            — Tab switcher (SOS / Incidents) with unread-count badges
+    CaseCard.jsx                — Dense list row; unread ring+pulse
     CaseInfoPanel.jsx           — Severity/type/status badges + live "time since received" counter
     VictimProfilePanel.jsx      — Identification, collapsible medical profile, emergency contacts, tel: links
     IncidentInfoPanel.jsx       — Type, detection confidence, affected lanes, source
     DispatchMap.jsx             — MapLibre dark-matter basemap; incident pin; unit markers; route lines
     UnitMarker.jsx              — Type icon + status-color dot; home-base variant
     UnitPopover.jsx             — Name, status, distance, ETA on unit click
-    MapControls.jsx             — Unit type/status filters; zoom-to-incident; zoom-to-all; distance rings
+    MapControls.jsx             — Unit type/status filter pill + zoom-to-incident; zoom-to-all; distance rings
     NearestUnitsPanel.jsx       — Haversine-ranked unit list; default selection from dispatchDefaults; Dispatch button
     DispatchConfirmModal.jsx    — Confirm step before dispatch; lists selected units
     ActiveAssignmentsPanel.jsx  — Per-assignment status badge; Cancel / Mark Completed actions
     CaseNotesPanel.jsx          — Free-text note input + chronological timeline (dispatcher vs system entries)
     CallbackModal.jsx           — Victim phone + tel: link + outcome field → logged as note
     CaseActionsBar.jsx          — Escalate / Call Back / Close, each with a confirm step
+    NewIncidentDialog.jsx       — Global modal: fires on every case:new socket event (new incident in queue)
+    NewAssignmentModal.jsx      — Modal: fires when a case is assigned to this dispatcher
+    console/
+      CommandBar.jsx            — Live status strip: dispatcher name, live indicator, active/available counts, clock
+      QueuePanel.jsx            — Scrollable case queue (left pane of DispatchConsolePage)
     badges/
       SeverityBadge.jsx         — HIGH/MEDIUM/LOW → safe-* Badge variant
       UnitStatusBadge.jsx       — available/en_route/on_scene/off_duty → safe-* Badge variant
@@ -77,7 +82,7 @@ src/shared/utils/
 ### Routing
 
 ```
-/cases                          → CaseListPage  (emergency_dispatcher, admin)
+/cases                          → DispatchConsolePage  (emergency_dispatcher, admin)
 /cases/:caseType/:caseId        → CaseDetailPage (emergency_dispatcher, admin)
 ```
 
@@ -90,17 +95,24 @@ Both routes are lazy-loaded and wrapped in `ProtectedRoute`.
 returned shape and all action signatures are documented in
 `specs/001-emergency-dispatcher/contracts/dispatcher-data-seam.md`.
 
-When the backend is ready, the hook body is replaced with a `dispatcherSlice.js` +
-`api.js` namespace + socket event wiring — no consuming component changes.
+A `dispatcherSlice.js` Redux slice exists in the store as the backend wiring target. When
+the backend is ready, the hook body is replaced with slice dispatch calls + socket event
+wiring — no consuming component changes needed.
 
-### Case list flow
+### Console layout
 
 ```
-CaseListPage
-  → useDispatcherData() → cases[]
-  → CaseListTabs (SOS / Incidents tabs, unread counts)
-  → CaseCard[] (sorted newest-first)
-  → navigate('/cases/:caseType/:caseId') on click
+DispatchConsolePage
+  CommandBar (live status strip — flex-shrink-0)
+  ├── QueuePanel (left, ~320px)
+  │     CaseListTabs (SOS / Incidents)
+  │     CaseCard[] (sorted newest-first)
+  │     → navigate('/cases/:caseType/:caseId') on click
+  ├── ConsoleMap (center, flex-1) — MapLibre dark-matter, live unit markers
+  └── UnitsRosterPanel (right, ~340px) — roster by status (Available/Responding/On Scene)
+
+NewIncidentDialog — mounted globally, fires on case:new socket event
+NewAssignmentModal — fires when this dispatcher is assigned a case
 ```
 
 ### Case detail flow
@@ -144,6 +156,14 @@ On `completed` or `cancelled`, the unit's status returns to `available`.
 - Has a 6 % probability of advancing each `en_route` assignment to `on_scene`.
 
 Disable by passing `{ enableTicker: false }` to `useDispatcherData()`.
+
+---
+
+## Backend integration
+
+The complete REST + socket contract for this feature is in:
+- [`backend-integration-emergency-dispatcher.md`](../backend-integration-emergency-dispatcher.md)
+- [`backend-integration-dashboard.md`](../backend-integration-dashboard.md) §5–6 (assignments hydration, nearest-units wiring)
 
 ---
 

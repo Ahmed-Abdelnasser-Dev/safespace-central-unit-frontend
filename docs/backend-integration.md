@@ -158,10 +158,40 @@ Events the frontend emits:
 The stream-service must:
 - Run on **port 4001**
 - Expose `GET /cameras` and `GET /cameras/:id` (REST)
-- Expose `WS /stream/:cameraId` (WebSocket — sends binary JPEG frames)
+- Expose `WS /stream/:cameraId` (WebSocket — sends **binary** JPEG frames for CCTV cameras)
+- Expose `WS /ws/nodes?client=dashboard` (WebSocket — sends **JSON** frames for detection node cameras, see below)
 - Expose `GET /health`
 
-The frontend's video player connects via WebSocket to `/stream-service/stream/:cameraId`, which the DMZ nginx strips to `/stream/:cameraId` and forwards to `stream-service:4001`.
+### Camera stream — `WS /stream/:cameraId`
+
+The CCTV camera video player connects via WebSocket to `/stream-service/stream/:cameraId`,
+which the DMZ nginx strips to `/stream/:cameraId` and forwards to `stream-service:4001`.
+The stream-service sends raw binary JPEG frames; no envelope format.
+
+### Node stream — `WS /ws/nodes?client=dashboard`
+
+The Road Observer node detail dialog connects to `/stream-service/ws/nodes?client=dashboard`
+(nginx strips the prefix to `/ws/nodes`). This endpoint uses **JSON text frames**:
+
+**Client → Server on connect:**
+```json
+{ "type": "dashboard_subscribe", "nodeIds": ["<nodeId>"] }
+```
+
+**Server → Client per frame:**
+```json
+{ "type": "video_frame", "nodeId": "<nodeId>", "frameData": "<base64-JPEG>" }
+```
+
+`frameData` is a plain base64 string (no data URI prefix). The frontend renders it as
+`<img src="data:image/jpeg;base64,{frameData}">`.
+
+For this to work in DMZ mode, the build `.env` must set:
+```env
+VITE_NODE_VIDEO_WS_URL=ws://<DMZ_IP>/stream-service
+```
+
+See `backend-integration-dashboard.md` §12 for full routing details.
 
 ---
 
@@ -174,6 +204,7 @@ After making the changes above, verify end-to-end:
 - [ ] Dashboard loads with live data — KPI cards, map markers visible
 - [ ] Socket.IO connects — check the browser Network tab for a successful `/socket.io/` request
 - [ ] An incident or node triggers a real-time event — the dashboard updates without a page reload
-- [ ] Open the Cameras page — a camera feed renders (validates the `/stream-service` WS proxy)
+- [ ] Open the Cameras page — a camera feed renders (validates the `/stream-service/stream/:cameraId` WS proxy)
+- [ ] Open the Road Observer, click a node in the right rail — the node detail dialog opens and shows a live feed or "CONNECTING" badge (validates the `/stream-service/ws/nodes` WS proxy)
 - [ ] Open the Profile page and upload a photo — it saves and loads back correctly (validates `/uploads/` proxy)
 - [ ] Inspect any image URL in the browser — it must start with `http://<DMZ_IP>`, not the backend's IP

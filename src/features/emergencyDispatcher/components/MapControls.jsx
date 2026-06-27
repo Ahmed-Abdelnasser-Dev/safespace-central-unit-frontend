@@ -35,9 +35,7 @@ function MapControls({
     <div className="absolute top-3 left-3 right-3 z-10 flex items-center gap-2 pointer-events-none min-w-0">
       {/* Filter bar — glass pill; min-w-0 lets it shrink so zoom controls always stay visible */}
       <div className="min-w-0 flex-1 flex items-center gap-1.5 px-2.5 py-1.5 bg-safe-dark/90 backdrop-blur-sm border border-safe-gray-light rounded-xl shadow-xl pointer-events-auto overflow-x-auto scrollbar-none">
-        <span className="text-[10px] font-semibold text-safe-text-muted uppercase tracking-widest flex-shrink-0 mr-1">
-          Filter
-        </span>
+        <FontAwesomeIcon icon="filter" className="text-[9px] text-safe-text-muted/60 flex-shrink-0" />
 
         {UNIT_TYPES.map((type) => {
           const isActive = unitFilter.types.includes(type.value);

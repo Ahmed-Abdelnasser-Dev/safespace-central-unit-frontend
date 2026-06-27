@@ -57,7 +57,7 @@ export default function NewAssignmentModal({ caseRecord, onDismiss }) {
             {/* Type row */}
             <div className="flex items-center gap-1.5">
               <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dot}`} aria-hidden="true" />
-              <span className="text-[10px] font-semibold text-safe-text-muted/70 uppercase tracking-wider">
+              <span className="text-[10px] font-semibold text-safe-text-muted/70">
                 {typeLabel}
               </span>
               <span className="ml-auto font-mono text-[10px] text-safe-text-muted/45">{caseRecord.id}</span>
@@ -72,7 +72,7 @@ export default function NewAssignmentModal({ caseRecord, onDismiss }) {
                 )}
               </div>
               <div className="text-right flex-shrink-0">
-                <p className="text-[10px] font-medium text-safe-text-muted/60 uppercase tracking-wide">Received</p>
+                <p className="text-[10px] font-medium text-safe-text-muted/60">Received</p>
                 <p className="text-xs font-mono text-safe-text-primary mt-0.5">
                   <LiveTimeSince receivedAt={caseRecord.receivedAt} />
                 </p>

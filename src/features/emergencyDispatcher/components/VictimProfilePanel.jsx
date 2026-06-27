@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 function InfoRow({ label, value, mono = false }) {
   return (
     <div className="flex items-start justify-between gap-4 py-2 border-b border-safe-gray-light last:border-0">
-      <span className="text-[11px] font-medium text-safe-text-muted/70 uppercase tracking-wide flex-shrink-0 pt-0.5">
+      <span className="text-[11px] font-medium text-safe-text-muted flex-shrink-0 pt-0.5">
         {label}
       </span>
       <span className={`text-sm text-safe-text-primary text-right ${mono ? 'font-mono' : ''}`}>{value}</span>
@@ -14,7 +14,7 @@ function InfoRow({ label, value, mono = false }) {
 
 function PillList({ items, variantClass }) {
   if (!items || items.length === 0)
-    return <span className="text-xs text-safe-text-muted/60">None on file</span>;
+    return <p className="text-xs text-safe-text-muted/60 mt-1">None on file</p>;
   return (
     <div className="flex flex-wrap gap-1.5 mt-1.5">
       {items.map((item) => (
@@ -34,7 +34,7 @@ function SectionHeader({ title, open, onToggle }) {
       className="flex w-full items-center justify-between text-left py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-safe-blue/40 rounded"
       aria-expanded={open}
     >
-      <span className="text-xs font-semibold text-safe-text-muted/70 uppercase tracking-wider">{title}</span>
+      <span className="text-xs font-semibold text-safe-text-muted">{title}</span>
       <FontAwesomeIcon
         icon={open ? 'chevron-up' : 'chevron-down'}
         className="text-safe-text-muted/50 text-[10px]"
@@ -78,7 +78,7 @@ function VictimProfilePanel({ victim, medicalProfile, emergencyContacts, loading
         <InfoRow label="National ID" value={victim.nationalId ?? '—'} mono />
         <InfoRow label="Age" value={calcAge(victim.dob) !== null ? `${calcAge(victim.dob)} yrs` : '—'} />
         <div className="flex items-start justify-between gap-4 py-2">
-          <span className="text-[11px] font-medium text-safe-text-muted/70 uppercase tracking-wide flex-shrink-0 pt-0.5">Phone</span>
+          <span className="text-[11px] font-medium text-safe-text-muted flex-shrink-0 pt-0.5">Phone</span>
           {victim.phone ? (
             <a
               href={`tel:${victim.phone}`}
@@ -105,28 +105,28 @@ function VictimProfilePanel({ victim, medicalProfile, emergencyContacts, loading
               <div className="space-y-3">
                 <InfoRow label="Blood Type" value={medicalProfile.bloodType ?? 'Unknown'} mono />
                 <div>
-                  <span className="text-[11px] font-medium text-safe-text-muted/60 uppercase tracking-wide">Conditions</span>
+                  <span className="text-[11px] font-medium text-safe-text-muted">Conditions</span>
                   <PillList
                     items={medicalProfile.conditions}
                     variantClass="bg-safe-info/12 text-safe-info"
                   />
                 </div>
                 <div>
-                  <span className="text-[11px] font-medium text-safe-text-muted/60 uppercase tracking-wide">Medications</span>
+                  <span className="text-[11px] font-medium text-safe-text-muted">Medications</span>
                   <PillList
                     items={medicalProfile.medications}
                     variantClass="bg-safe-gray-light/40 text-safe-text-primary"
                   />
                 </div>
                 <div>
-                  <span className="text-[11px] font-medium text-safe-text-muted/60 uppercase tracking-wide">Allergies</span>
+                  <span className="text-[11px] font-medium text-safe-text-muted">Allergies</span>
                   <PillList
                     items={medicalProfile.allergies}
                     variantClass="bg-safe-danger/12 text-safe-danger"
                   />
                 </div>
                 {medicalProfile.notes && (
-                  <p className="text-sm text-safe-text-muted italic border-l-2 border-safe-gray-light pl-3 mt-1">
+                  <p className="text-sm text-safe-text-muted italic bg-safe-gray-light/20 rounded-lg px-3 py-2 mt-1">
                     {medicalProfile.notes}
                   </p>
                 )}

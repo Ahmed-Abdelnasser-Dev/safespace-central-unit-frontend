@@ -62,7 +62,7 @@ function CaseCard({ caseRecord, onOpen, suppressQueuedBadge: _suppressQueuedBadg
             className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${sev.dot}`}
             aria-label={`Severity: ${caseRecord.severity}`}
           />
-          <span className="text-[10px] font-semibold text-safe-text-muted/75 uppercase tracking-wider truncate">
+          <span className="text-[10px] font-semibold text-safe-text-muted/75 truncate">
             {typeLabel}
           </span>
           {showStatusBadge && (

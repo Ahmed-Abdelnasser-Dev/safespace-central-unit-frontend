@@ -84,7 +84,7 @@ function CaseDetailPage() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Compact case header */}
-      <div className="px-5 py-3 border-b border-safe-gray-light flex-shrink-0 flex items-center gap-4 bg-safe-sidebar/60">
+      <div className="px-5 py-3 border-b border-safe-gray-light flex-shrink-0 flex items-center gap-4 bg-safe-sidebar">
         <button
           type="button"
           onClick={() => navigate('/cases')}
@@ -142,7 +142,7 @@ function CaseDetailPage() {
         </div>
 
         {/* Left Column: Case Info + Profile + Notes */}
-        <div className="order-2 xl:order-1 overflow-y-auto xl:border-r xl:border-safe-gray-light p-4 space-y-4">
+        <div className="order-2 xl:order-1 overflow-y-auto xl:border-r xl:border-safe-gray-light p-4 space-y-4 bg-safe-sidebar">
           <CaseInfoPanel caseRecord={caseRecord} />
           {isSOSCase ? (
             <VictimProfilePanel
@@ -159,7 +159,7 @@ function CaseDetailPage() {
         </div>
 
         {/* Right Column: Actions (sticky) + Dispatch + Assignments */}
-        <div className="order-3 xl:order-3 xl:flex xl:flex-col xl:overflow-hidden xl:border-l xl:border-safe-gray-light">
+        <div className="order-3 xl:order-3 xl:flex xl:flex-col xl:overflow-hidden xl:border-l xl:border-safe-gray-light bg-safe-sidebar">
           <div className="p-4 border-b border-safe-gray-light flex-shrink-0">
             <CaseActionsBar
               caseRecord={caseRecord}

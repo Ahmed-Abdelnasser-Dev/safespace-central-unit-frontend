@@ -83,5 +83,11 @@ coverage/
 .claude/
 .impeccable/
 .specify/
+.playwright-mcp/
+*.png
+**.jpg
+**.jpeg
+**.gif
+**.svg
 # =========================
 # End of .gitignore
