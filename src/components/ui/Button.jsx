@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 /**
  * Button — all action buttons across the app must use this component.
  *
- * Variants: primary | secondary | danger | ghost
+ * Variants: primary | secondary | danger | ghost | outline
  * Sizes:    sm | md
  *
  * isLoading: shows a spinner and disables the button.
@@ -41,6 +41,8 @@ function Button({
       'bg-safe-danger text-white hover:bg-safe-danger/90 hover:shadow-md active:scale-[0.98] focus:ring-safe-danger/30',
     ghost:
       'bg-transparent text-safe-text-muted hover:bg-safe-gray hover:text-safe-text-primary active:scale-[0.98] focus:ring-safe-blue-btn/20',
+    outline:
+      'bg-transparent text-safe-blue border border-safe-blue hover:bg-safe-blue/10 active:scale-[0.98] focus:ring-safe-blue/30',
   };
 
   return (
