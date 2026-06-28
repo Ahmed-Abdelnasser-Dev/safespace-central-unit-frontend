@@ -15,20 +15,8 @@ import { useSelector } from "react-redux";
 import { API_BASE_URL } from '@/lib/apiConfig';
 import { selectSelectedNode } from "../nodesSlice";
 import { useNodeVideoFeed } from "@/hooks/useNodeVideoFeed";
-import {
-  faMicrochip,
-  faMemory,
-  faWifi,
-  faDatabase,
-  faCircleCheck,
-  faCircleXmark,
-  faArrowRight,
-  faArrowLeft,
-} from "@fortawesome/free-solid-svg-icons";
-import MetricCard from "../components/cards/MetricCard";
 import SectionHeader from "../components/layout/SectionHeader";
 import NodeInfoRow from "../components/ui/NodeInfoRow";
-import RoadStatusDisplay from "../components/sections/RoadStatusDisplay";
 
 /**
  * Format uptime seconds into human-readable string
@@ -73,25 +61,6 @@ export default function OverviewTab() {
   }, [currentFrame, lastSnapshot]);
 
   // No need to observe or update size, always fixed at 640x640
-
-
-  // Sample lane data
-  const lanes = node?.roadRules?.lanes || [];
-  const speedLimit = node?.roadRules?.speedLimit || 120;
-
-
-  const laneStatusIcons = {
-    open: { icon: faCircleCheck, color: "#22c55e", bg: "#e8f5e9", label: "Open" },
-    blocked: { icon: faCircleXmark, color: "#d63e4d", bg: "#fee2e2", label: "Blocked" },
-    right: { icon: faArrowRight, color: "#247cff", bg: "#e3f2fd", label: "Right" },
-    left: { icon: faArrowLeft, color: "#247cff", bg: "#e3f2fd", label: "Left" },
-  };
-
-  // Convert laneStatusIcons object to array format for RoadStatusDisplay
-  const laneStatusOptions = Object.entries(laneStatusIcons).map(([value, data]) => ({
-    value,
-    ...data
-  }));
 
   return (
     <div className="p-[12px] sm:p-[14px] md:p-[16px] lg:p-[18px] xl:p-[20px] space-y-[14px] sm:space-y-[16px] md:space-y-[18px] lg:space-y-[20px] h-full overflow-y-auto">
@@ -196,51 +165,7 @@ export default function OverviewTab() {
         </div>
       </div>
 
-      {/* ===== SECTION 2: HEALTH METRICS ===== */}
-      <SectionHeader title="Health Metrics" showDivider={true} />
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-[8px] sm:gap-[10px] md:gap-[12px] lg:gap-[14px]">
-        <MetricCard
-          label="CPU"
-          value={node.health.cpu}
-          unit="%"
-          icon={faMicrochip}
-          color="#3b82f6"
-        />
-        <MetricCard
-          label="Memory"
-          value={node.health.memory}
-          unit="%"
-          icon={faMemory}
-          color="#f97316"
-        />
-        <MetricCard
-          label="Network"
-          value={node.health.network}
-          unit="%"
-          icon={faWifi}
-          color="#22c55e"
-        />
-        <MetricCard
-          label="Storage"
-          value={node.health.storage}
-          unit="%"
-          icon={faDatabase}
-          color="#a78bfa"
-        />
-      </div>
-
-      {/* ===== SECTION 3: ROAD STATUS ===== */}
-      <SectionHeader title="Road Status" showDivider={true} />
-
-      <RoadStatusDisplay
-        roadName={node.location?.address || node.name}
-        speedLimit={speedLimit}
-        lanes={lanes}
-        laneStatusOptions={laneStatusOptions}
-      />
-
-      {/* ===== SECTION 4: NODE INFORMATION ===== */}
+      {/* ===== SECTION 2: NODE INFORMATION ===== */}
       <SectionHeader title="Node Information" showDivider={true} />
 
       <div className="bg-safe-gray rounded-[6px] sm:rounded-[7px] md:rounded-[8px] p-[12px] sm:p-[14px] md:p-[16px] border border-safe-gray-light space-y-[8px] sm:space-y-[10px] md:space-y-[12px]">

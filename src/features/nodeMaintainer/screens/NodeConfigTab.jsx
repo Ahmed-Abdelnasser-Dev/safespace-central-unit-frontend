@@ -8,7 +8,7 @@
 
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectSelectedNode, updateNodeSpecs, updateNodeStatus } from '../nodesSlice';
+import { selectSelectedNode, updateNodeSpecs, updateNodeStatus, persistNodeSpecs, persistNodeStatus } from '../nodesSlice';
 import SectionLabel from '../components/forms/SectionLabel';
 import ConfigCard from '../components/cards/ConfigCard';
 import FormField from '../components/forms/FormField';
@@ -30,16 +30,17 @@ function NodeConfigTab() {
   };
 
   const handleSaveConfig = () => {
-    dispatch(updateNodeSpecs({
-      nodeId: node.id,
-      specs,
-    }));
     setHasChanges(false);
+    // Optimistic update in Redux
+    dispatch(updateNodeSpecs({ nodeId: node.id, specs }));
+    // Then persist to API
+    dispatch(persistNodeSpecs(node.id));
   };
 
   const handleToggleStatus = () => {
     const nextStatus = node.status === 'online' ? 'offline' : 'online';
     dispatch(updateNodeStatus({ nodeId: node.id, status: nextStatus }));
+    dispatch(persistNodeStatus(node.id));
   };
 
   const configSections = [

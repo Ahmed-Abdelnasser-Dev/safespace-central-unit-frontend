@@ -23,10 +23,9 @@ import NetworkMapCard from '../components/cards/NetworkMapCard.jsx';
 import NodesListCard from '../components/NodesList.jsx';
 import NodeDetailPanel from '../components/NodeDetailPanel.jsx';
 import OverviewTab from '../screens/OverviewTab.jsx';
-import RoadConfigTab from '../screens/RoadConfigTab.jsx';
-import NodeConfigTab from '../screens/NodeConfigTab.jsx';
+import LanesTab from '../screens/LanesTab.jsx';
 import HealthTab from '../screens/HealthTab.jsx';
-import PolygonsTab from '../screens/PolygonsTab.jsx';
+import ConfigTab from '../screens/NodeConfigTab.jsx';
 import PolygonEditorDialog from '../components/PolygonEditorDialog.jsx';
 import ConfirmDialog from '../components/ui/ConfirmDialog.jsx';
 import EditNodeModal from '../components/EditNodeModal.jsx';
@@ -76,20 +75,27 @@ export default function NodeMaintainerPage() {
     switch (currentTab) {
       case 'overview':
         return <OverviewTab />;
-      case 'roadConfig':
-        return <RoadConfigTab />;
-      case 'nodeConfig':
-        return <NodeConfigTab />;
-      case 'health':
-        return <HealthTab />;
-      case 'polygons':
+      case 'lanes':
         return (
-          <PolygonsTab
+          <LanesTab
             onEditPolygon={(poly) => {
               setEditingPolygon(poly);
               setShowPolygonEditor(true);
             }}
           />
+        );
+      case 'health':
+        return <HealthTab />;
+      case 'config':
+        return <ConfigTab />;
+      case 'cameras':
+        return (
+          <div className="flex-1 flex items-center justify-center p-10 text-safe-text-muted">
+            <div className="text-center">
+              <FontAwesomeIcon icon="camera" className="text-3xl mb-3 opacity-40" />
+              <p className="text-sm">Camera management coming soon</p>
+            </div>
+          </div>
         );
       default:
         return null;

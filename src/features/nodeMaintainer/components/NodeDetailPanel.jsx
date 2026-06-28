@@ -4,10 +4,10 @@ import VideoFeedPlayer from './VideoFeedPlayer.jsx';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: 'eye' },
-  { id: 'roadConfig', label: 'Road Configuration', icon: 'road' },
-  { id: 'nodeConfig', label: 'Node Configuration', icon: 'gear' },
+  { id: 'lanes', label: 'Lanes', icon: 'road' },
   { id: 'health', label: 'Health', icon: 'heart-pulse' },
-  { id: 'polygons', label: 'Polygons', icon: 'map' },
+  { id: 'config', label: 'Config', icon: 'gear' },
+  { id: 'cameras', label: 'Cameras', icon: 'camera' },
 ];
 
 export default function NodeDetailPanel({
