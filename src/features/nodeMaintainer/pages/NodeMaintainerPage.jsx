@@ -51,6 +51,7 @@ export default function NodeMaintainerPage() {
   const [pageSearch, setPageSearch] = useState('');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [wizardError, setWizardError] = useState('');
   const [showPolygonEditor, setShowPolygonEditor] = useState(false);
   const [editingPolygon, setEditingPolygon] = useState(null);
   const [showNodeWizard, setShowNodeWizard] = useState(false);
@@ -105,8 +106,9 @@ export default function NodeMaintainerPage() {
         dispatch(setCurrentTab('overview'));
         setShowNodeWizard(false);
       })
-      .catch(() => {
+      .catch((error) => {
         setIsSubmitting(false);
+        setWizardError(error || 'Failed to create node. Please try again.');
       });
   };
 
@@ -270,10 +272,11 @@ export default function NodeMaintainerPage() {
 
       <NodeCreationWizard
         isOpen={showNodeWizard}
-        onClose={() => setShowNodeWizard(false)}
+        onClose={() => { setWizardError(''); setShowNodeWizard(false); }}
         onSubmit={handleCreateNode}
         existingNodeIds={nodes.map((n) => n.id)}
         isSubmitting={isSubmitting}
+        submissionError={wizardError}
       />
     </div>
   );

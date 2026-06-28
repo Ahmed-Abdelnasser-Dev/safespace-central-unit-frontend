@@ -2,7 +2,7 @@
  * NodeCreationWizard — 5-step guided node creation.
  * Replaces AddNodeModal. Configures the node during creation.
  */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from '@/components/ui/Modal.jsx';
 import Stepper from '@/components/ui/Stepper.jsx';
 import Button from '@/components/ui/Button.jsx';
@@ -96,12 +96,22 @@ function SliderField({ label, value, onChange, min, max, step = 1, unit = '' }) 
   );
 }
 
-export default function NodeCreationWizard({ isOpen, onClose, onSubmit, existingNodeIds, isSubmitting }) {
+export default function NodeCreationWizard({ isOpen, onClose, onSubmit, existingNodeIds, isSubmitting, submissionError }) {
   const [stepIndex, setStepIndex] = useState(0);
   const [completedSteps, setCompletedSteps] = useState([]);
   const [form, setForm] = useState(DEFAULT_FORM);
   const [stepError, setStepError] = useState('');
   const [newLane, setNewLane] = useState({ name: '', type: 'standard', status: 'open' });
+
+  useEffect(() => {
+    if (!isOpen) {
+      setStepIndex(0);
+      setCompletedSteps([]);
+      setForm(DEFAULT_FORM);
+      setStepError('');
+      setNewLane({ name: '', type: 'standard', status: 'open' });
+    }
+  }, [isOpen]);
 
   const currentStep = STEPS[stepIndex];
 
@@ -204,6 +214,7 @@ export default function NodeCreationWizard({ isOpen, onClose, onSubmit, existing
   };
 
   const handleClose = () => {
+    if (isSubmitting) return;
     setStepIndex(0);
     setCompletedSteps([]);
     setForm(DEFAULT_FORM);
@@ -487,9 +498,9 @@ export default function NodeCreationWizard({ isOpen, onClose, onSubmit, existing
         </div>
 
         {/* Error */}
-        {stepError && (
+        {(stepError || submissionError) && (
           <div className="mx-8 mb-0 rounded-lg bg-safe-danger/10 border border-safe-danger/20 px-4 py-3 text-safe-danger text-sm flex-shrink-0">
-            {stepError}
+            {submissionError || stepError}
           </div>
         )}
 

@@ -2,7 +2,6 @@
  * LocationPicker — interactive map pin for node location selection.
  * Click or drag the pin to set coordinates.
  */
-import { useRef } from 'react';
 import Map, { Marker } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useMapStyle } from '@/hooks/useMapStyle.js';
@@ -10,8 +9,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const EGYPT_CENTER = { longitude: 32.5498, latitude: 30.0131, zoom: 8 };
 
+// Stable promise — created once at module scope to avoid remounting the map on every render
+const mapLibPromise = import('maplibre-gl');
+
 export default function LocationPicker({ lat, lng, onChange }) {
-  const mapRef = useRef(null);
   const mapStyle = useMapStyle();
 
   const hasPin = lat != null && lng != null && !isNaN(lat) && !isNaN(lng);
@@ -29,8 +30,7 @@ export default function LocationPicker({ lat, lng, onChange }) {
   return (
     <div className="relative w-full rounded-lg overflow-hidden" style={{ height: 240 }}>
       <Map
-        ref={mapRef}
-        mapLib={import('maplibre-gl')}
+        mapLib={mapLibPromise}
         initialViewState={EGYPT_CENTER}
         style={{ width: '100%', height: '100%' }}
         mapStyle={mapStyle}
