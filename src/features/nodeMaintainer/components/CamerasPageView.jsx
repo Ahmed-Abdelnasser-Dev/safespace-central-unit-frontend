@@ -42,7 +42,7 @@ export default function CamerasPageView({ searchQuery = '', onEdit, onDelete }) 
         <div className="text-center max-w-sm">
           <FontAwesomeIcon icon="triangle-exclamation" className="text-safe-orange text-3xl mb-3" />
           <p className="text-sm font-medium text-safe-text-primary mb-1">Camera service unavailable</p>
-          <p className="text-xs text-safe-text-muted">{typeof error === 'string' ? error : 'Unable to connect to the stream service.'}</p>
+          <p className="text-xs text-safe-text-muted">Unable to connect to the stream service. Check your connection and try again.</p>
         </div>
       </div>
     );

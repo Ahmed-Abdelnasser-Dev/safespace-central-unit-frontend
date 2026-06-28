@@ -62,8 +62,7 @@ export function useNodeVideoFeed() {
           }
         };
 
-        ws.onerror = (error) => {
-          console.error('WebSocket error:', error);
+        ws.onerror = () => {
           setIsConnected(false);
         };
 

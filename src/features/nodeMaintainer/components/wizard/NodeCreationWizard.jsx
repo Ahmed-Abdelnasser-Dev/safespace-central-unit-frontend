@@ -430,7 +430,7 @@ export default function NodeCreationWizard({ isOpen, onClose, onSubmit, existing
                   { label: 'Node ID', value: form.nodeId },
                   { label: 'Name', value: form.name || form.nodeId },
                   { label: 'Address', value: form.address },
-                  { label: 'Coordinates', value: `${form.latitude}, ${form.longitude}` },
+                  { label: 'Coordinates', value: form.latitude && form.longitude ? `${form.latitude}, ${form.longitude}` : '(map pin not set — will use 0,0)' },
                 ],
               },
               {
