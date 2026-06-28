@@ -30,7 +30,7 @@ import PolygonsTab from '../screens/PolygonsTab.jsx';
 import PolygonEditorDialog from '../components/PolygonEditorDialog.jsx';
 import ConfirmDialog from '../components/ui/ConfirmDialog.jsx';
 import EditNodeModal from '../components/EditNodeModal.jsx';
-import AddNodeModal from '../components/AddNodeModal.jsx';
+import NodeCreationWizard from '../components/wizard/NodeCreationWizard.jsx';
 import CameraViewPlaceholder from '../components/CameraViewPlaceholder.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -50,9 +50,10 @@ export default function NodeMaintainerPage() {
   // Page-level search (wired to active view's content)
   const [pageSearch, setPageSearch] = useState('');
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPolygonEditor, setShowPolygonEditor] = useState(false);
   const [editingPolygon, setEditingPolygon] = useState(null);
-  const [showAddNodeModal, setShowAddNodeModal] = useState(false);
+  const [showNodeWizard, setShowNodeWizard] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteError, setDeleteError] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -95,12 +96,17 @@ export default function NodeMaintainerPage() {
   };
 
   const handleCreateNode = (nodePayload) => {
+    setIsSubmitting(true);
     dispatch(registerNode(nodePayload))
       .unwrap()
       .then(() => {
+        setIsSubmitting(false);
         dispatch(selectNode(nodePayload.nodeId));
-        dispatch(setCurrentTab('nodeConfig'));
-        setShowAddNodeModal(false);
+        dispatch(setCurrentTab('overview'));
+        setShowNodeWizard(false);
+      })
+      .catch(() => {
+        setIsSubmitting(false);
       });
   };
 
@@ -159,7 +165,7 @@ export default function NodeMaintainerPage() {
 
         {/* View-specific action */}
         {activeView === 'nodes' ? (
-          <Button variant="primary" size="sm" icon="plus" onClick={() => setShowAddNodeModal(true)}>
+          <Button variant="primary" size="sm" icon="plus" onClick={() => setShowNodeWizard(true)}>
             Add Node
           </Button>
         ) : (
@@ -262,11 +268,12 @@ export default function NodeMaintainerPage() {
         />
       )}
 
-      <AddNodeModal
-        isOpen={showAddNodeModal}
-        onClose={() => setShowAddNodeModal(false)}
+      <NodeCreationWizard
+        isOpen={showNodeWizard}
+        onClose={() => setShowNodeWizard(false)}
         onSubmit={handleCreateNode}
         existingNodeIds={nodes.map((n) => n.id)}
+        isSubmitting={isSubmitting}
       />
     </div>
   );
