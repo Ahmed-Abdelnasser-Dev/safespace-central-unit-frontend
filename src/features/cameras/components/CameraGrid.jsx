@@ -42,7 +42,7 @@ export default function CameraGrid({ onEdit, onDelete, canManage }) {
            {canManage && (
              <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 p-1 rounded">
                 <button onClick={() => onEdit(cam)} className="p-1.5 text-safe-text-primary hover:text-safe-blue">
-                  <FontAwesomeIcon icon="edit" />
+                  <FontAwesomeIcon icon="pen-to-square" />
                 </button>
                 <button onClick={() => onDelete(cam)} className="p-1.5 text-safe-text-primary hover:text-red-500">
                   <FontAwesomeIcon icon="trash" />

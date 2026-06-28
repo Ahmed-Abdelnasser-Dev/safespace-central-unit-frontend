@@ -30,7 +30,10 @@ import PolygonEditorDialog from '../components/PolygonEditorDialog.jsx';
 import ConfirmDialog from '../components/ui/ConfirmDialog.jsx';
 import EditNodeModal from '../components/EditNodeModal.jsx';
 import NodeCreationWizard from '../components/wizard/NodeCreationWizard.jsx';
-import CameraViewPlaceholder from '../components/CameraViewPlaceholder.jsx';
+import CamerasPageView from '../components/CamerasPageView.jsx';
+import NodeCamerasTab from '../screens/NodeCamerasTab.jsx';
+import CameraFormModal from '../../cameras/components/CameraFormModal.jsx';
+import DeleteCameraModal from '../../cameras/components/DeleteCameraModal.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const PAGE_VIEWS = [
@@ -61,6 +64,11 @@ export default function NodeMaintainerPage() {
   const [editError, setEditError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
 
+  // Camera modal state
+  const [showCameraForm, setShowCameraForm] = useState(false);
+  const [editingCamera, setEditingCamera] = useState(null);
+  const [cameraToDelete, setCameraToDelete] = useState(null);
+
   useEffect(() => {
     dispatch(fetchNodes());
   }, [dispatch]);
@@ -89,14 +97,7 @@ export default function NodeMaintainerPage() {
       case 'config':
         return <ConfigTab />;
       case 'cameras':
-        return (
-          <div className="flex-1 flex items-center justify-center p-10 text-safe-text-muted">
-            <div className="text-center">
-              <FontAwesomeIcon icon="camera" className="text-3xl mb-3 opacity-40" />
-              <p className="text-sm">Camera management coming soon</p>
-            </div>
-          </div>
-        );
+        return <NodeCamerasTab />;
       default:
         return null;
     }
@@ -177,7 +178,7 @@ export default function NodeMaintainerPage() {
             Add Node
           </Button>
         ) : (
-          <Button variant="primary" size="sm" icon="plus" onClick={() => { /* Task 8 */ }}>
+          <Button variant="primary" size="sm" icon="plus" onClick={() => { setEditingCamera(null); setShowCameraForm(true); }}>
             Add Camera
           </Button>
         )}
@@ -236,8 +237,12 @@ export default function NodeMaintainerPage() {
               )}
             </>
           ) : (
-            /* Cameras view — full-width placeholder, replaced in Task 8 */
-            <CameraViewPlaceholder searchQuery={pageSearch} />
+            /* Cameras view — global camera management */
+            <CamerasPageView
+              searchQuery={pageSearch}
+              onEdit={(cam) => { setEditingCamera(cam); setShowCameraForm(true); }}
+              onDelete={(cam) => setCameraToDelete(cam)}
+            />
           )}
         </div>
       </div>
@@ -283,6 +288,19 @@ export default function NodeMaintainerPage() {
         existingNodeIds={nodes.map((n) => n.id)}
         isSubmitting={isSubmitting}
         submissionError={wizardError}
+      />
+
+      <CameraFormModal
+        isOpen={showCameraForm}
+        onClose={() => { setShowCameraForm(false); setEditingCamera(null); }}
+        mode={editingCamera ? 'edit' : 'create'}
+        camera={editingCamera}
+      />
+
+      <DeleteCameraModal
+        isOpen={!!cameraToDelete}
+        onClose={() => setCameraToDelete(null)}
+        camera={cameraToDelete}
       />
     </div>
   );

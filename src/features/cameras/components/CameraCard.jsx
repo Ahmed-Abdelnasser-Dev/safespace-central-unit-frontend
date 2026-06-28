@@ -20,7 +20,7 @@ export default function CameraCard({ camera, onEdit, onDelete, canManage }) {
         <div>
           <h3 className="text-safe-text-primary font-medium mb-1">{camera.name}</h3>
           <p className="text-sm text-safe-text-muted">
-            <FontAwesomeIcon icon="map-marker-alt" className="mr-2" />
+            <FontAwesomeIcon icon="location-dot" className="mr-2" />
             {camera.location || 'No location set'}
           </p>
           <p className="text-xs text-safe-text-muted mt-1">
@@ -30,7 +30,7 @@ export default function CameraCard({ camera, onEdit, onDelete, canManage }) {
         {canManage && (
           <div className="flex gap-2">
             <button onClick={() => onEdit(camera)} className="p-2 text-safe-text-muted hover:text-safe-text-primary hover:bg-safe-gray-light rounded" aria-label="Edit">
-              <FontAwesomeIcon icon="edit" />
+              <FontAwesomeIcon icon="pen-to-square" />
             </button>
             <button onClick={() => onDelete(camera)} className="p-2 text-safe-text-muted hover:text-red-500 hover:bg-safe-gray-light rounded" aria-label="Delete">
               <FontAwesomeIcon icon="trash" />
