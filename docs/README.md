@@ -24,6 +24,7 @@ This folder is the source of truth for the current state of the project. Update 
 | [backend-integration.md](./backend-integration.md) | DMZ deployment: CORS, cookies, nginx proxy, env vars, socket events |
 | [backend-integration-dashboard.md](./backend-integration-dashboard.md) | Endpoint contracts for dashboard, map, dispatcher, stream-service |
 | [backend-integration-emergency-dispatcher.md](./backend-integration-emergency-dispatcher.md) | Dispatcher-specific REST + socket contracts |
+| [backend-integration-node-maintainer.md](./backend-integration-node-maintainer.md) | Node maintainer: nodes CRUD, health history, geocoding proxy, camera API, realtime |
 
 ## Feature docs
 
