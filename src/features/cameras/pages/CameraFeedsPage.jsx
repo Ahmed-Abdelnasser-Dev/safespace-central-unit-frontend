@@ -1,7 +1,50 @@
 import PageHeader from '@/components/layout/PageHeader';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CameraGrid from '../components/CameraGrid';
+import CameraCard from '../components/CameraCard';
+import CameraFormModal from '../components/CameraFormModal';
+import DeleteCameraModal from '../components/DeleteCameraModal';
+import { fetchCameras } from '../cameraSlice';
+import { canManageCameras } from '@/shared/utils/roleUtils';
 
 function CameraFeedsPage() {
+  const dispatch = useDispatch();
+  const role = useSelector(state => state.auth?.user?.role?.name);
+  const canManage = role ? canManageCameras(role) : false;
+  
+  const { cameras } = useSelector(state => state.cameras);
+  const [viewMode, setViewMode] = useState('live'); // 'live' | 'manage'
+  
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formMode, setFormMode] = useState('create');
+  const [selectedCamera, setSelectedCamera] = useState(null);
+  
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchCameras());
+  }, [dispatch]);
+
+  const handleRefresh = () => {
+    dispatch(fetchCameras());
+  };
+
+  const handleAdd = () => {
+    setFormMode('create');
+    setSelectedCamera(null);
+    setIsFormOpen(true);
+  };
+
+  const handleEdit = (camera) => {
+    setFormMode('edit');
+    setSelectedCamera(camera);
+    setIsFormOpen(true);
+  };
+
+  const handleDelete = (camera) => {
+    setSelectedCamera(camera);
+    setIsDeleteOpen(true);
+  };
+
   return (
     <div className="min-h-full bg-safe-dark text-safe-text-primary p-6">
       <PageHeader
@@ -20,6 +63,36 @@ function CameraFeedsPage() {
           </p>
         </div>
       </div>
+      
+      {viewMode === 'live' ? (
+        <CameraGrid onEdit={handleEdit} onDelete={handleDelete} canManage={canManage} />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {cameras.length === 0 ? (
+            <div className="col-span-4 text-center text-gray-400 py-16">
+              No cameras registered yet.
+              {canManage && <span> Click <strong>Add Camera</strong> to add one.</span>}
+            </div>
+          ) : (
+            cameras.map(cam => (
+              <CameraCard key={cam.id} camera={cam} onEdit={handleEdit} onDelete={handleDelete} canManage={canManage} />
+            ))
+          )}
+        </div>
+      )}
+
+      <CameraFormModal 
+        isOpen={isFormOpen} 
+        onClose={() => setIsFormOpen(false)} 
+        mode={formMode} 
+        camera={selectedCamera} 
+      />
+      
+      <DeleteCameraModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        camera={selectedCamera}
+      />
     </div>
   );
 }
