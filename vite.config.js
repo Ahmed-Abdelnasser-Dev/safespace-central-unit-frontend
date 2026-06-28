@@ -12,7 +12,11 @@ export default defineConfig(({ mode }) => {
     ? env.VITE_NODE_VIDEO_WS_URL.replace('ws://', 'http://').replace('wss://', 'https://')
     : 'http://localhost:4001';
 
-  const server = { port: 4000 };
+  // Added allowedHosts: true to bypass Ngrok blocking
+  const server = { 
+    port: 4000,
+    allowedHosts: true 
+  };
 
   if (enableProxy) {
     server.proxy = {

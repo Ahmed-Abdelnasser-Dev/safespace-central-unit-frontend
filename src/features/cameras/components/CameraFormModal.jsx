@@ -7,25 +7,22 @@ import { showSuccess, showError } from '@/utils/toast';
 export default function CameraFormModal({ isOpen, onClose, mode, camera }) {
   const dispatch = useDispatch();
   const { submitting, error } = useSelector(state => state.cameras);
-  const nodes = useSelector(state => state.nodes?.nodes || []);
-  
+
   const [formData, setFormData] = useState({
     name: '',
     rtspUrl: '',
     location: '',
-    nodeId: ''
   });
 
   useEffect(() => {
     if (mode === 'edit' && camera) {
       setFormData({
         name: camera.name || '',
-        rtspUrl: '', // Leave blank placeholder logic
+        rtspUrl: '',
         location: camera.location || '',
-        nodeId: camera.nodeId || ''
       });
     } else {
-      setFormData({ name: '', rtspUrl: '', location: '', nodeId: '' });
+      setFormData({ name: '', rtspUrl: '', location: '' });
     }
   }, [mode, camera, isOpen]);
 
@@ -64,17 +61,6 @@ export default function CameraFormModal({ isOpen, onClose, mode, camera }) {
         <div>
           <label className="block text-sm text-gray-400 mb-1">Location</label>
           <input type="text" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="w-full bg-safe-dark border border-safe-gray-light rounded p-2 text-white" />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Node (Association)</label>
-          <select value={formData.nodeId} onChange={e => setFormData({...formData, nodeId: e.target.value})} className="w-full bg-safe-dark border border-safe-gray-light rounded p-2 text-white">
-            <option value="">Unassigned</option>
-            {nodes.map(node => (
-              <option key={node.id} value={node.id}>
-                {node.name || `Node ${node.id}`}
-              </option>
-            ))}
-          </select>
         </div>
         <div className="flex justify-end gap-2 mt-6">
           <button type="button" onClick={onClose} className="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>

@@ -7,12 +7,11 @@ import CameraCard from '../components/CameraCard';
 import CameraFormModal from '../components/CameraFormModal';
 import DeleteCameraModal from '../components/DeleteCameraModal';
 import { fetchCameras } from '../cameraSlice';
-import { fetchNodes } from '@/features/nodeMaintainer/nodesSlice';
 import { canManageCameras } from '@/shared/utils/roleUtils';
 
 function CameraFeedsPage() {
   const dispatch = useDispatch();
-  const role = useSelector(state => state.auth?.operator?.role);
+  const role = useSelector(state => state.auth?.user?.role?.name);
   const canManage = role ? canManageCameras(role) : false;
   
   const { cameras } = useSelector(state => state.cameras);
@@ -26,7 +25,6 @@ function CameraFeedsPage() {
 
   useEffect(() => {
     dispatch(fetchCameras());
-    dispatch(fetchNodes());
   }, [dispatch]);
 
   const handleRefresh = () => {
@@ -101,9 +99,16 @@ function CameraFeedsPage() {
         <CameraGrid onEdit={handleEdit} onDelete={handleDelete} canManage={canManage} />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {cameras.map(cam => (
-             <CameraCard key={cam.id} camera={cam} onEdit={handleEdit} onDelete={handleDelete} canManage={canManage} />
-          ))}
+          {cameras.length === 0 ? (
+            <div className="col-span-4 text-center text-gray-400 py-16">
+              No cameras registered yet.
+              {canManage && <span> Click <strong>Add Camera</strong> to add one.</span>}
+            </div>
+          ) : (
+            cameras.map(cam => (
+              <CameraCard key={cam.id} camera={cam} onEdit={handleEdit} onDelete={handleDelete} canManage={canManage} />
+            ))
+          )}
         </div>
       )}
 

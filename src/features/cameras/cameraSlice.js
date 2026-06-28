@@ -1,24 +1,26 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { streamApi } from '../../services/streamApi';
+import api from '../../services/api';
 
+// Camera list comes from the stream-service (live in-memory state)
 export const fetchCameras = createAsyncThunk(
   'cameras/fetchCameras',
   async (_, { rejectWithValue }) => {
     try {
-      const data = await streamApi.getCameras();
-      return data;
+      return await streamApi.getCameras();
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
 
+// CRUD goes through the backend API (persists to DB + syncs stream-service)
 export const createCamera = createAsyncThunk(
   'cameras/createCamera',
   async (cameraData, { rejectWithValue }) => {
     try {
-      const data = await streamApi.createCamera(cameraData);
-      return data;
+      const res = await api.post('/cameras', cameraData);
+      return res.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -29,8 +31,8 @@ export const updateCamera = createAsyncThunk(
   'cameras/updateCamera',
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      const response = await streamApi.updateCamera(id, data);
-      return response;
+      const res = await api.patch(`/cameras/${id}`, data);
+      return res.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -41,7 +43,7 @@ export const deleteCamera = createAsyncThunk(
   'cameras/deleteCamera',
   async (id, { rejectWithValue }) => {
     try {
-      await streamApi.deleteCamera(id);
+      await api.delete(`/cameras/${id}`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -91,9 +93,7 @@ const cameraSlice = createSlice({
       .addCase(updateCamera.fulfilled, (state, action) => {
         state.submitting = false;
         const index = state.cameras.findIndex((c) => c.id === action.payload.id);
-        if (index !== -1) {
-          state.cameras[index] = action.payload;
-        }
+        if (index !== -1) state.cameras[index] = action.payload;
       })
       .addCase(updateCamera.rejected, (state, action) => {
         state.submitting = false;
