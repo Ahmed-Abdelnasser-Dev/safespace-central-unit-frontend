@@ -89,5 +89,7 @@ coverage/
 **.jpeg
 **.gif
 **.svg
+playwright-mcp/
+.superpowers/
 # =========================
 # End of .gitignore

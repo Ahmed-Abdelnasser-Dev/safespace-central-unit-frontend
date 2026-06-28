@@ -50,7 +50,25 @@ function PolygonEditorDialog({ node, polygon, onClose }) {
     } else if (lastSnapshot?.snapshotPath) {
       img.src = `${baseUrl}${lastSnapshot.snapshotPath}`;
     } else {
-      img.src = 'https://images.unsplash.com/photo-1489496900549-f21edf41dd20?w=640&h=640&fit=crop';
+      // No video feed — draw placeholder directly, skip img.onload path
+      canvas.width = 640;
+      canvas.height = 640;
+      ctx.fillStyle = '#111827';
+      ctx.fillRect(0, 0, 640, 640);
+      // Grid lines for spatial reference
+      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x <= 640; x += 64) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 640); ctx.stroke(); }
+      for (let y = 0; y <= 640; y += 64) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(640, y); ctx.stroke(); }
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.font = 'bold 15px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText('No video feed — click to draw polygon points', 320, 310);
+      ctx.font = '12px system-ui';
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fillText('Points will be mapped to the live frame when connected', 320, 335);
+      drawPolygon(ctx);
+      return;
     }
 
     img.onload = () => {
@@ -90,9 +108,11 @@ function PolygonEditorDialog({ node, polygon, onClose }) {
       isEmpty: false,
     };
 
-    const updatedPolygons = polygon?.id
-      ? node.lanePolygons.map((p) => (p.id === polygon.id ? newPolygon : p))
-      : [...(node.lanePolygons || []), newPolygon];
+    const existingPolygons = node.lanePolygons || [];
+    const existingIndex = existingPolygons.findIndex((p) => p.id === polygon?.id);
+    const updatedPolygons = existingIndex >= 0
+      ? existingPolygons.map((p, i) => (i === existingIndex ? newPolygon : p))
+      : [...existingPolygons, newPolygon];
 
     dispatch(updateNodePolygons({ nodeId: node.id, lanePolygons: updatedPolygons }));
     onClose();
