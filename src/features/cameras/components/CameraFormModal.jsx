@@ -27,7 +27,7 @@ export default function CameraFormModal({ isOpen, onClose, mode, camera, default
     } else {
       setFormData({ name: '', rtspUrl: '', location: '', nodeId: defaultNodeId || '' });
     }
-  }, [mode, camera, isOpen]);
+  }, [mode, camera, isOpen, defaultNodeId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
