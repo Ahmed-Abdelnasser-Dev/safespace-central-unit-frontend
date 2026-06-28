@@ -34,13 +34,13 @@ function NodeConfigTab() {
     // Optimistic update in Redux
     dispatch(updateNodeSpecs({ nodeId: node.id, specs }));
     // Then persist to API
-    dispatch(persistNodeSpecs(node.id));
+    dispatch(persistNodeSpecs({ nodeId: node.id, specs }));
   };
 
   const handleToggleStatus = () => {
     const nextStatus = node.status === 'online' ? 'offline' : 'online';
     dispatch(updateNodeStatus({ nodeId: node.id, status: nextStatus }));
-    dispatch(persistNodeStatus(node.id));
+    dispatch(persistNodeStatus({ nodeId: node.id, status: nextStatus }));
   };
 
   const configSections = [

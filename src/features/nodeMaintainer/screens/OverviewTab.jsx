@@ -46,8 +46,6 @@ export default function OverviewTab() {
   // Always use 640x640 for node camera
   const [feedSize] = useState({ width: 640, height: 640 });
 
-  if (!node) return null;
-
   // Determine what to display: live frame, snapshot, or placeholder
   useEffect(() => {
     if (currentFrame && currentFrame.frameData) {
@@ -59,6 +57,8 @@ export default function OverviewTab() {
       setDisplayImage(`${baseUrl}${lastSnapshot.snapshotPath}`);
     }
   }, [currentFrame, lastSnapshot]);
+
+  if (!node) return null;
 
   // No need to observe or update size, always fixed at 640x640
 

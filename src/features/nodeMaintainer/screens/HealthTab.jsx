@@ -42,12 +42,16 @@ function HealthTab() {
     let cancelled = false;
     setIsLoading(true);
     setHistoryData(null);
-    nodeAPI.getHealthHistory(node.id, '24h').then((data) => {
-      if (!cancelled) {
-        setHistoryData(data);
-        setIsLoading(false);
-      }
-    });
+    nodeAPI.getHealthHistory(node.id, '24h')
+      .then((data) => {
+        if (!cancelled) {
+          setHistoryData(data);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setIsLoading(false);
+      });
     return () => { cancelled = true; };
   }, [node?.id]);
 

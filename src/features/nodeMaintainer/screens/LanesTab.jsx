@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectSelectedNode,
@@ -40,6 +40,10 @@ export default function LanesTab({ onEditPolygon }) {
   const node = useSelector(selectSelectedNode);
   const [speedLimit, setSpeedLimit] = useState(node?.roadRules?.speedLimit || 80);
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setSpeedLimit(node?.roadRules?.speedLimit || 80);
+  }, [node?.id]);
   const [saveError, setSaveError] = useState('');
   const [isAddLaneOpen, setIsAddLaneOpen] = useState(false);
   const [laneToDelete, setLaneToDelete] = useState(null);
