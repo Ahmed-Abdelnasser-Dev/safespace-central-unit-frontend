@@ -15,17 +15,17 @@ import ChartOverlay from '../components/ChartOverlay.jsx';
 import { analyticsAPI } from '@/services/api';
 import {
   Chart,
-  LineController, DoughnutController,
+  BarController, DoughnutController,
   CategoryScale, LinearScale,
-  PointElement, LineElement, ArcElement,
-  Tooltip, Legend, Filler,
+  BarElement, ArcElement,
+  Tooltip, Legend,
 } from 'chart.js';
 
 Chart.register(
-  LineController, DoughnutController,
+  BarController, DoughnutController,
   CategoryScale, LinearScale,
-  PointElement, LineElement, ArcElement,
-  Tooltip, Legend, Filler,
+  BarElement, ArcElement,
+  Tooltip, Legend,
 );
 
 const SEVERITY_COLORS = ['#4ade80', '#a3e635', '#facc15', '#fb923c', '#f87171'];
@@ -56,28 +56,116 @@ function changeArrow(pct) {
 
 // ── IncidentTimelineChart ─────────────────────────────────────────────────────
 
+const SEVERITY_DESCRIPTIONS = ['Minor', 'Moderate', 'Serious', 'Severe', 'Critical'];
+
+// Pre-fill every day in [startISO, endISO] so the timeline is always continuous
+function buildDayLabels(startISO, endISO) {
+  const labels = [];
+  const cur = new Date(startISO);
+  cur.setHours(0, 0, 0, 0);
+  const end = new Date(endISO);
+  end.setHours(0, 0, 0, 0);
+  while (cur <= end) {
+    labels.push(cur.toISOString().slice(0, 10));
+    cur.setDate(cur.getDate() + 1);
+  }
+  return labels;
+}
+
+function fmtAxisDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-EG', { month: 'short', day: 'numeric' });
+}
+
+function fmtRangeLabel(startISO, days) {
+  const end = new Date();
+  const start = new Date(startISO);
+  const fmtOpts = { month: 'short', day: 'numeric', year: 'numeric' };
+  return `${start.toLocaleDateString('en-EG', fmtOpts)} — ${end.toLocaleDateString('en-EG', fmtOpts)}`;
+}
+
 function IncidentTimelineChart({ range }) {
   const canvasRef = useRef(null);
   const chartRef  = useRef(null);
   const [status, setStatus] = useState('loading');
+  const [activeSeverities, setActiveSeverities] = useState([]);
+  const [rangeLabel, setRangeLabel] = useState('');
+  const [peakInfo, setPeakInfo]     = useState(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     Chart.getChart(canvas)?.destroy();
     chartRef.current = new Chart(canvas.getContext('2d'), {
-      type: 'line',
+      type: 'bar',
       data: { labels: [], datasets: [] },
       options: {
         responsive: true, maintainAspectRatio: false, animation: false,
         interaction: { mode: 'index', intersect: false },
         plugins: {
           legend: { display: false },
-          tooltip: { backgroundColor: '#1a1a1a', borderColor: 'rgba(255,255,255,0.08)', borderWidth: 1, titleColor: 'rgba(255,255,255,0.6)', bodyColor: 'rgba(255,255,255,0.9)', padding: 10, cornerRadius: 8 },
+          tooltip: {
+            backgroundColor: '#1a1a1a',
+            borderColor: 'rgba(255,255,255,0.08)', borderWidth: 1,
+            titleColor: 'rgba(255,255,255,0.85)',
+            bodyColor: 'rgba(255,255,255,0.75)',
+            footerColor: 'rgba(255,255,255,0.55)',
+            padding: 12, cornerRadius: 8,
+            callbacks: {
+              title: (items) => {
+                const d = new Date(items[0].label);
+                return isNaN(d) ? items[0].label
+                  : d.toLocaleDateString('en-EG', { weekday: 'long', month: 'long', day: 'numeric' });
+              },
+              label: (ctx) => {
+                if (ctx.parsed.y === 0) return null;
+                const sev = ctx.datasetIndex + 1;
+                const desc = SEVERITY_DESCRIPTIONS[sev - 1];
+                return `  Sev ${sev} — ${desc}: ${ctx.parsed.y} incident${ctx.parsed.y !== 1 ? 's' : ''}`;
+              },
+              footer: (items) => {
+                const total = items.reduce((s, i) => s + i.parsed.y, 0);
+                return total > 0 ? `  Total: ${total} incident${total !== 1 ? 's' : ''} this day` : null;
+              },
+            },
+          },
         },
         scales: {
-          x: { border: { display: false }, grid: { color: CHART_COLORS.grid }, ticks: { color: CHART_COLORS.tick, maxTicksLimit: 10, font: { size: 11 }, maxRotation: 0 } },
-          y: { border: { display: false }, grid: { color: CHART_COLORS.grid }, ticks: { color: CHART_COLORS.tick, maxTicksLimit: 5, font: { size: 11 } }, beginAtZero: true, stacked: true },
+          x: {
+            stacked: true,
+            border: { display: false },
+            grid: { display: false },
+            ticks: {
+              color: CHART_COLORS.tick,
+              font: { size: 10 },
+              maxRotation: 0,
+              autoSkip: true,
+              maxTicksLimit: 10,
+              callback(val) {
+                // Show tick only for clean intervals (every 3rd, 7th, etc.)
+                const label = this.getLabelForValue(val);
+                return fmtAxisDate(label);
+              },
+            },
+          },
+          y: {
+            stacked: true,
+            border: { display: false },
+            grid: { color: CHART_COLORS.grid },
+            ticks: {
+              color: CHART_COLORS.tick,
+              font: { size: 11 },
+              precision: 0,
+            },
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'incidents / day',
+              color: CHART_COLORS.tick,
+              font: { size: 10 },
+              padding: { bottom: 4 },
+            },
+          },
         },
       },
     });
@@ -87,45 +175,104 @@ function IncidentTimelineChart({ range }) {
   useEffect(() => {
     let cancelled = false;
     setStatus('loading');
+    setRangeLabel('');
+    setPeakInfo(null);
     const now = new Date();
     const days = range === '7d' ? 7 : range === '90d' ? 90 : 30;
-    const start = new Date(now.getTime() - days * 86400_000).toISOString();
+    const startDate = new Date(now.getTime() - days * 86400_000);
+    const start = startDate.toISOString();
+
     analyticsAPI.getIncidentTimeline({ start }).then((d) => {
       if (cancelled || !chartRef.current) return;
-      if (!d.labels?.length) { setStatus('empty'); return; }
-      chartRef.current.data.labels = d.labels;
-      chartRef.current.data.datasets = d.datasets.map((ds, i) => ({
-        label: `Sev ${ds.severity}`,
-        data: ds.data,
-        borderColor: SEVERITY_COLORS[i],
-        backgroundColor: SEVERITY_COLORS[i] + '22',
-        fill: true, tension: 0.4, pointRadius: 0, borderWidth: 1.5,
+
+      // Build a complete day-by-day label array (no gaps)
+      const allDays = buildDayLabels(start, now.toISOString());
+
+      // Re-index API data onto the complete day array
+      const apiDaySet = new Set(d.labels ?? []);
+      const apiDataByDay = {};
+      (d.datasets ?? []).forEach((ds) => {
+        ds.data.forEach((val, i) => {
+          const day = d.labels[i];
+          if (!apiDataByDay[day]) apiDataByDay[day] = {};
+          apiDataByDay[day][ds.severity] = val;
+        });
+      });
+
+      const datasets = [1, 2, 3, 4, 5].map((sev, i) => ({
+        label: `Sev ${sev} — ${SEVERITY_DESCRIPTIONS[i]}`,
+        data: allDays.map((day) => apiDataByDay[day]?.[sev] ?? 0),
+        backgroundColor: SEVERITY_COLORS[i] + 'cc',
+        borderColor: 'transparent',
+        borderWidth: 0,
+        borderRadius: 2,
+        borderSkipped: false,
       }));
+
+      chartRef.current.data.labels = allDays;
+      chartRef.current.data.datasets = datasets;
       chartRef.current.update('none');
-      setStatus('ok');
+
+      // Compute which severities have any data
+      const active = [1,2,3,4,5].filter((sev, i) =>
+        datasets[i].data.some((v) => v > 0)
+      );
+      setActiveSeverities(active);
+
+      // Find peak day for the annotation
+      const dailyTotals = allDays.map((day) =>
+        [1,2,3,4,5].reduce((s, sev) => s + (apiDataByDay[day]?.[sev] ?? 0), 0)
+      );
+      const peakIdx = dailyTotals.indexOf(Math.max(...dailyTotals));
+      const peakTotal = dailyTotals[peakIdx];
+      if (peakTotal > 0) {
+        setPeakInfo({
+          date: new Date(allDays[peakIdx]).toLocaleDateString('en-EG', { month: 'short', day: 'numeric' }),
+          count: peakTotal,
+        });
+      }
+
+      setRangeLabel(fmtRangeLabel(start, days));
+      setStatus(active.length ? 'ok' : 'empty');
     }).catch(() => { if (!cancelled) setStatus('error'); });
     return () => { cancelled = true; };
   }, [range]);
 
-  const severityLegend = SEVERITY_LABELS.map((label, i) => ({
-    label,
-    color: SEVERITY_COLORS[i],
-  }));
+  const severityLegend = SEVERITY_LABELS
+    .map((label, i) => ({ label, color: SEVERITY_COLORS[i], desc: SEVERITY_DESCRIPTIONS[i], sev: i + 1 }))
+    .filter(({ sev }) => activeSeverities.includes(sev));
 
   return (
     <div>
+      {/* Legend row */}
       <div className="flex flex-wrap gap-x-4 gap-y-1 mb-2">
-        {severityLegend.map(({ label, color }) => (
+        {severityLegend.map(({ label, color, desc }) => (
           <div key={label} className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-sm flex-shrink-0" style={{ background: color }} />
-            <span className="text-xs text-safe-text-muted">{label}</span>
+            <span className="text-xs text-safe-text-muted">{label} <span className="opacity-50">({desc})</span></span>
           </div>
         ))}
       </div>
-      <div className="relative h-48 w-full">
+
+      {/* Chart */}
+      <div className="relative h-52 w-full">
         <canvas ref={canvasRef} />
-        <ChartOverlay status={status} height="h-48" emptyText="No incident data for this period" />
+        <ChartOverlay status={status} height="h-52" emptyText="No incident data for this period" />
       </div>
+
+      {/* Date range + peak annotation below the chart */}
+      {status === 'ok' && (
+        <div className="flex items-center justify-between mt-2 pt-2 border-t border-safe-border/40">
+          <span className="text-xs text-safe-text-muted">{rangeLabel}</span>
+          {peakInfo && (
+            <span className="text-xs text-safe-text-muted">
+              Peak: <span className="text-safe-text-primary font-medium">{peakInfo.date}</span>
+              {' '}·{' '}
+              <span className="text-safe-text-primary font-medium">{peakInfo.count}</span> incidents
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 }
