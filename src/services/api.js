@@ -544,4 +544,67 @@ export const observerAPI = {
   },
 };
 
+export const analyticsAPI = {
+  getOverview: async (params = {}) => {
+    const { data } = await api.get('/analytics/overview', { params, withCredentials: true });
+    return data.data;
+  },
+  getIncidentTimeline: async (params = {}) => {
+    const { data } = await api.get('/analytics/incidents/timeline', { params, withCredentials: true });
+    return data.data;
+  },
+  getSeverityBreakdown: async (params = {}) => {
+    const { data } = await api.get('/analytics/incidents/severity', { params, withCredentials: true });
+    return data.data;
+  },
+  getTimeOfDayHeatmap: async (params = {}) => {
+    const { data } = await api.get('/analytics/incidents/heatmap-time', { params, withCredentials: true });
+    return data.data;
+  },
+  getConfirmationRate: async (params = {}) => {
+    const { data } = await api.get('/analytics/incidents/confirmation-rate', { params, withCredentials: true });
+    return data.data;
+  },
+  getResponseTimeDistribution: async (params = {}) => {
+    const { data } = await api.get('/analytics/incidents/response-time', { params, withCredentials: true });
+    return data.data;
+  },
+  getIncidentTable: async (params = {}) => {
+    const { data } = await api.get('/analytics/incidents', { params, withCredentials: true });
+    return data.data;
+  },
+  getTopDangerousNodes: async () => {
+    const { data } = await api.get('/analytics/incidents/top-nodes', { withCredentials: true });
+    return data.data;
+  },
+  getRecentDecisions: async () => {
+    const { data } = await api.get('/analytics/incidents/recent-decisions', { withCredentials: true });
+    return data.data;
+  },
+  getNodeList: async () => {
+    const { data } = await api.get('/analytics/nodes', { withCredentials: true });
+    return data.data;
+  },
+  getNodeDetail: async (nodeId, params = {}) => {
+    const { data } = await api.get(`/analytics/nodes/${nodeId}`, { params, withCredentials: true });
+    return data.data;
+  },
+  getDispatchSummary: async (params = {}) => {
+    const { data } = await api.get('/analytics/dispatch', { params, withCredentials: true });
+    return data.data;
+  },
+  getHeatmapPoints: async (params = {}) => {
+    const { data } = await api.get('/analytics/heatmap', { params, withCredentials: true });
+    return data.data;
+  },
+  getReport: async (params = {}) => {
+    const { data } = await api.get('/analytics/report', { params, withCredentials: true });
+    return data.data;
+  },
+  getReportCsvUrl: (params = {}) => {
+    const search = new URLSearchParams({ ...params, format: 'csv' }).toString();
+    return `/api/analytics/report?${search}`;
+  },
+};
+
 export default api;

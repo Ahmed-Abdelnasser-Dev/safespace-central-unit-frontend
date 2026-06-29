@@ -48,6 +48,13 @@ const MessagesPage = lazy(() => import('./features/messages/pages/MessagesPage.j
 const CameraFeedsPage = lazy(() => import('./features/cameras/pages/CameraFeedsPage.jsx'));
 const IncidentHistoryPage = lazy(() => import('./features/incidents/pages/IncidentHistoryPage.jsx'));
 
+// Analytics pages (data_analyst role)
+const AnalyticsOverviewPage  = lazy(() => import('./features/analytics/pages/AnalyticsOverviewPage.jsx'));
+const IncidentAnalyticsPage  = lazy(() => import('./features/analytics/pages/IncidentAnalyticsPage.jsx'));
+const NodeAnalyticsPage      = lazy(() => import('./features/analytics/pages/NodeAnalyticsPage.jsx'));
+const AnalyticsHeatmapPage   = lazy(() => import('./features/analytics/pages/AnalyticsHeatmapPage.jsx'));
+const AnalyticsReportsPage   = lazy(() => import('./features/analytics/pages/AnalyticsReportsPage.jsx'));
+
 // -- Loading fallback ---------------------------------------------------------
 function PageLoader() {
   return (
@@ -68,7 +75,7 @@ function RoleRedirect() {
 }
 
 // -- App ----------------------------------------------------------------------
-const ALL_ROLES = ['admin', 'emergency_dispatcher', 'road_observer', 'node_maintenance_crew'];
+const ALL_ROLES = ['admin', 'emergency_dispatcher', 'road_observer', 'node_maintenance_crew', 'data_analyst'];
 
 function App() {
   const dispatch = useDispatch();
@@ -256,6 +263,48 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['road_observer', 'admin']}>
                   <IncidentHistoryPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ── Analytics (data_analyst + admin) ──────────── */}
+            <Route
+              path="analytics"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'data_analyst']}>
+                  <AnalyticsOverviewPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="analytics/incidents"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'data_analyst']}>
+                  <IncidentAnalyticsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="analytics/nodes"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'data_analyst']}>
+                  <NodeAnalyticsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="analytics/heatmap"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'data_analyst']}>
+                  <AnalyticsHeatmapPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="analytics/reports"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'data_analyst']}>
+                  <AnalyticsReportsPage />
                 </ProtectedRoute>
               }
             />
