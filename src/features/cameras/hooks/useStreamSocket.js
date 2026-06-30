@@ -119,7 +119,11 @@ export function useStreamSocket(cameraId, canvasRef) {
     return () => {
       isMounted = false;
       if (ws) {
-        ws.close();
+        if (ws.readyState === WebSocket.CONNECTING) {
+          ws.onopen = () => ws.close();
+        } else {
+          ws.close();
+        }
       }
     };
   }, [cameraId, canvasRef]);

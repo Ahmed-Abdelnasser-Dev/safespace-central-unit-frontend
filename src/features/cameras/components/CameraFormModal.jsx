@@ -7,6 +7,7 @@ import { showSuccess, showError } from '@/utils/toast';
 export default function CameraFormModal({ isOpen, onClose, mode, camera, defaultNodeId }) {
   const dispatch = useDispatch();
   const { submitting, error } = useSelector(state => state.cameras);
+  const nodes = useSelector(state => state.nodes.nodes);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -85,16 +86,6 @@ export default function CameraFormModal({ isOpen, onClose, mode, camera, default
               </button>
             </div>
           </form>
-        </div>
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Location</label>
-          <input type="text" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="w-full bg-safe-dark border border-safe-gray-light rounded p-2 text-white" />
-        </div>
-        <div className="flex justify-end gap-2 mt-6">
-          <button type="button" onClick={onClose} className="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
-          <button type="submit" disabled={submitting} className="px-4 py-2 bg-safe-blue text-white rounded hover:bg-blue-600 disabled:opacity-50">
-            {submitting ? 'Saving...' : 'Save'}
-          </button>
         </div>
       </div>
     </Modal>

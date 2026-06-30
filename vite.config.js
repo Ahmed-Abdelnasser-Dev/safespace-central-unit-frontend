@@ -8,9 +8,8 @@ export default defineConfig(({ mode }) => {
   const proxyTarget = env.VITE_DEV_PROXY_TARGET || 'http://localhost:5000';
   const enableProxy = env.VITE_ENABLE_DEV_PROXY === 'true';
 
-  const streamHttpUrl = env.VITE_NODE_VIDEO_WS_URL 
-    ? env.VITE_NODE_VIDEO_WS_URL.replace('ws://', 'http://').replace('wss://', 'https://')
-    : 'http://localhost:4001';
+  const rawStreamWs = env.VITE_NODE_VIDEO_WS_URL || 'ws://localhost:4001';
+  const streamHttpUrl = rawStreamWs.replace(/^wss:\/\//i, 'https://').replace(/^ws:\/\//i, 'http://');
 
   // Added allowedHosts: true to bypass Ngrok blocking
   const server = { 

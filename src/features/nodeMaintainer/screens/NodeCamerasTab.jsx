@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCameras } from '../../cameras/cameraSlice';
 import { selectSelectedNode } from '../nodesSlice';
 import { canManageCameras } from '@/shared/utils/roleUtils';
-import CameraCard from '../../cameras/components/CameraCard.jsx';
+import CameraFeed from '../../cameras/components/CameraFeed.jsx';
 import CameraFormModal from '../../cameras/components/CameraFormModal.jsx';
 import DeleteCameraModal from '../../cameras/components/DeleteCameraModal.jsx';
 import Button from '@/components/ui/Button.jsx';
@@ -30,11 +30,6 @@ export default function NodeCamerasTab() {
 
   const handleAddCamera = () => {
     setEditingCamera(null);
-    setShowForm(true);
-  };
-
-  const handleEdit = (cam) => {
-    setEditingCamera(cam);
     setShowForm(true);
   };
 
@@ -72,15 +67,29 @@ export default function NodeCamerasTab() {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 gap-4">
           {nodeCameras.map((cam) => (
-            <CameraCard
-              key={cam.id}
-              camera={cam}
-              onEdit={handleEdit}
-              onDelete={setCameraToDelete}
-              canManage={canManage}
-            />
+            <div key={cam.id} className="relative group">
+              <CameraFeed camera={cam} />
+              {canManage && (
+                <div className="absolute top-10 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => { setEditingCamera(cam); setShowForm(true); }}
+                    className="p-1.5 bg-black/60 rounded text-white hover:text-safe-blue"
+                    aria-label="Edit camera"
+                  >
+                    <FontAwesomeIcon icon="pen-to-square" className="text-xs" />
+                  </button>
+                  <button
+                    onClick={() => setCameraToDelete(cam)}
+                    className="p-1.5 bg-black/60 rounded text-white hover:text-red-400"
+                    aria-label="Delete camera"
+                  >
+                    <FontAwesomeIcon icon="trash" className="text-xs" />
+                  </button>
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}

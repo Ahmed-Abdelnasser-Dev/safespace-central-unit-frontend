@@ -59,16 +59,14 @@ export default function NodeDetailPanel({
           {selectedNode.location.address}
         </p>
 
-        {selectedNode.videoFeedUrl && (
-          <div className="mb-3">
-            <p className="text-xs font-semibold text-safe-text-muted uppercase tracking-wide mb-2">Live Video Feed</p>
-            <VideoFeedPlayer
-              videoFeedUrl={selectedNode.videoFeedUrl}
-              nodeId={selectedNode.id}
-              status={selectedNode.status}
-            />
-          </div>
-        )}
+        <div className="mb-3">
+          <p className="text-xs font-semibold text-safe-text-muted uppercase tracking-wide mb-2">Live Video Feed</p>
+          <VideoFeedPlayer
+            nodeId={selectedNode.id}
+            streamUrl={selectedNode.streamUrl ?? null}
+            status={selectedNode.status}
+          />
+        </div>
 
         {/* Tabs */}
         <div className="flex gap-1.5 overflow-x-auto -mx-4 px-4 pb-1">

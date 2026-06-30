@@ -1,101 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NODE_VIDEO_WS_URL } from '@/lib/apiConfig';
 import { getLaneCfg } from './NodesList';
-
-// ── Live stream panel ────────────────────────────────────────────────────────
-
-function NodeStreamViewer({ nodeId }) {
-  const [frameData, setFrameData] = useState(null);
-  const [status, setStatus] = useState('connecting'); // 'connecting' | 'live' | 'offline'
-  const wsRef = useRef(null);
-
-  useEffect(() => {
-    if (!nodeId) return;
-    let isMounted = true;
-
-    try {
-      const url = new URL(NODE_VIDEO_WS_URL);
-      if (!url.pathname.includes('/ws/nodes')) {
-        url.pathname = `${url.pathname.replace(/\/$/, '')}/ws/nodes`;
-      }
-      url.searchParams.set('client', 'dashboard');
-
-      const ws = new WebSocket(url.toString());
-      wsRef.current = ws;
-
-      ws.onopen = () => {
-        if (!isMounted) return;
-        setStatus('connecting');
-        ws.send(JSON.stringify({ type: 'dashboard_subscribe', nodeIds: [nodeId] }));
-      };
-
-      ws.onmessage = (event) => {
-        if (!isMounted) return;
-        try {
-          const msg = JSON.parse(event.data);
-          if (msg.type === 'video_frame' && msg.nodeId === nodeId && msg.frameData) {
-            setFrameData(msg.frameData);
-            setStatus('live');
-          }
-        } catch (_) {}
-      };
-
-      ws.onclose = () => { if (isMounted) setStatus('offline'); };
-      ws.onerror = () => { if (isMounted) setStatus('offline'); };
-    } catch (err) {
-      if (isMounted) setStatus('offline');
-    }
-
-    return () => {
-      isMounted = false;
-      wsRef.current?.close();
-    };
-  }, [nodeId]);
-
-  const isLive = status === 'live' && !!frameData;
-
-  return (
-    <div className="relative w-full h-full bg-black flex items-center justify-center">
-      {frameData ? (
-        <img
-          src={`data:image/jpeg;base64,${frameData}`}
-          alt="Node live feed"
-          className="w-full h-full object-contain"
-        />
-      ) : (
-        <div className="flex flex-col items-center justify-center text-center px-6 gap-3">
-          <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center">
-            <FontAwesomeIcon icon="video" className="text-white/25 text-2xl" />
-          </div>
-          <div>
-            <p className="text-white/60 text-sm font-medium">
-              {status === 'connecting' ? 'Connecting to stream…' : 'No stream available'}
-            </p>
-            <p className="text-white/30 text-xs mt-0.5">
-              {status === 'connecting'
-                ? 'Establishing WebSocket connection'
-                : 'Node may be offline or stream service unreachable'}
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Status badge */}
-      <div className={`absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-sm border ${
-        isLive
-          ? 'bg-safe-green/80 border-safe-green/40 text-white'
-          : status === 'connecting'
-          ? 'bg-black/60 border-white/10 text-white/50'
-          : 'bg-safe-danger/70 border-safe-danger/40 text-white'
-      }`}>
-        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isLive ? 'bg-white animate-pulse' : 'bg-white/30'}`} />
-        {isLive ? 'LIVE' : status === 'connecting' ? 'CONNECTING' : 'OFFLINE'}
-      </div>
-    </div>
-  );
-}
+import VideoFeedPlayer from '@/features/nodeMaintainer/components/VideoFeedPlayer';
 
 // ── Info section wrappers ────────────────────────────────────────────────────
 
@@ -204,8 +110,12 @@ export function NodeDetailDialog({ node, onClose, activeIncidentNodeIds = [] }) 
           <div className="flex flex-1 min-h-0 overflow-hidden">
 
             {/* Left: Live stream */}
-            <div className="flex-1 bg-black min-w-0" style={{ minHeight: '240px' }}>
-              <NodeStreamViewer nodeId={node.id} />
+            <div className="flex-1 bg-black min-w-0 p-2">
+              <VideoFeedPlayer
+                nodeId={node.id}
+                streamUrl={node.streamUrl ?? null}
+                status={node.status}
+              />
             </div>
 
             {/* Right: Info panels (scrollable) */}
