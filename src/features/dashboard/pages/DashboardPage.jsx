@@ -55,6 +55,14 @@ function DashboardPage() {
       setUserLoading(true);
       const data = await userAPI.listUsers({ page: 1, limit: 1000 });
       const users = data.users || [];
+      const uniqueRoles = [...new Set(users.map((u) => u.role?.name).filter(Boolean))];
+      const ROLE_SHORT = {
+        admin: 'admin',
+        emergency_dispatcher: 'dispatcher',
+        road_observer: 'observer',
+        node_maintenance_crew: 'maintainer',
+        data_analyst: 'analyst',
+      };
       setUserStats({
         total: data.total ?? users.length,
         active: users.filter((u) => u.isActive).length,
@@ -62,6 +70,8 @@ function DashboardPage() {
           if (!u.lastLoginAt) return false;
           return new Date(u.lastLoginAt).toDateString() === new Date().toDateString();
         }).length,
+        roleCount: uniqueRoles.length,
+        roleNames: uniqueRoles.map((r) => ROLE_SHORT[r] ?? r).join(' · '),
       });
     } catch (err) {
       console.error('Dashboard: failed to fetch users', err);
@@ -194,8 +204,8 @@ function DashboardPage() {
       icon: 'shield',
       iconColor: 'text-safe-accent',
       label: 'Operator Roles',
-      value: '4',
-      trend: 'admin · dispatcher · observer · maintainer',
+      value: loading ? '...' : String(userStats?.roleCount ?? '—'),
+      trend: loading ? null : (userStats?.roleNames || 'loading…'),
     },
   ];
 

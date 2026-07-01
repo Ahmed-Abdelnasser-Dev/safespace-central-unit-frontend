@@ -21,7 +21,8 @@ import {
   faCircleExclamation,
   faSun, faMoon, faFingerprint,
   faClipboard, faQrcode, faEnvelopeCircleCheck,
-  faVideoSlash, // "video-slash"
+  faTable, faPrint, faDownload,
+  faChartPie, faVideoSlash, faRightToBracket,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -46,5 +47,6 @@ library.add(
   faCircleExclamation,
   faSun, faMoon, faFingerprint,
   faClipboard, faQrcode, faEnvelopeCircleCheck,
-  faVideoSlash,
+  faTable, faPrint, faDownload,
+  faChartPie, faVideoSlash, faRightToBracket,
 );
