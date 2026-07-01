@@ -10,11 +10,17 @@
 import { configureStore } from '@reduxjs/toolkit';
 import nodesReducer from '../features/nodeMaintainer/nodesSlice.js';
 import authReducer from '../features/auth/authSlice.js';
+import camerasReducer from '../features/cameras/cameraSlice.js';
+import dispatcherReducer from '../features/emergencyDispatcher/dispatcherSlice.js';
+import notificationsReducer from '../features/notifications/notificationsSlice.js';
 
 export const store = configureStore({
   reducer: {
     nodes: nodesReducer,
-    auth: authReducer, 
+    auth: authReducer,
+    cameras: camerasReducer,
+    dispatcher: dispatcherReducer,
+    notifications: notificationsReducer,
   },
 });
 

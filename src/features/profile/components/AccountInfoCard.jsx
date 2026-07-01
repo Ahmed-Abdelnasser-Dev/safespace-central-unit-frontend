@@ -3,12 +3,12 @@ import InfoRow from './InfoRow';
 
 function AccountInfoCard({ profile, isAdmin, onEdit }) {
   return (
-    <div className="bg-white rounded-xl border border-safe-border p-7">
+    <div className="bg-safe-sidebar rounded-xl border border-safe-gray-light p-7">
       <div className="mb-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h3 className="text-base font-bold text-safe-text-dark">Account Information</h3>
-            <p className="text-xs text-safe-text-gray mt-0.5">Editable only by Admin</p>
+            <h3 className="text-base font-bold text-safe-text-primary">Account Information</h3>
+            <p className="text-xs text-safe-text-muted mt-0.5">Editable only by Admin</p>
           </div>
           {isAdmin && (
             <button
@@ -20,7 +20,7 @@ function AccountInfoCard({ profile, isAdmin, onEdit }) {
             </button>
           )}
         </div>
-        <div className="border-b border-safe-border" />
+        <div className="border-b border-safe-gray-light" />
       </div>
 
       <div className="space-y-4">

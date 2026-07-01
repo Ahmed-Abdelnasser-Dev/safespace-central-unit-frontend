@@ -1,8 +1,8 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { 
+import {
   faChartLine, faUsers, faBell, faArrowUp, faArrowDown, faCircle, faGaugeHigh,
   faPhone, faVideo, faTrafficLight, faLocationCrosshairs, faMicrochip, faChartSimple,
-  faMagnifyingGlass, faRotate, faShield, faMapPin, faPlus, faMinus, faExpand,
+  faMagnifyingGlass, faMagnifyingGlassPlus, faRotate, faShield, faMapPin, faPlus, faMinus, faExpand,
   faBook, faPaperPlane, faGear, faCircleUser, faClock, faExclamationTriangle, faEnvelope, 
   faLock, faEye, faShieldHalved, faCheck, faCheckCircle, faAngleDown, faUserPlus,
   faCalendarCheck, faSort, faSave, faEyeSlash, faPenToSquare, faBuilding, faLocationDot,
@@ -14,14 +14,23 @@ import {
   faBroom, faArrowsUpDownLeftRight, faRobot, faBalanceScale, faChevronUp, faChevronDown,
   faBan, faExclamation, faImage,
   faClipboardList, faFileLines, faServer, faWrench, faCompass,
+  faHeadset, faTruckMedical, faFireFlameCurved, faHardHat, faRoute, faFilter,
+  faUpRightFromSquare, faAnglesUp, faArrowLeft, faArrowRight,
+  faFireExtinguisher, faPersonFallingBurst, faCircleRadiation,
+  faHouseChimney, faUserCheck, faSatelliteDish, faCircleDot,
+  faCircleExclamation,
+  faSun, faMoon, faFingerprint,
+  faClipboard, faQrcode, faEnvelopeCircleCheck,
+  faTable, faPrint, faDownload,
+  faChartPie, faVideoSlash, faRightToBracket,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
   faChartLine, faUsers, faBell, faArrowUp, faArrowDown, faCircle, faGaugeHigh,
   faPhone, faVideo, faTrafficLight, faLocationCrosshairs, faMicrochip, faChartSimple,
-  faMagnifyingGlass, faRotate, faShield, faMapPin, faPlus, faMinus, faExpand,
+  faMagnifyingGlass, faMagnifyingGlassPlus, faRotate, faShield, faMapPin, faPlus, faMinus, faExpand,
   faBook, faPaperPlane, faGear, faCircleUser, faClock, faExclamationTriangle, faEnvelope,
-  faLock, faEye, faShieldHalved, faCheck, faCheckCircle, faAngleDown, faUserPlus, 
+  faLock, faEye, faShieldHalved, faCheck, faCheckCircle, faAngleDown, faUserPlus,
   faCalendarCheck, faSort, faSave, faEyeSlash, faPenToSquare, faBuilding, faLocationDot,
   faCakeCandles, faVenusMars, faCalendar, faArrowRightFromBracket, faChevronRight, faIdBadge,
   faCircleCheck, faCircleXmark,
@@ -31,4 +40,13 @@ library.add(
   faBroom, faArrowsUpDownLeftRight, faRobot, faBalanceScale, faChevronUp, faChevronDown,
   faBan, faExclamation, faImage,
   faClipboardList, faFileLines, faServer, faWrench, faCompass,
+  faHeadset, faTruckMedical, faFireFlameCurved, faHardHat, faRoute, faFilter,
+  faUpRightFromSquare, faAnglesUp, faArrowLeft, faArrowRight,
+  faFireExtinguisher, faPersonFallingBurst, faCircleRadiation,
+  faHouseChimney, faUserCheck, faSatelliteDish, faCircleDot,
+  faCircleExclamation,
+  faSun, faMoon, faFingerprint,
+  faClipboard, faQrcode, faEnvelopeCircleCheck,
+  faTable, faPrint, faDownload,
+  faChartPie, faVideoSlash, faRightToBracket,
 );

@@ -83,14 +83,14 @@ function EditPersonalInfoModal({ isOpen, onClose, onSubmit, userData }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 animate-slideUp">
+      <div className="bg-safe-sidebar rounded-xl border border-safe-gray-light w-full max-w-2xl mx-4 animate-slideUp">
 
         {/* Modal Header */}
-        <div className="px-8 py-6 border-b border-safe-border">
-          <h2 className="text-xl font-bold text-safe-text-dark">
+        <div className="px-8 py-6 border-b border-safe-gray-light">
+          <h2 className="text-xl font-bold text-safe-text-primary">
             Edit Personal Information
           </h2>
-          <p className="text-sm text-safe-text-gray mt-1">
+          <p className="text-sm text-safe-text-muted mt-1">
             Update your personal profile details
           </p>
         </div>
@@ -103,8 +103,8 @@ function EditPersonalInfoModal({ isOpen, onClose, onSubmit, userData }) {
             <div className="p-4 bg-safe-blue-btn/10 border border-safe-blue-btn/30 rounded-lg">
               <div className="flex items-start gap-3">
                 <div className="flex-1">
-                  <span className="text-xs font-bold text-safe-dark/70 mb-1">Note: </span>
-                  <span className="text-xs text-safe-text-gray">
+                  <span className="text-xs font-bold text-safe-text-primary/70 mb-1">Note: </span>
+                  <span className="text-xs text-safe-text-muted">
                     Email address and user role can only be modified by an administrator.
                   </span>
                 </div>
@@ -139,26 +139,26 @@ function EditPersonalInfoModal({ isOpen, onClose, onSubmit, userData }) {
 
             {/* Birth Date */}
             <div>
-              <label className="block text-sm font-medium text-safe-text-dark mb-2">
+              <label className="block text-sm font-medium text-safe-text-primary mb-2">
                 Birth Date
               </label>
               <input
                 type="date"
                 value={formData.birthdate}
                 onChange={(e) => handleInputChange('birthdate', e.target.value)}
-                className="w-full px-4 py-2.5 bg-safe-bg border border-safe-border rounded-lg focus:ring-2 focus:ring-safe-blue-btn/30"
+                className="w-full px-4 py-2.5 bg-safe-gray border border-safe-gray-light text-safe-text-primary rounded-lg focus:ring-2 focus:ring-safe-blue-btn/30"
               />
             </div>
 
             {/* Gender */}
             <div>
-              <label className="block text-sm font-medium text-safe-text-dark mb-2">
+              <label className="block text-sm font-medium text-safe-text-primary mb-2">
                 Gender
               </label>
               <select
                 value={formData.gender}
                 onChange={(e) => handleInputChange('gender', e.target.value)}
-                className="w-full px-4 py-2.5 bg-safe-bg border border-safe-border rounded-lg cursor-pointer focus:ring-2 focus:ring-safe-blue-btn/30"
+                className="w-full px-4 py-2.5 bg-safe-gray border border-safe-gray-light text-safe-text-primary rounded-lg cursor-pointer focus:ring-2 focus:ring-safe-blue-btn/30"
               >
                 <option value="">Select gender...</option>
                 <option value="male">Male</option>
@@ -186,25 +186,25 @@ function EditPersonalInfoModal({ isOpen, onClose, onSubmit, userData }) {
 
             {/* Address */}
             <div>
-              <label className="block text-sm font-medium text-safe-text-dark mb-2">
+              <label className="block text-sm font-medium text-safe-text-primary mb-2">
                 Address
               </label>
               <textarea
                 rows="3"
                 value={formData.address}
                 onChange={(e) => handleInputChange('address', e.target.value)}
-                className="w-full px-4 py-2.5 bg-safe-bg border border-safe-border rounded-lg resize-none focus:ring-2 focus:ring-safe-blue-btn/30"
+                className="w-full px-4 py-2.5 bg-safe-gray border border-safe-gray-light text-safe-text-primary rounded-lg resize-none focus:ring-2 focus:ring-safe-blue-btn/30"
               />
             </div>
 
           </div>
 
           {/* Modal Footer */}
-          <div className="px-8 py-5 bg-safe-bg/40 border-t border-safe-border rounded-b-xl flex items-center justify-end gap-3">
+          <div className="px-8 py-5 bg-safe-gray/40 border-t border-safe-gray-light rounded-b-xl flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2.5 text-sm font-medium text-safe-text-dark bg-white border border-safe-border hover:bg-safe-bg rounded-lg transition-colors"
+              className="px-4 py-2.5 text-sm font-medium text-safe-text-primary bg-safe-sidebar border border-safe-gray-light hover:bg-safe-gray rounded-lg transition-colors"
             >
               Cancel
             </button>
@@ -228,7 +228,7 @@ function InputField({ label, value, error, onChange, placeholder = '' }) {
   const errorId = `${id}-error`;
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-safe-text-dark mb-2">
+      <label htmlFor={id} className="block text-sm font-medium text-safe-text-primary mb-2">
         {label}
       </label>
       <input
@@ -239,8 +239,8 @@ function InputField({ label, value, error, onChange, placeholder = '' }) {
         placeholder={placeholder}
         aria-invalid={!!error}
         aria-describedby={error ? errorId : undefined}
-        className={`w-full px-4 py-2.5 bg-safe-bg border rounded-lg focus:ring-2 focus:ring-safe-blue-btn/30 ${
-          error ? 'border-safe-danger' : 'border-safe-border'
+        className={`w-full px-4 py-2.5 bg-safe-gray border rounded-lg text-safe-text-primary focus:ring-2 focus:ring-safe-blue-btn/30 ${
+          error ? 'border-safe-danger' : 'border-safe-gray-light'
         }`}
       />
       {error && <p id={errorId} className="mt-1.5 text-xs text-safe-danger">{error}</p>}

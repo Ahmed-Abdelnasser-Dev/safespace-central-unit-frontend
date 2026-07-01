@@ -11,6 +11,7 @@ import PersonalInfoCard from './PersonalInfoCard';
 import AccountInfoCard from './AccountInfoCard';
 import RecentActivityCard from './RecentActivityCard';
 import SecuritySettingsCard from './SecuritySettingsCard';
+import MFACard from './MFACard';
 import EditPersonalInfoModal from './EditPersonalInfoModal';
 import EditAccountInfoModal from '@/features/admin/components/EditAccountInfoModal';
 import ChangePasswordModal from './ChangePasswordModal';
@@ -99,10 +100,10 @@ function Profile({ onLogout }) {
 
   if (loading || !user) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-safe-bg">
+      <div className="flex-1 flex items-center justify-center bg-safe-dark">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-safe-blue-btn mx-auto mb-4"></div>
-          <p className="text-safe-text-gray">Loading profile...</p>
+          <p className="text-safe-text-muted">Loading profile...</p>
         </div>
       </div>
     );
@@ -135,21 +136,21 @@ function Profile({ onLogout }) {
 
   const recentActivity = [
     {
-      id: 1, icon: 'circle-user', iconColor: 'text-safe-green', iconBg: 'bg-safe-white',
+      id: 1, icon: 'circle-user', iconColor: 'text-safe-green', iconBg: 'bg-safe-gray',
       title: 'Logged in',
       subtitle: user.lastLoginAt
         ? `${new Date(user.lastLoginAt).toLocaleString()} • ${profile.officeLocation}`
         : 'No login history'
     },
     {
-      id: 2, icon: 'pen-to-square', iconColor: 'text-safe-blue-btn', iconBg: 'bg-safe-white',
+      id: 2, icon: 'pen-to-square', iconColor: 'text-safe-blue-btn', iconBg: 'bg-safe-gray',
       title: 'Updated profile information',
       subtitle: user.updatedAt && user.createdAt && new Date(user.updatedAt).getTime() - new Date(user.createdAt).getTime() > 5000
         ? `${new Date(user.updatedAt).toLocaleString()} • ${profile.officeLocation}`
         : 'No updates yet'
     },
     {
-      id: 3, icon: 'lock', iconColor: 'text-safe-accent', iconBg: 'bg-safe-white',
+      id: 3, icon: 'lock', iconColor: 'text-safe-accent', iconBg: 'bg-safe-gray',
       title: 'Password changed',
       subtitle: user.passwordChangedAt
         ? `${new Date(user.passwordChangedAt).toLocaleDateString()} • ${profile.officeLocation}`
@@ -160,30 +161,30 @@ function Profile({ onLogout }) {
   const showMustChangePasswordBanner = (mustChangePassword || location.state?.mustChangePassword) && !isPasswordModalOpen;
 
   return (
-    <div className="flex-1 overflow-y-auto bg-safe-bg p-7 space-y-5">
+    <div className="flex-1 overflow-y-auto bg-safe-dark p-7 space-y-5">
 
       {/* Banners */}
       {showMustChangePasswordBanner && (
-        <div className="bg-yellow-50 border border-yellow-300 rounded-xl px-5 py-4 flex items-center gap-4">
-          <FontAwesomeIcon icon="triangle-exclamation" className="text-yellow-500 text-lg flex-shrink-0" />
+        <div className="bg-safe-orange/10 border border-safe-orange/30 rounded-xl px-5 py-4 flex items-center gap-4">
+          <FontAwesomeIcon icon="triangle-exclamation" className="text-safe-orange text-lg flex-shrink-0" />
           <div className="flex-1">
-            <p className="text-sm font-semibold text-yellow-800">Password Change Required</p>
-            <p className="text-xs text-yellow-700 mt-0.5">You must change your password before continuing.</p>
+            <p className="text-sm font-semibold text-safe-text-primary">Password Change Required</p>
+            <p className="text-xs text-safe-text-muted mt-0.5">You must change your password before continuing.</p>
           </div>
-          <button onClick={() => setIsPasswordModalOpen(true)} className="px-4 py-2 text-xs font-semibold text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg transition-colors flex-shrink-0">
+          <button onClick={() => setIsPasswordModalOpen(true)} className="px-4 py-2 text-xs font-semibold text-white bg-safe-orange hover:bg-safe-orange/90 rounded-lg transition-colors flex-shrink-0">
             Change Now
           </button>
         </div>
       )}
 
       {passwordJustChanged && !mustChangePassword && (
-        <div className="bg-blue-50 border border-blue-300 rounded-xl p-4 flex items-start gap-3">
-          <FontAwesomeIcon icon="circle-info" className="text-blue-600 mt-0.5" />
+        <div className="bg-safe-info/10 border border-safe-info/30 rounded-xl p-4 flex items-start gap-3">
+          <FontAwesomeIcon icon="circle-info" className="text-safe-info mt-0.5" />
           <div className="flex-1">
-            <h4 className="font-semibold text-blue-900">Password Updated Successfully!</h4>
-            <p className="text-sm text-blue-700 mt-1">Please continue and complete your profile details below.</p>
+            <h4 className="font-semibold text-safe-text-primary">Password Updated Successfully!</h4>
+            <p className="text-sm text-safe-text-muted mt-1">Please continue and complete your profile details below.</p>
           </div>
-          <button onClick={() => setPasswordJustChanged(false)} className="text-blue-600 hover:text-blue-800 transition-colors">
+          <button onClick={() => setPasswordJustChanged(false)} className="text-safe-info hover:text-safe-info/70 transition-colors">
             <FontAwesomeIcon icon="xmark" className="text-lg" />
           </button>
         </div>
@@ -201,6 +202,8 @@ function Profile({ onLogout }) {
         <RecentActivityCard activities={recentActivity} />
         <SecuritySettingsCard onChangePassword={() => setIsPasswordModalOpen(true)} onLogout={onLogout} />
       </div>
+
+      <MFACard />
 
       {/* Modals */}
       <EditPersonalInfoModal isOpen={isPersonalModalOpen} onClose={() => setIsPersonalModalOpen(false)} userData={user} onSubmit={handlePersonalInfoSubmit} />

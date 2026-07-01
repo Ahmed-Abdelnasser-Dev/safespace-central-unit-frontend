@@ -4,8 +4,6 @@ import Modal from '@/components/ui/Modal.jsx';
 import Card from '@/components/ui/Card.jsx';
 import Button from '@/components/ui/Button.jsx';
 import Input from '@/components/ui/Input.jsx';
-import { typography, fontFamily } from '../styles/typography';
-
 export default function AddLaneModal({ isOpen, onClose, onConfirm, laneStatusOptions, defaultName, defaultType }) {
   const [laneName, setLaneName] = useState(defaultName || '');
   const [laneType, setLaneType] = useState(defaultType || '');
@@ -37,34 +35,30 @@ export default function AddLaneModal({ isOpen, onClose, onConfirm, laneStatusOpt
   };
 
   return (
-    <Modal open={isOpen} onClose={handleClose} size="md">
-      <Card className="bg-white rounded-xl overflow-hidden">
-        <div className="px-8 py-6 border-b border-[#e5e7eb]">
-          <h3 className="text-[#101828] font-bold" style={{ ...typography.heading2, fontFamily }}>
-            Add New Lane
-          </h3>
-          <p className="text-[#6a7282] mt-2" style={{ ...typography.bodySmall, fontFamily }}>
-            Define lane name, type, and status.
-          </p>
+    <Modal bare open={isOpen} onClose={handleClose} size="md">
+      <Card className="bg-safe-gray border border-safe-gray-light rounded-2xl overflow-hidden">
+        <div className="px-8 py-6 border-b border-safe-gray-light">
+          <h3 className="text-xl font-bold text-safe-text-primary">Add New Lane</h3>
+          <p className="text-sm text-safe-text-muted mt-2">Define lane name, type, and status.</p>
         </div>
 
         <div className="px-8 py-6 space-y-6">
           <div>
-            <label className="text-[#101828] font-semibold block mb-2" style={{ ...typography.label, fontFamily }}>
+            <label className="text-xs font-semibold text-safe-text-primary block mb-2 tracking-wide uppercase">
               Lane Name
             </label>
             <Input value={laneName} onChange={(e) => setLaneName(e.target.value)} placeholder="Lane 4" />
           </div>
 
           <div>
-            <label className="text-[#101828] font-semibold block mb-2" style={{ ...typography.label, fontFamily }}>
+            <label className="text-xs font-semibold text-safe-text-primary block mb-2 tracking-wide uppercase">
               Lane Type
             </label>
             <Input value={laneType} onChange={(e) => setLaneType(e.target.value)} placeholder="Custom Lane" />
           </div>
 
           <div>
-            <label className="text-[#101828] font-semibold block mb-3" style={{ ...typography.label, fontFamily }}>
+            <label className="text-xs font-semibold text-safe-text-primary block mb-3 tracking-wide uppercase">
               Lane Status
             </label>
             <div className="flex flex-wrap gap-3">
@@ -73,12 +67,11 @@ export default function AddLaneModal({ isOpen, onClose, onConfirm, laneStatusOpt
                   key={status.value}
                   type="button"
                   onClick={() => setLaneStatus(status.value)}
-                  className={`px-4 py-2 rounded-lg border transition-all flex items-center gap-2 ${
+                  className={`px-4 py-2 text-sm rounded-lg border transition-all flex items-center gap-2 ${
                     laneStatus === status.value
-                      ? 'border-[#247cff] bg-[#247cff]/10 text-[#247cff]'
-                      : 'border-[#e5e7eb] text-[#6a7282] hover:bg-[#f7f8f9]'
+                      ? 'border-safe-blue bg-safe-blue/10 text-safe-blue'
+                      : 'border-safe-gray-light text-safe-text-muted hover:bg-safe-gray-light/50'
                   }`}
-                  style={{ ...typography.bodySmall, fontFamily }}
                 >
                   <FontAwesomeIcon icon={status.icon} style={{ width: '14px', height: '14px', color: status.color }} />
                   {status.label}

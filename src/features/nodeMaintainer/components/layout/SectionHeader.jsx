@@ -1,30 +1,11 @@
-/**
- * Reusable Section Header Component
- * 
- * Displays a section title with optional divider
- * Used consistently across all tabs
- * 
- * @component
- */
-
-import { typography, fontFamily } from '../../styles/typography';
-
-function SectionHeader({ 
-  title, 
-  showDivider = true,
-  className = '' 
-}) {
+function SectionHeader({ title, showDivider = true, className = '' }) {
   return (
-    <div className={`${showDivider ? 'mt-[12px] sm:mt-[14px] md:mt-[16px] lg:mt-[20px] pt-[12px] sm:pt-[14px] md:pt-[16px] lg:pt-[20px] border-t border-[#e5e7eb]' : 'mt-[12px] sm:mt-[14px] md:mt-[16px] lg:mt-[20px]'} ${className}`}>
-      <h3
-        className="font-bold text-[#101828]"
-        style={{
-          fontSize: 'clamp(14px, 1.6vw, 18px)',
-          fontFamily,
-        }}
-      >
-        {title}
-      </h3>
+    <div
+      className={`${
+        showDivider ? 'mt-4 pt-4 border-t border-safe-gray-light' : 'mt-4'
+      } ${className}`}
+    >
+      <h3 className="text-base font-bold text-safe-text-primary">{title}</h3>
     </div>
   );
 }

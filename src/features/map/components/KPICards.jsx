@@ -1,74 +1,91 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import StatCard from '@/components/ui/StatCard';
 
-function KPICards() {
-  const metrics = [
+/**
+ * KPICards — compact status tiles for the Road Observer monitoring console.
+ * Uses the shared StatCard component (compact variant) so the visual vocabulary
+ * matches Admin and Dashboard.
+ *
+ * @param {number}  props.nodesOnline     — online nodes (from Redux)
+ * @param {number}  props.nodesOffline    — offline nodes (from Redux)
+ * @param {number}  [props.pendingReview] — pending observer reviews (observer API)
+ * @param {number}  [props.reviewedToday] — reviewed today (observer API)
+ * @param {number}  [props.camerasOnline] — online cameras (cameras slice)
+ * @param {number}  [props.camerasOffline]— offline cameras (cameras slice)
+ * @param {boolean} props.loading         — show skeletons while fetching
+ */
+function KPICards({
+  nodesOnline = 0,
+  nodesOffline = 0,
+  pendingReview,
+  reviewedToday,
+  camerasOnline,
+  camerasOffline,
+  loading = false,
+}) {
+  const tiles = [
     {
-      id: 'vehicles',
-      icon: 'chart-line',
-      iconBg: 'bg-safe-blue-btn',
-      value: '58k',
-      label: 'Total Vehicles',
-      subtext: 'last day',
-      trend: '+26%',
-      trendPositive: true,
+      id: 'online',
+      icon: 'server',
+      iconColor: 'text-safe-green',
+      label: 'Nodes Online',
+      value: loading ? '...' : String(nodesOnline),
+      trend: nodesOnline > 0 ? 'active' : 'none active',
     },
     {
-      id: 'incidents',
-      icon: 'exclamation-triangle',
-      iconBg: 'bg-safe-danger',
-      value: '8',
-      label: 'Active Incidents',
-      subtext: 'weekly average',
-      trend: '-18',
-      trendPositive: false,
+      id: 'offline',
+      icon: 'triangle-exclamation',
+      iconColor: 'text-safe-danger',
+      label: 'Nodes Offline',
+      value: loading ? '...' : String(nodesOffline),
+      trend: nodesOffline > 0 ? 'require attention' : 'all healthy',
     },
     {
-      id: 'response',
-      icon: 'clock',
-      iconBg: 'bg-safe-orange',
-      value: '4.2m',
-      label: 'Avg Response Time',
-      subtext: 'last day',
-      trend: '-25%',
-      trendPositive: true,
+      id: 'cameras-online',
+      icon: 'video',
+      iconColor: 'text-safe-teal',
+      label: 'Cameras Live',
+      value: camerasOnline == null ? '—' : String(camerasOnline),
+      trend: camerasOnline != null ? 'feeds active' : 'unavailable',
     },
     {
-      id: 'safety',
-      icon: 'shield',
-      iconBg: 'bg-safe-green',
-      value: '94%',
-      label: 'Safety Score',
-      subtext: 'last day',
-      trend: '+4%',
-      trendPositive: true,
+      id: 'cameras-offline',
+      icon: 'video-slash',
+      iconColor: 'text-safe-orange',
+      label: 'Cameras Offline',
+      value: camerasOffline == null ? '—' : String(camerasOffline),
+      trend: camerasOffline != null ? (camerasOffline > 0 ? 'require attention' : 'all feeds live') : 'unavailable',
+    },
+    {
+      id: 'pending',
+      icon: 'circle-dot',
+      iconColor: 'text-safe-accent',
+      label: 'Pending Review',
+      value: pendingReview == null ? '—' : String(pendingReview),
+      trend: 'incidents awaiting',
+    },
+    {
+      id: 'reviewed',
+      icon: 'circle-check',
+      iconColor: 'text-safe-blue-btn',
+      label: 'Reviewed Today',
+      value: reviewedToday == null ? '—' : String(reviewedToday),
+      trend: 'decisions made',
     },
   ];
 
   return (
-    <div >
-      <div className="grid grid-cols-4 gap-5">
-        {metrics.map((metric) => (
-          <div key={metric.id} className="bg-white rounded-xl p-5 border border-safe-border relative overflow-hidden">
-            <div className={`absolute top-0 left-0 right-0 h-1 ${metric.id === 'vehicles' ? 'bg-safe-blue-btn' : metric.id === 'incidents' ? 'bg-safe-danger' : metric.id === 'response' ? 'bg-safe-orange' : 'bg-safe-green'}`}></div>
-            <div className="flex items-start justify-between mb-3 pt-2">
-              <div className={`w-14 h-14 ${metric.iconBg} rounded-2xl flex items-center justify-center`}>
-                <FontAwesomeIcon icon={metric.icon} className="text-white text-xl" />
-              </div>
-              <div className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded ${
-                metric.trendPositive ? 'text-safe-green bg-safe-green/10' : 'text-safe-danger bg-safe-danger/10'
-              }`}>
-                <FontAwesomeIcon icon={metric.trendPositive ? 'arrow-up' : 'arrow-down'} className="text-[9px]" />
-                {metric.trend}
-              </div>
-            </div>
-            <div className="mt-2">
-              <div className="text-3xl font-bold text-safe-text-dark mb-0.5">{metric.value}</div>
-              <div className="text-sm font-semibold text-safe-text-dark mb-1">{metric.label}</div>
-              <div className="text-xs text-safe-text-gray">{metric.subtext}</div>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="grid grid-cols-3 lg:grid-cols-6 gap-3">
+      {tiles.map((tile) => (
+        <StatCard
+          key={tile.id}
+          label={tile.label}
+          value={tile.value}
+          trend={tile.trend}
+          icon={tile.icon}
+          iconColor={tile.iconColor}
+          size="compact"
+        />
+      ))}
     </div>
   );
 }

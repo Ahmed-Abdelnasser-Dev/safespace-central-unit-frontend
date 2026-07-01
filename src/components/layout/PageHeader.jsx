@@ -13,8 +13,8 @@ function PageHeader({ title, description, icon, actions }) {
           </div>
         )}
         <div>
-          <h1 className="text-xl font-semibold text-white">{title}</h1>
-          {description && <p className="text-xs text-gray-400 mt-0.5">{description}</p>}
+          <h1 className="text-xl font-semibold text-safe-text-primary">{title}</h1>
+          {description && <p className="text-xs text-safe-text-muted mt-0.5">{description}</p>}
         </div>
       </div>
       {actions && <div className="flex items-center gap-3">{actions}</div>}

@@ -1,96 +1,98 @@
 /**
  * Health Tab Screen
- * 
- * Displays node health metrics and historical charts
- * 
+ *
+ * Displays live node health metric cards and 24h historical charts
+ * fetched from nodeAPI.getHealthHistory.
+ *
  * @component
  */
 
 import { useSelector } from 'react-redux';
 import { selectSelectedNode } from '../nodesSlice';
 import { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMicrochip, faMemory, faWifi, faDatabase } from '@fortawesome/free-solid-svg-icons';
+import { nodeAPI } from '@/services/api';
+import TimeSeriesChart from '@/components/ui/TimeSeriesChart.jsx';
 import MetricCard from '../components/cards/MetricCard';
 import SectionHeader from '../components/layout/SectionHeader';
-import HistoricalChartsGrid from '../components/grids/HistoricalChartsGrid';
-import { fontFamily } from '../styles/typography';
+import {
+  faMicrochip,
+  faMemory,
+  faWifi,
+  faDatabase,
+  faTemperatureHalf,
+  faVideo,
+} from '@fortawesome/free-solid-svg-icons';
+
+const METRICS = [
+  { key: 'cpu', label: 'CPU', icon: faMicrochip, color: '#3b7cff', unit: '%' },
+  { key: 'memory', label: 'Memory', icon: faMemory, color: '#f97316', unit: '%' },
+  { key: 'network', label: 'Network', icon: faWifi, color: '#22c55e', unit: '%' },
+  { key: 'storage', label: 'Storage', icon: faDatabase, color: '#a78bfa', unit: '%' },
+  { key: 'temperature', label: 'Temp', icon: faTemperatureHalf, color: '#f43f5e', unit: '°C' },
+  { key: 'fps', label: 'FPS', icon: faVideo, color: '#06b6d4', unit: ' fps' },
+];
 
 function HealthTab() {
   const node = useSelector(selectSelectedNode);
-  const [cpuHistory, setCpuHistory] = useState([]);
-  const [temperatureHistory, setTemperatureHistory] = useState([]);
+  const [historyData, setHistoryData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize and update historical data every minute
   useEffect(() => {
     if (!node) return;
-
-    // Initialize with current values
-    const initCpuHistory = Array(5).fill(node.health.cpu || 0);
-    const initTempHistory = Array(5).fill(node.health.temperature || 0);
-    setCpuHistory(initCpuHistory);
-    setTemperatureHistory(initTempHistory);
-
-    // Update every minute (60000ms)
-    const interval = setInterval(() => {
-      setCpuHistory(prev => {
-        const newHistory = [...prev.slice(1), node.health.cpu || 0];
-        return newHistory;
+    let cancelled = false;
+    setIsLoading(true);
+    setHistoryData(null);
+    nodeAPI.getHealthHistory(node.id, '24h')
+      .then((data) => {
+        if (!cancelled) {
+          setHistoryData(data);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setIsLoading(false);
       });
-      setTemperatureHistory(prev => {
-        const newHistory = [...prev.slice(1), node.health.temperature || 0];
-        return newHistory;
-      });
-    }, 60000);
+    return () => { cancelled = true; };
+  }, [node?.id]);
 
-    return () => clearInterval(interval);
-  }, [node]);
-
-  if (!node) return <div className="p-[16px] text-[#6a7282]" style={{ fontFamily: 'Arimo, sans-serif' }}>Select a node</div>;
+  if (!node) return <div className="p-4 text-sm text-safe-text-muted">Select a node</div>;
 
   return (
-    <div className="p-[20px] space-y-[20px]">
-      {/* Health Metrics Cards with Progress Bars */}
-      <div className="grid grid-cols-2 gap-[14px]">
-        <MetricCard
-          label="CPU"
-          value={node.health.cpu}
-          unit="%"
-          icon={faMicrochip}
-          color="#3b82f6"
-        />
-        <MetricCard
-          label="Memory"
-          value={node.health.memory}
-          unit="%"
-          icon={faMemory}
-          color="#f97316"
-        />
-        <MetricCard
-          label="Network"
-          value={node.health.network}
-          unit="%"
-          icon={faWifi}
-          color="#22c55e"
-        />
-        <MetricCard
-          label="Storage"
-          value={node.health.storage}
-          unit="%"
-          icon={faDatabase}
-          color="#a78bfa"
-        />
+    <div className="p-5 space-y-5 overflow-y-auto h-full">
+      {/* Live metric cards — 3 columns */}
+      <div className="grid grid-cols-3 gap-3">
+        {METRICS.map(({ key, label, icon, color }) => (
+          <MetricCard
+            key={key}
+            label={label}
+            value={key === 'temperature' ? node.health?.temperature : key === 'fps' ? node.health?.currentFps : node.health?.[key]}
+            unit={key === 'temperature' ? '°C' : key === 'fps' ? ' fps' : '%'}
+            icon={icon}
+            color={color}
+          />
+        ))}
       </div>
 
-      {/* History Section - Line Charts */}
-      <SectionHeader title="Historical Data" showDivider={true} />
+      {/* Historical charts */}
+      <SectionHeader title="Historical Data (24h)" showDivider />
 
-      <HistoricalChartsGrid
-        cpuData={cpuHistory.length === 5 ? cpuHistory : Array(5).fill(node.health.cpu || 0)}
-        temperatureData={temperatureHistory.length === 5 ? temperatureHistory : Array(5).fill(node.health.temperature || 0)}
-      />
-
-      
+      <div className="grid grid-cols-2 gap-4">
+        {METRICS.map(({ key, label, color, unit }) => (
+          <div key={key} className="bg-safe-gray border border-safe-gray-light rounded-lg p-3">
+            <p className="text-xs font-semibold text-safe-text-muted mb-2">{label}</p>
+            <TimeSeriesChart
+              labels={historyData?.[key]?.labels || []}
+              values={historyData?.[key]?.values || []}
+              color={color}
+              unit={unit}
+              label={label}
+              height={120}
+              isLoading={isLoading}
+              isEmpty={!isLoading && !historyData}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

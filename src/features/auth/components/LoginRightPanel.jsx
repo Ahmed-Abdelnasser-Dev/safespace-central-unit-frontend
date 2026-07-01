@@ -2,7 +2,7 @@ import Card from '@/components/ui/Card.jsx';
 
 /**
  * Card shell for auth forms (right side).
- * Optional Icon / Title / subtitle / footer text can be overridden per screen.
+ * Modern refined design with smooth animations.
  */
 function AuthRightPanel({
   icon,
@@ -12,37 +12,37 @@ function AuthRightPanel({
   footer,
 }) {
   return (
-    <div className="w-full max-w-lg">
-      <Card className="rounded-3xl bg-white border border-safe-border shadow-none flex flex-col">
+    <div className="w-full max-w-md animate-scaleIn">
+      <Card variant="elevated" className="rounded-2xl flex flex-col overflow-hidden">
         {/* Icon + Header */}
         {(icon || title || subtitle) && (
-          <div className="px-14 pt-10 text-center">
+          <div className="px-12 pt-12 pb-8 text-center bg-gradient-to-b from-safe-bg to-safe-sidebar">
             {icon && (
-              <div className="flex justify-center mb-4">
-                {icon}
+              <div className="flex justify-center mb-6 animate-slideUp">
+                <div className="text-safe-blue text-4xl">{icon}</div>
               </div>
             )}
             {title && (
-              <h1 className="text-3xl font-bold text-safe-text-dark">
+              <h1 className="font-display text-3xl font-bold text-safe-text-dark animate-slideUp stagger-1">
                 {title}
               </h1>
             )}
             {subtitle && (
-              <p className="mt-2 text-sm text-safe-text-gray">
+              <p className="mt-3 text-sm text-safe-text-gray font-light leading-relaxed animate-slideUp stagger-2">
                 {subtitle}
               </p>
             )}
           </div>
         )}
 
-        {/* Main content – tighter spacing */}
-        <div className="px-14 pt-4 pb-9 flex-1 flex flex-col gap-4 text-sm">
+        {/* Main content */}
+        <div className="px-12 py-8 flex-1 flex flex-col gap-5 text-sm animate-slideUp stagger-3">
           {children}
         </div>
 
-        {/* Optional footer area inside the card */}
+        {/* Optional footer area */}
         {footer && (
-          <div className="px-14 py-4 bg-safe-bg text-xs text-safe-text-gray border-t border-safe-border">
+          <div className="px-12 py-4 bg-safe-bg text-xs text-safe-text-gray border-t border-safe-border/50 font-light">
             {footer}
           </div>
         )}

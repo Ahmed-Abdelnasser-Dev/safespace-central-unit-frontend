@@ -8,13 +8,12 @@
  */
 
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { API_URL } from '../../lib/apiConfig';
+import { nodeAPI } from '../../services/api';
 
 const initialState = {
   nodes: [],
   selectedNodeId: null,
-  currentTab: 'overview', // 'overview', 'roadConfig', 'nodeConfig', 'health', 'polygons'
+  currentTab: 'overview', // 'overview', 'lanes', 'health', 'config', 'cameras'
   isLoading: false,
   error: null,
 };
@@ -54,6 +53,16 @@ const normalizeNode = (node) => {
     };
   });
   
+  // Resolve IP: Prefer top-level ipAddress since it's the actual connection IP
+  // fallback to nodeSpecs.ipAddress if available.
+  const ipAddress =
+    node.ipAddress ||
+    (node.nodeSpecs && node.nodeSpecs.ipAddress) ||
+    '0.0.0.0';
+
+  // Ensure nodeSpecs always carries ipAddress so OverviewTab can read it
+  const nodeSpecs = { ...(node.nodeSpecs || {}), ipAddress };
+
   return {
     id: nodeId,
     nodeId,
@@ -61,7 +70,7 @@ const normalizeNode = (node) => {
     status: node.status || 'offline',
     location,
     roadRules: roadRules,
-    nodeSpecs: node.nodeSpecs || {},
+    nodeSpecs,
     health: node.health || {
       cpu: 0,
       temperature: 0,
@@ -74,10 +83,13 @@ const normalizeNode = (node) => {
     defaultLaneCount: node.defaultLaneCount || lanes.length || 1,
     speedLimit: node.speedLimit || 80,
     streetName: node.streetName || location.address || 'Unknown location',
-    ipAddress: node.ipAddress || '0.0.0.0',
+    ipAddress,
     latitude: typeof node.latitude === 'number' ? node.latitude : location.latitude || 0,
     longitude: typeof node.longitude === 'number' ? node.longitude : location.longitude || 0,
     videoFeedUrl: node.videoFeedUrl || '',
+    // streamUrl is used by VideoFeedPlayer to connect to the stream-service WebSocket.
+    // The backend provides this when STREAM_SERVICE_PUBLIC_WS_URL is set.
+    streamUrl: node.streamUrl || null,
     frameRate: node.frameRate || 30,
     resolution: node.resolution || '1920x1080',
     uptimeSec: node.uptimeSec || 0,
@@ -92,8 +104,7 @@ const normalizeNode = (node) => {
 
 export const fetchNodes = createAsyncThunk('nodes/fetchNodes', async (_, thunkApi) => {
   try {
-    const response = await axios.get(`${API_URL}/nodes`);
-    return response.data.data || [];
+    return await nodeAPI.getNodes();
   } catch (error) {
     return thunkApi.rejectWithValue(error?.response?.data?.message || 'Failed to fetch nodes');
   }
@@ -101,9 +112,8 @@ export const fetchNodes = createAsyncThunk('nodes/fetchNodes', async (_, thunkAp
 
 export const registerNode = createAsyncThunk('nodes/registerNode', async (payload, thunkApi) => {
   try {
-    await axios.post(`${API_URL}/nodes/register`, payload);
-    const response = await axios.get(`${API_URL}/nodes`);
-    return response.data.data || [];
+    await nodeAPI.registerNode(payload);
+    return await nodeAPI.getNodes(); // re-fetch full list
   } catch (error) {
     return thunkApi.rejectWithValue(error?.response?.data?.message || 'Failed to register node');
   }
@@ -111,8 +121,7 @@ export const registerNode = createAsyncThunk('nodes/registerNode', async (payloa
 
 export const updateNodePolygons = createAsyncThunk('nodes/updateNodePolygons', async ({ nodeId, lanePolygons }, thunkApi) => {
   try {
-    const response = await axios.patch(`${API_URL}/nodes/${nodeId}`, { lanePolygons });
-    return response.data.data;
+    return await nodeAPI.updateNodePolygons(nodeId, lanePolygons);
   } catch (error) {
     return thunkApi.rejectWithValue(error?.response?.data?.message || 'Failed to update polygons');
   }
@@ -120,7 +129,7 @@ export const updateNodePolygons = createAsyncThunk('nodes/updateNodePolygons', a
 
 export const deleteNode = createAsyncThunk('nodes/deleteNode', async (nodeId, thunkApi) => {
   try {
-    await axios.delete(`${API_URL}/nodes/${nodeId}`);
+    await nodeAPI.deleteNode(nodeId);
     return nodeId;
   } catch (error) {
     return thunkApi.rejectWithValue(error?.response?.data?.message || 'Failed to delete node');
@@ -133,12 +142,59 @@ export const deleteNode = createAsyncThunk('nodes/deleteNode', async (nodeId, th
  */
 export const updateNode = createAsyncThunk('nodes/updateNode', async ({ nodeId, updates }, thunkApi) => {
   try {
-    const response = await axios.patch(`${API_URL}/nodes/${nodeId}`, updates);
-    return response.data.data;
+    return await nodeAPI.updateNode(nodeId, updates);
   } catch (error) {
     return thunkApi.rejectWithValue(error?.response?.data?.message || 'Failed to update node');
   }
 });
+
+/**
+ * Persist road config (lanes + speedLimit) to the API.
+ * Applies optimistic update locally first; rolls back on API failure.
+ */
+export const persistRoadConfig = createAsyncThunk(
+  'nodes/persistRoadConfig',
+  async ({ nodeId, lanes, speedLimit }, thunkApi) => {
+    try {
+      const result = await nodeAPI.updateRoadConfig(nodeId, { lanes, speedLimit });
+      return result; // may be null if backend returns 204
+    } catch (error) {
+      return thunkApi.rejectWithValue(error?.response?.data?.message || 'Failed to save road configuration');
+    }
+  }
+);
+
+/**
+ * Persist node specs (camera/network/detection params) to the API.
+ * Applies optimistic update locally first; rolls back on API failure.
+ */
+export const persistNodeSpecs = createAsyncThunk(
+  'nodes/persistNodeSpecs',
+  async ({ nodeId, specs }, thunkApi) => {
+    try {
+      const result = await nodeAPI.updateNode(nodeId, { nodeSpecs: specs });
+      return result;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error?.response?.data?.message || 'Failed to save node configuration');
+    }
+  }
+);
+
+/**
+ * Persist node status (active/inactive) to the API.
+ * Applies optimistic update locally first; rolls back on API failure.
+ */
+export const persistNodeStatus = createAsyncThunk(
+  'nodes/persistNodeStatus',
+  async ({ nodeId, status }, thunkApi) => {
+    try {
+      const result = await nodeAPI.updateNode(nodeId, { status });
+      return result;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error?.response?.data?.message || 'Failed to update node status');
+    }
+  }
+);
 
 const nodesSlice = createSlice({
   name: 'nodes',
@@ -358,7 +414,7 @@ const nodesSlice = createSlice({
       const { nodeId } = action.payload;
       const node = state.nodes.find(n => n.id === nodeId);
       if (node) {
-        console.error(`🔴 Marking node ${nodeId} OFFLINE (no heartbeat for 60+ seconds)`);
+        console.warn(`Marking node ${nodeId} OFFLINE (no heartbeat for 60+ seconds)`);
         node.status = 'offline';
         node.health = {
           cpu: 0,
@@ -427,10 +483,12 @@ const nodesSlice = createSlice({
       })
       .addCase(updateNodePolygons.fulfilled, (state, action) => {
         state.isLoading = false;
-        const updated = normalizeNode(action.payload);
-        const idx = state.nodes.findIndex(n => n.id === updated.id);
-        if (idx !== -1) {
-          state.nodes[idx] = updated;
+        if (action.payload != null) {
+          const updated = normalizeNode(action.payload);
+          const idx = state.nodes.findIndex(n => n.id === updated.id);
+          if (idx !== -1) {
+            state.nodes[idx] = updated;
+          }
         }
       })
       .addCase(updateNodePolygons.rejected, (state, action) => {
@@ -470,6 +528,60 @@ const nodesSlice = createSlice({
       .addCase(updateNode.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || 'Failed to update node';
+      })
+      .addCase(persistRoadConfig.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(persistRoadConfig.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (action.payload != null) {
+          const updated = normalizeNode(action.payload);
+          const idx = state.nodes.findIndex(n => n.id === updated.id);
+          if (idx !== -1) {
+            state.nodes[idx] = updated;
+          }
+        }
+      })
+      .addCase(persistRoadConfig.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || 'Failed to save road configuration';
+      })
+      .addCase(persistNodeSpecs.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(persistNodeSpecs.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (action.payload != null) {
+          const updated = normalizeNode(action.payload);
+          const idx = state.nodes.findIndex(n => n.id === updated.id);
+          if (idx !== -1) {
+            state.nodes[idx] = updated;
+          }
+        }
+      })
+      .addCase(persistNodeSpecs.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || 'Failed to save node configuration';
+      })
+      .addCase(persistNodeStatus.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(persistNodeStatus.fulfilled, (state, action) => {
+        state.isLoading = false;
+        if (action.payload != null) {
+          const updated = normalizeNode(action.payload);
+          const idx = state.nodes.findIndex(n => n.id === updated.id);
+          if (idx !== -1) {
+            state.nodes[idx] = updated;
+          }
+        }
+      })
+      .addCase(persistNodeStatus.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || 'Failed to update node status';
       });
   },
 });

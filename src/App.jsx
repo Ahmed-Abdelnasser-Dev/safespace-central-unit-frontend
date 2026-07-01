@@ -10,14 +10,16 @@
  * @module App
  */
 
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import AppLayout from './components/layout/AppLayout.jsx';
+import DispatcherLayout from './features/emergencyDispatcher/DispatcherLayout.jsx';
 import { getDefaultPath } from './config/navigation';
 import { useNodeHeartbeat } from './hooks/useNodeHeartbeat';
 import { useHeartbeatTimeout } from './hooks/useHeartbeatTimeout';
+import { refreshSession } from './features/auth/authSlice';
 
 // -- Lazy-loaded pages --------------------------------------------------------
 const MapOverviewPage = lazy(() => import('./features/map/pages/MapOverviewPage.jsx'));
@@ -27,12 +29,15 @@ const ActivityLogsPage = lazy(() => import('./features/admin/pages/ActivityLogsP
 const ProfilePage = lazy(() => import('./features/profile/pages/ProfilePage.jsx'));
 const NodeMaintainerPage = lazy(() => import('./features/nodeMaintainer/pages/NodeMaintainerPage.jsx'));
 const SystemTestPage = lazy(() => import('./features/systemTest/pages/SystemTestPage.jsx'));
+const DispatchConsolePage = lazy(() => import('./features/emergencyDispatcher/pages/DispatchConsolePage.jsx'));
+const CaseDetailPage = lazy(() => import('./features/emergencyDispatcher/pages/CaseDetailPage.jsx'));
 
 // Auth pages
 const SignInPage = lazy(() => import('./features/auth/pages/SignInPage.jsx'));
 const TwoFactorAuthPage = lazy(() => import('./features/auth/pages/TwoFactorAuthPage.jsx'));
 const ForgotPasswordPage = lazy(() => import('./features/auth/pages/ForgotPasswordPage.jsx'));
 const CheckYourEmailPage = lazy(() => import('./features/auth/pages/CheckYourEmailPage.jsx'));
+const ResetPasswordPage = lazy(() => import('./features/auth/pages/ResetPasswordPage.jsx'));
 const YouAreAllSetPage = lazy(() => import('./features/auth/pages/YouAreAllSetPage.jsx'));
 
 // Placeholder pages
@@ -41,6 +46,14 @@ const AlertsPage = lazy(() => import('./features/alerts/pages/AlertsPage.jsx'));
 const ReportsPage = lazy(() => import('./features/reports/pages/ReportsPage.jsx'));
 const MessagesPage = lazy(() => import('./features/messages/pages/MessagesPage.jsx'));
 const CameraFeedsPage = lazy(() => import('./features/cameras/pages/CameraFeedsPage.jsx'));
+const IncidentHistoryPage = lazy(() => import('./features/incidents/pages/IncidentHistoryPage.jsx'));
+
+// Analytics pages (data_analyst role)
+const AnalyticsOverviewPage  = lazy(() => import('./features/analytics/pages/AnalyticsOverviewPage.jsx'));
+const IncidentAnalyticsPage  = lazy(() => import('./features/analytics/pages/IncidentAnalyticsPage.jsx'));
+const NodeAnalyticsPage      = lazy(() => import('./features/analytics/pages/NodeAnalyticsPage.jsx'));
+const AnalyticsHeatmapPage   = lazy(() => import('./features/analytics/pages/AnalyticsHeatmapPage.jsx'));
+const AnalyticsReportsPage   = lazy(() => import('./features/analytics/pages/AnalyticsReportsPage.jsx'));
 
 // -- Loading fallback ---------------------------------------------------------
 function PageLoader() {
@@ -48,7 +61,7 @@ function PageLoader() {
     <div className="flex items-center justify-center min-h-screen bg-safe-dark">
       <div className="text-center">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-safe-blue mx-auto mb-3" />
-        <p className="text-gray-400 text-sm">Loading...</p>
+        <p className="text-safe-text-muted text-sm">Loading...</p>
       </div>
     </div>
   );
@@ -62,13 +75,37 @@ function RoleRedirect() {
 }
 
 // -- App ----------------------------------------------------------------------
-const ALL_ROLES = ['admin', 'emergency_dispatcher', 'road_observer', 'node_maintenance_crew'];
+const ALL_ROLES = ['admin', 'emergency_dispatcher', 'road_observer', 'node_maintenance_crew', 'data_analyst'];
 
 function App() {
+  const dispatch = useDispatch();
+  const { loadingRefresh } = useSelector((state) => state.auth);
+
+  // Rehydrate session on app startup
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      dispatch(refreshSession());
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [dispatch]);
+
   useNodeHeartbeat();
   useHeartbeatTimeout();
 
   const { isAuthenticated } = useSelector((state) => state.auth);
+
+  // Show loading while checking session
+  if (loadingRefresh) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-safe-dark">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-safe-blue mx-auto mb-3" />
+          <p className="text-safe-text-muted text-sm">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
@@ -79,6 +116,7 @@ function App() {
           <Route path="/two-factor" element={<TwoFactorAuthPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/check-email" element={<CheckYourEmailPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/all-set" element={<YouAreAllSetPage />} />
 
           {/* ── Authenticated routes (with AppLayout) ────────────── */}
@@ -95,15 +133,29 @@ function App() {
               element={isAuthenticated ? <RoleRedirect /> : <Navigate to="/sign-in" replace />}
             />
 
-            {/* Map — all roles */}
+            {/* Road Observer monitoring console — all roles can view the map */}
             <Route
-              path="map"
+              path="road-observer"
               element={
                 <ProtectedRoute allowedRoles={ALL_ROLES}>
                   <MapOverviewPage />
                 </ProtectedRoute>
               }
             />
+            {/* Legacy /map redirect — keeps old links working */}
+            <Route path="map" element={<Navigate to="/road-observer" replace />} />
+
+            {/* Cases — Dispatch Console + Case Detail, sharing one DispatcherProvider */}
+            <Route
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'emergency_dispatcher']}>
+                  <DispatcherLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="cases" element={<DispatchConsolePage />} />
+              <Route path="cases/:caseType/:caseId" element={<CaseDetailPage />} />
+            </Route>
 
             {/* Dashboard — admin + dispatcher */}
             <Route
@@ -201,6 +253,58 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={ALL_ROLES}>
                   <CameraFeedsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Incident History — road_observer + admin */}
+            <Route
+              path="incident-history"
+              element={
+                <ProtectedRoute allowedRoles={['road_observer', 'admin']}>
+                  <IncidentHistoryPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ── Analytics (data_analyst + admin) ──────────── */}
+            <Route
+              path="analytics"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'data_analyst']}>
+                  <AnalyticsOverviewPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="analytics/incidents"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'data_analyst']}>
+                  <IncidentAnalyticsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="analytics/nodes"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'data_analyst']}>
+                  <NodeAnalyticsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="analytics/heatmap"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'data_analyst']}>
+                  <AnalyticsHeatmapPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="analytics/reports"
+              element={
+                <ProtectedRoute allowedRoles={['admin', 'data_analyst']}>
+                  <AnalyticsReportsPage />
                 </ProtectedRoute>
               }
             />

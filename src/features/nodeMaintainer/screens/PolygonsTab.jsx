@@ -12,7 +12,6 @@ import { selectSelectedNode } from '../nodesSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ListItem from '../components/lists/ListItem';
 import EmptyState from '../components/lists/EmptyState';
-import { typography, fontFamily } from '../styles/typography';
 
 function PolygonsTab({ onEditPolygon }) {
   const node = useSelector(selectSelectedNode);
@@ -37,10 +36,8 @@ function PolygonsTab({ onEditPolygon }) {
     <div className="p-[20px] space-y-[20px]">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-bold text-[#101828]" style={{ ...typography.heading2, fontFamily }}>
-            Lane Polygons
-          </h3>
-          <p className="text-[#6a7282] text-sm mt-1" style={{ fontFamily }}>
+          <h3 className="text-xl font-bold text-safe-text-primary">Lane Polygons</h3>
+          <p className="text-sm text-safe-text-muted mt-1">
             {definedCount} of {lanes.length} polygons defined
             {lanes.length === 0 && ' • Add lanes in Road Configuration first'}
           </p>
@@ -61,8 +58,8 @@ function PolygonsTab({ onEditPolygon }) {
               title={lane.name}
               subtitle={
                 isEmpty 
-                  ? <span className="text-[#f59e0b] font-medium">⚠ Polygon not defined</span>
-                  : <span className="text-[#22c55e]">✓ {polygon.points?.length || 0} points</span>
+                  ? <span className="text-safe-orange font-medium">⚠ Polygon not defined</span>
+                  : <span className="text-safe-success">✓ {polygon.points?.length || 0} points</span>
               }
               actions={[
                 {

@@ -37,7 +37,7 @@ function UsersTable({ columns, data, onRowClick, renderCell, className = '' }) {
   });
 
   return (
-    <div className={`mt-6 bg-white rounded-xl border border-safe-border overflow-hidden ${className}`}>
+    <div className={`mt-6 bg-safe-sidebar rounded-xl border border-safe-border overflow-hidden ${className}`}>
       <div className="overflow-x-auto">
         <table className="w-full table-auto">
           {/* Table Header */}
@@ -62,11 +62,11 @@ function UsersTable({ columns, data, onRowClick, renderCell, className = '' }) {
                       <span className="flex flex-col ml-1 gap-px">
                         <FontAwesomeIcon
                           icon="chevron-up"
-                          className={`text-[10px] leading-none ${sortKey === column.key && sortDir === 'asc' ? 'text-safe-blue-btn' : 'text-gray-400'}`}
+                          className={`text-[10px] leading-none ${sortKey === column.key && sortDir === 'asc' ? 'text-safe-blue-btn' : 'text-safe-text-muted'}`}
                         />
                         <FontAwesomeIcon
                           icon="chevron-down"
-                          className={`text-[10px] leading-none ${sortKey === column.key && sortDir === 'desc' ? 'text-safe-blue-btn' : 'text-gray-400'}`}
+                          className={`text-[10px] leading-none ${sortKey === column.key && sortDir === 'desc' ? 'text-safe-blue-btn' : 'text-safe-text-muted'}`}
                         />
                       </span>
                     )}

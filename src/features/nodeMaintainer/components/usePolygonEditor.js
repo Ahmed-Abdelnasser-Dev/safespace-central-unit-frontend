@@ -19,10 +19,11 @@ export default function usePolygonEditor(initialPoints = []) {
     setRedoStack([]);
   }, []);
 
-  const getCanvasCoords = (e, canvas) => {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
+  const getCanvasCoords = (e, element) => {
+    const rect = element.getBoundingClientRect();
+    // Use fixed 640x640 coordinate system for the backend
+    const scaleX = 640 / rect.width;
+    const scaleY = 640 / rect.height;
     return {
       x: (e.clientX - rect.left) * scaleX,
       y: (e.clientY - rect.top) * scaleY,
@@ -62,12 +63,12 @@ export default function usePolygonEditor(initialPoints = []) {
 
   const handleMouseMove = (e) => {
     if (toolMode !== 'edit' || !isDragging || selectedPointIndex === null) return;
-    const canvas = e.currentTarget;
-    const { x, y } = getCanvasCoords(e, canvas);
+    const element = e.currentTarget;
+    const { x, y } = getCanvasCoords(e, element);
     const nextPoints = [...points];
     nextPoints[selectedPointIndex] = {
-      x: Math.max(0, Math.min(canvas.width, x + dragOffsetRef.current.x)),
-      y: Math.max(0, Math.min(canvas.height, y + dragOffsetRef.current.y)),
+      x: Math.max(0, Math.min(640, x + dragOffsetRef.current.x)),
+      y: Math.max(0, Math.min(640, y + dragOffsetRef.current.y)),
     };
     setPoints(nextPoints);
   };
@@ -115,9 +116,34 @@ export default function usePolygonEditor(initialPoints = []) {
     setSelectedPointIndex(null);
   };
 
-  const drawPolygon = (ctx) => {
+  const drawPolygon = (ctx, otherPolygons = []) => {
+    // Draw other polygons first (so they are under the active one)
+    otherPolygons.forEach((poly) => {
+      const pts = poly.points;
+      if (!pts || pts.length < 3) return;
+      
+      // Use a distinct color, like gray/orange for other lanes
+      ctx.strokeStyle = 'rgba(156, 163, 175, 0.8)'; // gray-400
+      ctx.fillStyle = 'rgba(156, 163, 175, 0.1)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([5, 5]); // dashed line for other polygons
+
+      ctx.beginPath();
+      pts.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      });
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    });
+
+    ctx.setLineDash([]); // Reset line dash for active polygon
+
     if (points.length === 0) return;
-    ctx.strokeStyle = 'rgb(59, 130, 246)';
+    
+    // Draw active polygon
+    ctx.strokeStyle = 'rgb(59, 130, 246)'; // blue-500
     ctx.fillStyle = 'rgba(59, 130, 246, 0.1)';
     ctx.lineWidth = 2;
     ctx.beginPath();

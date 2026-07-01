@@ -1,12 +1,10 @@
 import { Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Sidebar from './Sidebar';
+import AppTopBar from './AppTopBar';
+import { PageConfigProvider } from '@/contexts/PageConfigContext';
 import { getNavItems } from '@/config/navigation';
 
-/**
- * Shared application layout for all authenticated pages.
- * Renders the dynamic role-based sidebar alongside the page content.
- */
 function AppLayout() {
   const { user } = useSelector((state) => state.auth);
   const roleName = user?.role?.name;
@@ -15,9 +13,16 @@ function AppLayout() {
   return (
     <div className="flex h-screen bg-safe-dark">
       <Sidebar navItems={navItems} />
-      <main className="flex-1 overflow-auto">
-        <Outlet />
-      </main>
+
+      {/* Main content column */}
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+        <PageConfigProvider>
+          <AppTopBar />
+          <main className="flex-1 overflow-auto min-h-0">
+            <Outlet />
+          </main>
+        </PageConfigProvider>
+      </div>
     </div>
   );
 }

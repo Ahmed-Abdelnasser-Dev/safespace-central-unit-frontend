@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { userAPI } from '@/services/api';
 import UsersTable from '@/components/ui/UsersTable';
 import EditAccountInfoModal from './EditAccountInfoModal';
+import ResetPasswordModal from './ResetPasswordModal';
+import DeleteUserModal from './DeleteUserModal';
 import { showSuccess, showError } from '@/utils/toast';
 import { API_BASE_URL } from '@/lib/apiConfig';
 
@@ -10,10 +12,12 @@ import { API_BASE_URL } from '@/lib/apiConfig';
  * User Management Table
  * Displays all users with actions using base Table component
  */
-function UserManagementTable({ users = [], loading = false, onRefresh, onPageChange, currentPage = 1 }) {
+function UserManagementTable({ users = [], loading = false, onRefresh, onPageChange, currentPage = 1, currentUserId }) {
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [resetTarget, setResetTarget] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const getPhotoUrl = (user) => {
     if (!user.profilePhotoUrl) return null;
@@ -106,16 +110,18 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
     }
   };
 
-  const handleDelete = async (user) => {
-    if (!window.confirm(`Are you sure you want to delete ${user.fullName || user.email}?\nThis action cannot be undone.`)) return;
-    try {
-      await userAPI.deleteUser(user.id);
+  const handleDeleteClick = (user) => {
+      setDeleteTarget(user);
+    };
+
+    const handleDeleteModalClose = () => {
+      setDeleteTarget(null);
+    };
+
+    const handleDeletedOrDeactivated = () => {
+      setDeleteTarget(null);
       if (onRefresh) onRefresh();
-    } catch (error) {
-      console.error('Failed to delete user:', error);
-      showError(error.response?.data?.message || 'Failed to delete user');
-    }
-  };
+    };
 
   // Get user initials for avatar
   const getInitials = (user) => {
@@ -216,14 +222,21 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
 
       case 'actions':
         return (
-          <div className={`flex items-center gap-2 ${
-          column.key === 'actions' ? 'justify-end' : ''}`}>
+          <div className="flex items-center gap-2 justify-end">
             <button
               onClick={() => handleEditClick(user)}
               className="px-3 py-1.5 text-xs font-medium text-safe-text-dark bg-safe-bg hover:bg-safe-border/50 rounded-lg transition-colors"
             >
               Edit
             </button>
+            {user.id !== currentUserId && (
+              <button
+                onClick={() => setResetTarget(user)}
+                className="px-3 py-1.5 text-xs font-medium text-safe-orange bg-safe-orange/10 hover:bg-safe-orange/20 border border-safe-orange/20 rounded-lg transition-colors"
+              >
+                Reset Password
+              </button>
+            )}
             <button
               onClick={() => handleDeactivate(user)}
               className="px-3 py-1.5 text-xs font-medium text-safe-text-dark bg-safe-bg hover:bg-safe-border/50 rounded-lg transition-colors min-w-[80px] text-center"
@@ -231,7 +244,7 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
               {user.isActive ? 'Deactivate' : 'Activate'}
             </button>
             <button
-              onClick={() => handleDelete(user)}
+              onClick={() => handleDeleteClick(user)}
               className="px-3 py-1.5 text-xs font-medium text-white bg-safe-danger hover:bg-safe-danger/90 rounded-lg transition-colors"
             >
               Delete
@@ -247,7 +260,7 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
   // Loading state
   if (loading) {
     return (
-      <div className="mt-6 bg-white rounded-xl border border-safe-border p-8">
+      <div className="mt-6 bg-safe-sidebar rounded-xl border border-safe-border p-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-safe-blue-btn mx-auto mb-4"></div>
           <p className="text-safe-text-gray">Loading users...</p>
@@ -259,7 +272,7 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
   // Empty state
   if (users.length === 0) {
     return (
-      <div className="mt-6 bg-white rounded-xl border border-safe-border p-8">
+      <div className="mt-6 bg-safe-sidebar rounded-xl border border-safe-border p-8">
         <div className="text-center">
           <FontAwesomeIcon icon="users" className="text-4xl text-safe-text-gray mb-4" />
           <p className="text-safe-text-dark font-medium">No users found</p>
@@ -285,9 +298,22 @@ function UserManagementTable({ users = [], loading = false, onRefresh, onPageCha
         onClose={handleModalClose}
         onSubmit={handleModalSubmit}
         isAdmin={true}
-      />  
-    </>
+      />
 
+      <ResetPasswordModal
+        isOpen={!!resetTarget}
+        user={resetTarget}
+        onClose={() => setResetTarget(null)}
+      />
+
+      <DeleteUserModal
+        isOpen={!!deleteTarget}
+        user={deleteTarget}
+        onClose={handleDeleteModalClose}
+        onDeactivated={handleDeletedOrDeactivated}
+        onDeleted={handleDeletedOrDeactivated}
+      />
+    </>
   );
 }
 

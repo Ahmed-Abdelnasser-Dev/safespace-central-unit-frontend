@@ -14,7 +14,7 @@ function ProfilePage() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-safe-bg overflow-hidden">
+    <div className="flex flex-col h-full bg-safe-dark overflow-hidden">
       <div className="flex-1 overflow-y-auto">
         <UserProfileBody user={user} onLogout={handleLogout} />
       </div>

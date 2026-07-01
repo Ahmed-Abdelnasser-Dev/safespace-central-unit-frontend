@@ -2,10 +2,12 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { API_BASE_URL } from '@/lib/apiConfig';
+import { useTheme } from '@/contexts/ThemeContext.jsx';
 
 function Sidebar({ navItems = [] }) {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+  const { theme, toggle } = useTheme();
 
   const photoUrl = user?.profilePhotoUrl
     ? user.profilePhotoUrl.startsWith('http')
@@ -31,7 +33,7 @@ function Sidebar({ navItems = [] }) {
               `w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
                 isActive
                   ? 'bg-safe-blue-btn text-white'
-                  : 'text-gray-400 hover:bg-safe-gray hover:text-white'
+                  : 'text-safe-text-muted hover:bg-safe-gray hover:text-safe-text-primary'
               }`
             }
           >
@@ -40,10 +42,19 @@ function Sidebar({ navItems = [] }) {
         ))}
       </nav>
 
+      {/* Theme Toggle */}
+      <button
+        onClick={toggle}
+        title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        className="w-12 h-12 rounded-xl flex items-center justify-center text-safe-text-muted hover:bg-safe-gray hover:text-safe-text-primary transition-colors"
+      >
+        <FontAwesomeIcon icon={theme === 'dark' ? 'sun' : 'moon'} className="text-lg" />
+      </button>
+
       {/* Profile Avatar */}
       <button
         onClick={() => navigate('/profile')}
-        className="w-12 h-12 rounded-xl bg-safe-gray flex items-center justify-center text-gray-300 hover:bg-safe-gray-light transition-colors overflow-hidden"
+        className="w-12 h-12 rounded-xl bg-safe-gray flex items-center justify-center text-safe-text-muted hover:bg-safe-gray-light transition-colors overflow-hidden"
         title="Profile"
       >
         {photoUrl ? (

@@ -15,7 +15,7 @@ export default function PolygonToolbar({
   onDeletePoint,
 }) {
   return (
-    <div className="w-full lg:w-[64px] bg-[#f7f8f9] border border-[#e5e7eb] rounded-lg p-2 flex flex-col gap-2 items-center">
+    <div className="w-full lg:w-[64px] bg-safe-gray border border-safe-gray-light rounded-lg p-2 flex flex-col gap-2 items-center">
       <Button
         variant={toolMode === 'draw' ? 'primary' : 'secondary'}
         size="sm"
@@ -34,7 +34,7 @@ export default function PolygonToolbar({
       >
         <FontAwesomeIcon icon="arrows-up-down-left-right" />
       </Button>
-      <div className="w-full h-px bg-[#e5e7eb]" />
+      <div className="w-full h-px bg-safe-gray-light" />
       <Button variant="ghost" size="sm" onClick={onUndo} disabled={undoCount === 0} title="Undo" aria-label="Undo">
         <FontAwesomeIcon icon="rotate-left" />
       </Button>
@@ -44,7 +44,7 @@ export default function PolygonToolbar({
       <Button variant="ghost" size="sm" onClick={onClear} disabled={pointsCount === 0} title="Clear points" aria-label="Clear points">
         <FontAwesomeIcon icon="broom" />
       </Button>
-      <div className="w-full h-px bg-[#e5e7eb]" />
+      <div className="w-full h-px bg-safe-gray-light" />
       <Button variant="ghost" size="sm" onClick={onDeletePoint} disabled={selectedPointIndex === null} title="Delete selected point" aria-label="Delete selected point">
         <FontAwesomeIcon icon="trash" />
       </Button>

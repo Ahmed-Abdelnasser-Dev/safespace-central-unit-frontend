@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function ProtectedRoute({ children, allowedRoles = null }) {
   const location = useLocation();
@@ -34,12 +35,12 @@ function ProtectedRoute({ children, allowedRoles = null }) {
     if (!allowedRoles.includes(userRole)) {
       return (
         <div className="flex items-center justify-center min-h-screen bg-safe-bg">
-          <div className="text-center max-w-md p-8 bg-white rounded-lg shadow-lg">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i className="bi bi-shield-x text-3xl text-red-600" />
+          <div className="text-center max-w-md p-8 bg-safe-sidebar border border-safe-border rounded-xl shadow-xl">
+            <div className="w-16 h-16 bg-safe-danger/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FontAwesomeIcon icon="shield-halved" className="text-3xl text-safe-danger" />
             </div>
-            <h2 className="text-2xl font-bold text-safe-text-dark mb-2">Access Denied</h2>
-            <p className="text-safe-text-gray mb-6">
+            <h2 className="text-2xl font-bold text-safe-text-primary mb-2">Access Denied</h2>
+            <p className="text-safe-text-muted mb-6">
               You don't have permission to access this page. 
               {allowedRoles.length === 1 && ` This page requires ${allowedRoles[0]} role.`}
             </p>

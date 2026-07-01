@@ -9,7 +9,7 @@ function Checkbox({ checked, onChange, className = '' }) {
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center text-white text-xs font-bold transition-all ${checked ? 'bg-safe-success border-safe-success shadow-sm scale-105' : 'bg-white border-safe-border hover:border-safe-text-gray/40'} ${className}`}
+      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center text-white text-xs font-bold transition-all ${checked ? 'bg-safe-success border-safe-success shadow-sm scale-105' : 'bg-safe-gray border-safe-border hover:border-safe-text-muted/40'} ${className}`}
       aria-pressed={checked}
     >
       {checked ? '✓' : ''}

@@ -5,9 +5,9 @@ function PasswordRequirement({ met, text }) {
     <li className="flex items-center gap-2 text-xs">
       <FontAwesomeIcon
         icon={met ? 'check-circle' : 'circle'}
-        className={`text-xs ${met ? 'text-safe-green' : 'text-safe-text-gray'}`}
+        className={`text-xs ${met ? 'text-safe-green' : 'text-safe-text-muted'}`}
       />
-      <span className={met ? 'text-safe-green' : 'text-safe-text-gray'}>{text}</span>
+      <span className={met ? 'text-safe-green' : 'text-safe-text-muted'}>{text}</span>
     </li>
   );
 }
@@ -21,12 +21,12 @@ export default function PasswordStrengthSection({ password, strength }) {
       {password && (
         <div className="mt-2">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-xs text-safe-text-gray">Password Strength:</span>
+            <span className="text-xs text-safe-text-muted">Password Strength:</span>
             <span className={`text-xs font-medium ${strength.color}`}>
               {strength.label}
             </span>
           </div>
-          <div className="h-1.5 bg-safe-border rounded-full overflow-hidden">
+          <div className="h-1.5 bg-safe-gray-light rounded-full overflow-hidden">
             <div
               className={`h-full transition-all duration-300 ${
                 strength.strength === 100 ? 'bg-safe-green' :
@@ -38,8 +38,8 @@ export default function PasswordStrengthSection({ password, strength }) {
         </div>
       )}
 
-      <div className="mt-2 p-3 bg-safe-bg rounded-lg">
-        <p className="text-xs font-medium text-safe-text-dark mb-2">Password must contain:</p>
+      <div className="mt-2 p-3 bg-safe-gray rounded-lg border border-safe-gray-light">
+        <p className="text-xs font-medium text-safe-text-primary mb-2">Password must contain:</p>
         <ul className="space-y-1">
           <PasswordRequirement met={password.length >= 8} text="At least 8 characters" />
           <PasswordRequirement met={/[A-Z]/.test(password)} text="One uppercase letter" />

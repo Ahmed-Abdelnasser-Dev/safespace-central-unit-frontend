@@ -73,37 +73,37 @@ function SystemTestPage() {
   useState(() => { testBackendConnection(); });
 
   return (
-    <div className="min-h-full bg-safe-dark text-white">
+    <div className="min-h-full bg-safe-dark text-safe-text-primary">
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="bg-safe-gray-light/40 backdrop-blur-sm rounded-xl p-8 mb-8 border border-safe-gray-light shadow-card">
           <h2 className="text-2xl font-semibold mb-2 text-safe-blue">System Test Dashboard</h2>
-          <p className="text-gray-400 mb-8">Testing connection between Frontend (React + Vite) and Backend (Node.js + Express)</p>
+          <p className="text-safe-text-muted mb-8">Testing connection between Frontend (React + Vite) and Backend (Node.js + Express)</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-safe-gray/60 rounded-lg p-6 border border-safe-gray-light">
               <h3 className="text-sm font-semibold mb-4 text-safe-blue">Backend Status</h3>
               {backendStatus.loading ? (
-                <div className="text-center text-gray-400 py-4">
+                <div className="text-center text-safe-text-muted py-4">
                   <div className="animate-spin w-8 h-8 border-4 border-safe-blue border-t-transparent rounded-full mx-auto" />
                   <p className="mt-2">Connecting...</p>
                 </div>
               ) : (
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Connection:</span>
+                    <span className="text-safe-text-muted">Connection:</span>
                     <span className={backendStatus.connected ? 'text-safe-success' : 'text-safe-danger'}>
                       {backendStatus.connected ? '✅ Connected' : '❌ Disconnected'}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Version:</span>
+                    <span className="text-safe-text-muted">Version:</span>
                     <span>{backendStatus.version || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Environment:</span>
+                    <span className="text-safe-text-muted">Environment:</span>
                     <span className="capitalize">{backendStatus.environment || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Uptime:</span>
+                    <span className="text-safe-text-muted">Uptime:</span>
                     <span>{backendStatus.uptime > 0 ? `${backendStatus.uptime}s` : 'N/A'}</span>
                   </div>
                 </div>
@@ -113,11 +113,11 @@ function SystemTestPage() {
               <h3 className="text-sm font-semibold mb-4 text-safe-blue">Connection Tests</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Health Check:</span>
+                  <span className="text-safe-text-muted">Health Check:</span>
                   <span className="font-mono">{testResults.healthCheck}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">API Endpoint:</span>
+                  <span className="text-safe-text-muted">API Endpoint:</span>
                   <span className="font-mono">{testResults.apiTest}</span>
                 </div>
                 <button onClick={testBackendConnection} className="mt-4 w-full bg-safe-blue hover:bg-safe-blue-light text-white font-medium py-2 px-4 rounded-lg transition-colors">
@@ -130,7 +130,7 @@ function SystemTestPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-safe-gray-light/40 rounded-xl p-6 border border-safe-gray-light">
             <h3 className="text-sm font-semibold mb-4 text-safe-blue">Frontend Stack</h3>
-            <ul className="space-y-2 text-gray-300 text-xs">
+            <ul className="space-y-2 text-safe-text-primary text-xs">
               <li>React 18</li>
               <li>Vite Build Tool</li>
               <li>Tailwind CSS</li>
@@ -140,7 +140,7 @@ function SystemTestPage() {
           </div>
           <div className="bg-safe-gray-light/40 rounded-xl p-6 border border-safe-gray-light">
             <h3 className="text-sm font-semibold mb-4 text-safe-blue">Backend Stack</h3>
-            <ul className="space-y-2 text-gray-300 text-xs">
+            <ul className="space-y-2 text-safe-text-primary text-xs">
               <li>Node.js (LTS)</li>
               <li>Express.js</li>
               <li>Winston Logger</li>

@@ -1,0 +1,179 @@
+import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+function InfoRow({ label, value, mono = false }) {
+  return (
+    <div className="flex items-start justify-between gap-4 py-2 border-b border-safe-gray-light last:border-0">
+      <span className="text-[11px] font-medium text-safe-text-muted flex-shrink-0 pt-0.5">
+        {label}
+      </span>
+      <span className={`text-sm text-safe-text-primary text-right ${mono ? 'font-mono' : ''}`}>{value}</span>
+    </div>
+  );
+}
+
+function PillList({ items, variantClass }) {
+  if (!items || items.length === 0)
+    return <p className="text-xs text-safe-text-muted/60 mt-1">None on file</p>;
+  return (
+    <div className="flex flex-wrap gap-1.5 mt-1.5">
+      {items.map((item) => (
+        <span key={item} className={`px-2 py-0.5 rounded-full text-xs font-medium ${variantClass}`}>
+          {item}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function SectionHeader({ title, open, onToggle }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      className="flex w-full items-center justify-between text-left py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-safe-blue/40 rounded"
+      aria-expanded={open}
+    >
+      <span className="text-xs font-semibold text-safe-text-muted">{title}</span>
+      <FontAwesomeIcon
+        icon={open ? 'chevron-up' : 'chevron-down'}
+        className="text-safe-text-muted/50 text-[10px]"
+      />
+    </button>
+  );
+}
+
+function calcAge(dob) {
+  if (!dob) return null;
+  const birth = new Date(dob);
+  if (isNaN(birth.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  return age;
+}
+
+function VictimProfilePanel({ victim, medicalProfile, emergencyContacts, loading = false }) {
+  const [medicalOpen, setMedicalOpen] = useState(true);
+  const [contactsOpen, setContactsOpen] = useState(true);
+
+  if (!victim) {
+    return (
+      <div className="bg-safe-gray rounded-xl border border-safe-gray-light p-4">
+        <h3 className="text-sm font-semibold text-safe-text-primary mb-3">Victim</h3>
+        <p className={`text-sm text-safe-text-muted/60 ${loading ? 'animate-pulse' : ''}`}>
+          {loading ? 'Loading victim profile…' : 'No victim profile on file.'}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-safe-gray rounded-xl border border-safe-gray-light divide-y divide-safe-gray-light">
+      {/* Identification */}
+      <div className="p-4 space-y-0.5">
+        <h3 className="text-sm font-semibold text-safe-text-primary mb-3">Victim</h3>
+        <InfoRow label="Name" value={victim.fullName} />
+        <InfoRow label="National ID" value={victim.nationalId ?? '—'} mono />
+        <InfoRow label="Age" value={calcAge(victim.dob) !== null ? `${calcAge(victim.dob)} yrs` : '—'} />
+        <div className="flex items-start justify-between gap-4 py-2">
+          <span className="text-[11px] font-medium text-safe-text-muted flex-shrink-0 pt-0.5">Phone</span>
+          {victim.phone ? (
+            <a
+              href={`tel:${victim.phone}`}
+              className="text-sm text-safe-blue hover:text-safe-blue-light font-mono transition-colors"
+            >
+              {victim.phone}
+            </a>
+          ) : (
+            <span className="text-sm text-safe-text-muted/60 italic">No phone on file</span>
+          )}
+        </div>
+      </div>
+
+      {/* Medical Profile */}
+      <div className="p-4">
+        <SectionHeader
+          title="Medical Profile"
+          open={medicalOpen}
+          onToggle={() => setMedicalOpen((o) => !o)}
+        />
+        {medicalOpen && (
+          <div className="mt-3">
+            {medicalProfile ? (
+              <div className="space-y-3">
+                <InfoRow label="Blood Type" value={medicalProfile.bloodType ?? 'Unknown'} mono />
+                <div>
+                  <span className="text-[11px] font-medium text-safe-text-muted">Conditions</span>
+                  <PillList
+                    items={medicalProfile.conditions}
+                    variantClass="bg-safe-info/12 text-safe-info"
+                  />
+                </div>
+                <div>
+                  <span className="text-[11px] font-medium text-safe-text-muted">Medications</span>
+                  <PillList
+                    items={medicalProfile.medications}
+                    variantClass="bg-safe-gray-light/40 text-safe-text-primary"
+                  />
+                </div>
+                <div>
+                  <span className="text-[11px] font-medium text-safe-text-muted">Allergies</span>
+                  <PillList
+                    items={medicalProfile.allergies}
+                    variantClass="bg-safe-danger/12 text-safe-danger"
+                  />
+                </div>
+                {medicalProfile.notes && (
+                  <p className="text-sm text-safe-text-muted italic bg-safe-gray-light/20 rounded-lg px-3 py-2 mt-1">
+                    {medicalProfile.notes}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm text-safe-text-muted/60 mt-2">No medical profile on file.</p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Emergency Contacts */}
+      <div className="p-4">
+        <SectionHeader
+          title="Emergency Contacts"
+          open={contactsOpen}
+          onToggle={() => setContactsOpen((o) => !o)}
+        />
+        {contactsOpen && (
+          <div className="mt-3 space-y-2">
+            {emergencyContacts && emergencyContacts.length > 0 ? (
+              emergencyContacts.map((contact) => (
+                <div
+                  key={contact.phone}
+                  className="flex items-center justify-between gap-3 py-2 px-3 rounded-lg bg-safe-gray-light/20 border border-safe-gray-light"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-safe-text-primary">{contact.name}</p>
+                    <p className="text-xs text-safe-text-muted/70">{contact.relationship}</p>
+                  </div>
+                  <a
+                    href={`tel:${contact.phone}`}
+                    className="flex items-center gap-1.5 text-safe-blue hover:text-safe-blue-light font-mono text-sm transition-colors"
+                  >
+                    <FontAwesomeIcon icon="phone" className="text-xs" />
+                    {contact.phone}
+                  </a>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-safe-text-muted/60">No emergency contacts on file.</p>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default VictimProfilePanel;

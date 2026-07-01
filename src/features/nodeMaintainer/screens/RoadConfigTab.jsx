@@ -30,7 +30,6 @@ import RoadStatusDisplay from "../components/sections/RoadStatusDisplay";
 import SpeedLimitConfig from "./SpeedLimitConfig";
 import AddLaneModal from "../components/AddLaneModal";
 import DeleteLaneModal from "../components/DeleteLaneModal";
-import { fontFamily } from "../styles/typography";
 import Button from "@/components/ui/Button.jsx";
 
 const LANE_STATUS_OPTIONS = [
@@ -49,7 +48,7 @@ function RoadConfigTab() {
   const [laneToDelete, setLaneToDelete] = useState(null);
 
   if (!node)
-    return <div className="p-[16px] text-[#6a7282]">Select a node</div>;
+    return <div className="p-[16px] text-safe-text-muted">Select a node</div>;
 
   const lanes = node?.roadRules?.lanes || [];
 
@@ -95,9 +94,7 @@ function RoadConfigTab() {
     <div className="p-[12px] sm:p-[14px] md:p-[16px] lg:p-[18px] xl:p-[20px] space-y-[14px] sm:space-y-[16px] md:space-y-[18px] lg:space-y-[20px] h-full overflow-y-auto">
       {/* Node Display Output */}
       <div className="space-y-[8px] sm:space-y-[10px] md:space-y-[12px]">
-        <h4 className="font-bold text-[#101828]" style={{ fontSize: "clamp(14px, 1.5vw, 18px)", fontFamily }}>
-          Node Display Output
-        </h4>
+        <h4 className="text-base font-bold text-safe-text-primary">Node Display Output</h4>
         <RoadStatusDisplay
           roadName={node.location?.address || node.name}
           speedLimit={speedLimit}
@@ -112,7 +109,7 @@ function RoadConfigTab() {
       <div className="space-y-[8px] sm:space-y-[10px] md:space-y-[12px] mt-[12px] sm:mt-[14px] lg:mt-[16px]">
         <div className="flex justify-between items-center">
           <span></span>
-          <Button variant="ghost" onClick={() => setIsAddLaneOpen(true)} className="!text-[#247cff] hover:!bg-blue-50">
+          <Button variant="ghost" onClick={() => setIsAddLaneOpen(true)} className="!text-safe-blue hover:!bg-safe-blue/10">
             + Add Lane
           </Button>
         </div>
@@ -141,8 +138,8 @@ function RoadConfigTab() {
               />
             ))
           ) : (
-            <div className="p-[10px] sm:p-[12px] md:p-[14px] bg-[#f7f8f9] border border-[#e5e7eb] rounded-[6px] sm:rounded-[7px] md:rounded-[8px] text-center">
-              <p className="text-[#6a7282] text-center" style={{ fontSize: "clamp(13px, 1.2vw, 16px)", fontFamily }}>
+            <div className="p-[10px] sm:p-[12px] md:p-[14px] bg-safe-gray border border-safe-gray-light rounded-[6px] sm:rounded-[7px] md:rounded-[8px] text-center">
+              <p className="text-sm text-safe-text-muted text-center">
                 No lanes configured
               </p>
             </div>

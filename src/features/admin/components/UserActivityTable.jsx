@@ -143,7 +143,7 @@ function ActivityLogsTable() {
 
   if (loading) {
     return (
-      <div className="mt-6 bg-white rounded-xl border border-safe-border p-8">
+      <div className="mt-6 bg-safe-sidebar rounded-xl border border-safe-border p-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-safe-blue-btn mx-auto mb-3"></div>
           <p className="text-safe-text-gray text-sm">Loading activity logs...</p>

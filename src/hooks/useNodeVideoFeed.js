@@ -33,18 +33,24 @@ export function useNodeVideoFeed() {
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
+  const retryDelayRef = useRef(3000);
+  const isMountedRef = useRef(false);
 
   useEffect(() => {
-    // Connect to WebSocket
+    isMountedRef.current = true;
+    retryDelayRef.current = 3000;
+
     const connect = () => {
+      if (!isMountedRef.current) return;
       try {
         const ws = new WebSocket(buildNodeVideoUrl(NODE_VIDEO_WS_URL));
         wsRef.current = ws;
 
         ws.onopen = () => {
+          if (!isMountedRef.current) return;
+          retryDelayRef.current = 3000;
           setIsConnected(true);
 
-          // Subscribe to specific node updates if one is selected
           if (selectedNodeId) {
             ws.send(JSON.stringify({
               type: 'dashboard_subscribe',
@@ -54,6 +60,7 @@ export function useNodeVideoFeed() {
         };
 
         ws.onmessage = (event) => {
+          if (!isMountedRef.current) return;
           try {
             const message = JSON.parse(event.data);
             handleWebSocketMessage(message);
@@ -62,18 +69,17 @@ export function useNodeVideoFeed() {
           }
         };
 
-        ws.onerror = (error) => {
-          console.error('WebSocket error:', error);
-          setIsConnected(false);
+        ws.onerror = () => {
+          if (isMountedRef.current) setIsConnected(false);
         };
 
         ws.onclose = () => {
+          if (!isMountedRef.current) return;
           setIsConnected(false);
-          
-          // Attempt to reconnect after 3 seconds
-          reconnectTimeoutRef.current = setTimeout(() => {
-            connect();
-          }, 3000);
+          // Exponential backoff: 3s → 6s → 12s → … capped at 30s
+          const delay = retryDelayRef.current;
+          retryDelayRef.current = Math.min(delay * 2, 30000);
+          reconnectTimeoutRef.current = setTimeout(connect, delay);
         };
       } catch (error) {
         console.error('Failed to connect to WebSocket:', error);
@@ -82,13 +88,17 @@ export function useNodeVideoFeed() {
 
     connect();
 
-    // Cleanup on unmount
     return () => {
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-      }
-      if (wsRef.current) {
-        wsRef.current.close();
+      isMountedRef.current = false;
+      clearTimeout(reconnectTimeoutRef.current);
+      const ws = wsRef.current;
+      if (ws) {
+        // Avoid "closed before established" browser warning
+        if (ws.readyState === WebSocket.CONNECTING) {
+          ws.onopen = () => ws.close();
+        } else {
+          ws.close();
+        }
       }
     };
   }, []);

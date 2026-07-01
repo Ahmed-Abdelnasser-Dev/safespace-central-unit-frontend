@@ -19,7 +19,7 @@ function Input({
   className = '',
   ...rest
 }) {
-  const base = 'w-full px-4 py-3 rounded-lg border border-safe-border bg-white text-safe-text-dark placeholder:text-safe-text-gray/70 focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/25 disabled:opacity-60 disabled:cursor-not-allowed';
+  const base = 'w-full px-4 py-3 rounded-lg border border-safe-border bg-safe-dark text-safe-text-primary placeholder:text-safe-text-muted/70 focus:outline-none focus:ring-2 focus:ring-safe-blue-btn/25 disabled:opacity-60 disabled:cursor-not-allowed';
 
   return (
     <input

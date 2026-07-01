@@ -29,8 +29,8 @@ class ErrorBoundary extends Component {
             <div className="w-16 h-16 bg-safe-danger/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-3xl" role="img" aria-label="warning">⚠️</span>
             </div>
-            <h1 className="text-2xl font-bold text-white mb-2">Something went wrong</h1>
-            <p className="text-gray-400 mb-6">
+            <h1 className="text-2xl font-bold text-safe-text-primary mb-2">Something went wrong</h1>
+            <p className="text-safe-text-muted mb-6">
               An unexpected error occurred. Please try refreshing the page.
             </p>
             <button

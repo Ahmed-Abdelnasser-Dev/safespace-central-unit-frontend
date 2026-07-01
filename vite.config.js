@@ -8,7 +8,14 @@ export default defineConfig(({ mode }) => {
   const proxyTarget = env.VITE_DEV_PROXY_TARGET || 'http://localhost:5000';
   const enableProxy = env.VITE_ENABLE_DEV_PROXY === 'true';
 
-  const server = { port: 4000 };
+  const rawStreamWs = env.VITE_NODE_VIDEO_WS_URL || 'ws://localhost:4001';
+  const streamHttpUrl = rawStreamWs.replace(/^wss:\/\//i, 'https://').replace(/^ws:\/\//i, 'http://');
+
+  // Added allowedHosts: true to bypass Ngrok blocking
+  const server = { 
+    port: 4000,
+    allowedHosts: true 
+  };
 
   if (enableProxy) {
     server.proxy = {
@@ -24,6 +31,27 @@ export default defineConfig(({ mode }) => {
         target: proxyTarget,
         changeOrigin: true,
       },
+      '/stream-service': {
+        target: streamHttpUrl,
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/stream-service/, ''),
+        headers: {
+          Origin: streamHttpUrl,
+        }
+      }
+    };
+  } else {
+    server.proxy = {
+      '/stream-service': {
+        target: streamHttpUrl,
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/stream-service/, ''),
+        headers: {
+          Origin: streamHttpUrl,
+        }
+      }
     };
   }
 

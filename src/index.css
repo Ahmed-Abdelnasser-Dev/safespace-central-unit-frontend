@@ -1,14 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── Theme CSS custom properties ──────────────────────────────────────────── */
+/* Light mode defaults — space-separated RGB values for Tailwind opacity support */
+:root {
+  --color-safe-dark:       245 245 246;   /* #f5f5f6 — page canvas, neutral gray */
+  --color-safe-sidebar:    255 255 255;   /* #ffffff — sidebar / header */
+  --color-safe-gray:       238 239 241;   /* #eeeef1 — card surface, neutral */
+  --color-safe-gray-light: 215 215 218;   /* #d7d7da — elevated / border, neutral */
+  --color-text-primary:    15 20 25;      /* #0f1419 — body text */
+  --color-text-muted:      71 85 105;     /* #475569 — muted text (6.1:1 on card, passes WCAG AA) */
+}
+
+/* Dark mode overrides */
+.dark {
+  --color-safe-dark:       17 17 17;      /* #111111 */
+  --color-safe-sidebar:    26 26 26;      /* #1a1a1a */
+  --color-safe-gray:       36 36 36;      /* #242424 */
+  --color-safe-gray-light: 51 51 51;      /* #333333 */
+  --color-text-primary:    255 255 255;   /* #ffffff */
+  --color-text-muted:      139 153 181;   /* #8b99b5 */
+}
+
+@layer base {
+  body {
+    @apply font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
 @layer utilities {
   .animate-fadeIn {
-    animation: fadeIn 0.2s ease-out;
+    animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  
+
   .animate-slideUp {
-    animation: slideUp 0.3s ease-out;
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .animate-slideIn {
+    animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .animate-scaleIn {
+    animation: scaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .animate-pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  .stagger-1 {
+    animation-delay: 0.1s;
+  }
+  .stagger-2 {
+    animation-delay: 0.2s;
+  }
+  .stagger-3 {
+    animation-delay: 0.3s;
+  }
+  .stagger-4 {
+    animation-delay: 0.4s;
   }
 }
 
@@ -24,7 +81,7 @@
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -32,10 +89,113 @@
   }
 }
 
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fadeIn,
+  .animate-slideUp,
+  .animate-slideIn,
+  .animate-scaleIn {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(59, 124, 255, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(59, 124, 255, 0);
+  }
+}
+
+/* Adaptive MapLibre GL popups inside the dispatcher map */
+.emergency-dispatcher-unit-popover .maplibregl-popup-content {
+  background: rgb(var(--color-safe-gray));
+  border: 1px solid rgb(var(--color-safe-gray-light));
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  padding: 12px 14px;
+  color: rgb(var(--color-text-primary));
+}
+
+.emergency-dispatcher-unit-popover .maplibregl-popup-tip {
+  border-top-color: rgb(var(--color-safe-gray)) !important;
+}
+
+.emergency-dispatcher-unit-popover .maplibregl-popup-close-button {
+  color: rgb(var(--color-text-muted));
+  font-size: 16px;
+  padding: 4px 8px;
+  top: 4px;
+  right: 4px;
+  border-radius: 6px;
+}
+
+.emergency-dispatcher-unit-popover .maplibregl-popup-close-button:hover {
+  background: rgb(var(--color-safe-gray-light) / 0.4);
+  color: rgb(var(--color-text-primary));
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: 'Poppins', system-ui, Avenir, sans-serif;
+  line-height: 1.6;
   font-weight: 400;
+  color-scheme: light;
+  --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.28);
+}
+
+.dark {
+  color-scheme: dark;
+  --scrollbar-thumb: rgba(255, 255, 255, 0.12);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.22);
+}
+
+/* Adaptive scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 99px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
 }
 
 body {
