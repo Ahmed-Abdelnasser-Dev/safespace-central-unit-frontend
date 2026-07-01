@@ -80,10 +80,12 @@ function NodeRow({ node, activeIncidentNodeIds = [], onSelect, onViewDetails }) 
   const hasIncident = activeIncidentNodeIds.includes(node.id);
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={() => onSelect?.(node)}
-      className="w-full flex items-center gap-3 px-3 py-3 hover:bg-safe-gray-light/30 transition-colors duration-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-safe-blue/40 text-left group"
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect?.(node); } }}
+      className="w-full flex items-center gap-3 px-3 py-3 hover:bg-safe-gray-light/30 transition-colors duration-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-safe-blue/40 text-left group cursor-pointer"
     >
       {/* Status icon */}
       <div className={`relative w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
@@ -120,7 +122,7 @@ function NodeRow({ node, activeIncidentNodeIds = [], onSelect, onViewDetails }) 
           className="text-safe-text-muted/50 text-xs"
         />
       </div>
-    </button>
+    </div>
   );
 }
 

@@ -193,13 +193,13 @@ export default function NodeMaintainerPage() {
         </button>
       </PageActions>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex gap-[12px] lg:gap-[16px] xl:gap-[20px] px-[12px] lg:px-[16px] xl:px-[20px] py-[12px] lg:py-[16px] xl:py-[20px] overflow-hidden flex-1 h-full">
+      <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+        <div className="flex gap-[12px] lg:gap-[16px] xl:gap-[20px] px-[12px] lg:px-[16px] xl:px-[20px] py-[12px] lg:py-[16px] xl:py-[20px] overflow-hidden flex-1 min-h-0">
 
           {activeView === 'nodes' ? (
             <>
               {/* Left Section: Map and Nodes List */}
-              <div className="w-[35%] lg:w-[38%] xl:w-[40%] 2xl:w-[42%] flex flex-col gap-[8px] lg:gap-[12px] xl:gap-[16px] overflow-hidden">
+              <div className="w-[35%] lg:w-[38%] xl:w-[40%] 2xl:w-[42%] flex flex-col gap-[8px] lg:gap-[12px] xl:gap-[16px] overflow-hidden min-h-0">
                 {/* Map — dominant (60%) */}
                 <div className="h-[60%] overflow-hidden">
                   <NetworkMapCard />
@@ -273,7 +273,7 @@ export default function NodeMaintainerPage() {
         errorMessage={deleteError}
       />
 
-      {showPolygonEditor && (
+      {showPolygonEditor && editingPolygon && (
         <PolygonEditorDialog
           node={selectedNode}
           polygon={editingPolygon}

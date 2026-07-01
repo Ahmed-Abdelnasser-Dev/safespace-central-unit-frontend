@@ -71,7 +71,7 @@ function NodeConfigTab() {
   ];
 
   return (
-    <div className="p-[20px] space-y-[20px]">
+    <div className="p-[20px] space-y-[20px] h-full overflow-y-auto">
       <div className="space-y-[12px]">
         <SectionLabel text="Node Status" icon="power-off" />
         <ConfigCard>

@@ -53,6 +53,16 @@ const normalizeNode = (node) => {
     };
   });
   
+  // Resolve IP: Prefer top-level ipAddress since it's the actual connection IP
+  // fallback to nodeSpecs.ipAddress if available.
+  const ipAddress =
+    node.ipAddress ||
+    (node.nodeSpecs && node.nodeSpecs.ipAddress) ||
+    '0.0.0.0';
+
+  // Ensure nodeSpecs always carries ipAddress so OverviewTab can read it
+  const nodeSpecs = { ...(node.nodeSpecs || {}), ipAddress };
+
   return {
     id: nodeId,
     nodeId,
@@ -60,7 +70,7 @@ const normalizeNode = (node) => {
     status: node.status || 'offline',
     location,
     roadRules: roadRules,
-    nodeSpecs: node.nodeSpecs || {},
+    nodeSpecs,
     health: node.health || {
       cpu: 0,
       temperature: 0,
@@ -73,10 +83,13 @@ const normalizeNode = (node) => {
     defaultLaneCount: node.defaultLaneCount || lanes.length || 1,
     speedLimit: node.speedLimit || 80,
     streetName: node.streetName || location.address || 'Unknown location',
-    ipAddress: node.ipAddress || '0.0.0.0',
+    ipAddress,
     latitude: typeof node.latitude === 'number' ? node.latitude : location.latitude || 0,
     longitude: typeof node.longitude === 'number' ? node.longitude : location.longitude || 0,
     videoFeedUrl: node.videoFeedUrl || '',
+    // streamUrl is used by VideoFeedPlayer to connect to the stream-service WebSocket.
+    // The backend provides this when STREAM_SERVICE_PUBLIC_WS_URL is set.
+    streamUrl: node.streamUrl || null,
     frameRate: node.frameRate || 30,
     resolution: node.resolution || '1920x1080',
     uptimeSec: node.uptimeSec || 0,

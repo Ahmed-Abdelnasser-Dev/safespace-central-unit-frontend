@@ -68,7 +68,7 @@ function EditNodeModal({ isOpen, onClose, onSave, node, isLoading = false, error
   };
 
   return (
-    <Modal open={isOpen} onClose={onClose}>
+    <Modal bare open={isOpen} onClose={onClose}>
       <div className="bg-safe-gray border border-safe-gray-light rounded-2xl w-full max-w-2xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-safe-gray-light">

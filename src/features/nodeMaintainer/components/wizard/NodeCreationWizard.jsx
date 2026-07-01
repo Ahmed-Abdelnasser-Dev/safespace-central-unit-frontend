@@ -480,7 +480,7 @@ export default function NodeCreationWizard({ isOpen, onClose, onSubmit, existing
   };
 
   return (
-    <Modal open={isOpen} onClose={handleClose} size="lg">
+    <Modal bare open={isOpen} onClose={handleClose} size="lg">
       <div className="bg-safe-gray border border-safe-gray-light rounded-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="px-8 py-5 border-b border-safe-gray-light flex-shrink-0">

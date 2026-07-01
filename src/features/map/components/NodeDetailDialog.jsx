@@ -113,7 +113,6 @@ export function NodeDetailDialog({ node, onClose, activeIncidentNodeIds = [] }) 
             <div className="flex-1 bg-black min-w-0 p-2">
               <VideoFeedPlayer
                 nodeId={node.id}
-                streamUrl={node.streamUrl ?? null}
                 status={node.status}
               />
             </div>

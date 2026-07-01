@@ -35,7 +35,7 @@ export default function AddLaneModal({ isOpen, onClose, onConfirm, laneStatusOpt
   };
 
   return (
-    <Modal open={isOpen} onClose={handleClose} size="md">
+    <Modal bare open={isOpen} onClose={handleClose} size="md">
       <Card className="bg-safe-gray border border-safe-gray-light rounded-2xl overflow-hidden">
         <div className="px-8 py-6 border-b border-safe-gray-light">
           <h3 className="text-xl font-bold text-safe-text-primary">Add New Lane</h3>

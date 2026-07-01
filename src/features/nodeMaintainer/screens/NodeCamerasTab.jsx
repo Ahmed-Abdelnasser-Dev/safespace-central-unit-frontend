@@ -28,10 +28,9 @@ export default function NodeCamerasTab() {
 
   const nodeCameras = cameras.filter((c) => c.nodeId === node.id);
 
-  const handleAddCamera = () => {
-    setEditingCamera(null);
-    setShowForm(true);
-  };
+  const handleAdd = () => { setEditingCamera(null); setShowForm(true); };
+  const handleEdit = (cam) => { setEditingCamera(cam); setShowForm(true); };
+  const handleDelete = (cam) => setCameraToDelete(cam);
 
   return (
     <div className="p-5 space-y-4 overflow-y-auto h-full">
@@ -46,7 +45,7 @@ export default function NodeCamerasTab() {
           <p className="text-[10px] text-safe-text-muted mt-0.5">Cameras assigned to {node.id}</p>
         </div>
         {canManage && (
-          <Button variant="outline" size="sm" icon="plus" onClick={handleAddCamera}>
+          <Button variant="outline" size="sm" icon="plus" onClick={handleAdd}>
             Add Camera
           </Button>
         )}
@@ -61,7 +60,7 @@ export default function NodeCamerasTab() {
           <FontAwesomeIcon icon="camera" className="text-2xl opacity-40" />
           <p className="text-xs">No cameras assigned to this node.</p>
           {canManage && (
-            <button onClick={handleAddCamera} className="text-xs text-safe-blue hover:underline mt-1">
+            <button onClick={handleAdd} className="text-xs text-safe-blue hover:underline mt-1">
               Add one now
             </button>
           )}
@@ -69,27 +68,13 @@ export default function NodeCamerasTab() {
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {nodeCameras.map((cam) => (
-            <div key={cam.id} className="relative group">
-              <CameraFeed camera={cam} />
-              {canManage && (
-                <div className="absolute top-10 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => { setEditingCamera(cam); setShowForm(true); }}
-                    className="p-1.5 bg-black/60 rounded text-white hover:text-safe-blue"
-                    aria-label="Edit camera"
-                  >
-                    <FontAwesomeIcon icon="pen-to-square" className="text-xs" />
-                  </button>
-                  <button
-                    onClick={() => setCameraToDelete(cam)}
-                    className="p-1.5 bg-black/60 rounded text-white hover:text-red-400"
-                    aria-label="Delete camera"
-                  >
-                    <FontAwesomeIcon icon="trash" className="text-xs" />
-                  </button>
-                </div>
-              )}
-            </div>
+            <CameraFeed
+              key={cam.id}
+              camera={cam}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              canManage={canManage}
+            />
           ))}
         </div>
       )}

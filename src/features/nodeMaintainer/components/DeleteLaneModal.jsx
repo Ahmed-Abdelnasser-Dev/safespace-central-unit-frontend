@@ -3,7 +3,7 @@ import Card from '@/components/ui/Card.jsx';
 import Button from '@/components/ui/Button.jsx';
 export default function DeleteLaneModal({ lane, onClose, onConfirm }) {
   return (
-    <Modal open={!!lane} onClose={onClose} size="md">
+    <Modal bare open={!!lane} onClose={onClose} size="md">
       <Card className="bg-safe-gray border border-safe-gray-light rounded-2xl overflow-hidden">
         <div className="px-8 py-6 border-b border-safe-gray-light">
           <h3 className="text-xl font-bold text-safe-text-primary">Delete Lane</h3>

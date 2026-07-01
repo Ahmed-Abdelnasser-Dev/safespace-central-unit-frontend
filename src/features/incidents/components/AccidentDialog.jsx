@@ -206,19 +206,19 @@ function AccidentDialog({ open, onClose, incident, onDecision }) {
   
   // Lane status configuration matching node maintainer design
   const statusConfig = {
-    open: { icon: faCircleCheck, color: '#22c55e', bg: '#dcfce7', label: 'Open' },
-    blocked: { icon: faCircleXmark, color: '#d63e4d', bg: '#fee2e2', label: 'Blocked' },
-    right: { icon: faArrowRight, color: '#247cff', bg: '#dbeafe', label: 'Right' },
-    left: { icon: faArrowLeft, color: '#247cff', bg: '#dbeafe', label: 'Left' },
+    open:    { icon: faCircleCheck, color: '#22c55e', bg: 'rgba(34, 197, 94, 0.15)',   label: 'Open' },
+    blocked: { icon: faCircleXmark, color: '#ef4444', bg: 'rgba(239, 68, 68, 0.15)',   label: 'Blocked' },
+    right:   { icon: faArrowRight,  color: '#3b7cff', bg: 'rgba(59, 124, 255, 0.15)',  label: 'Right' },
+    left:    { icon: faArrowLeft,   color: '#3b7cff', bg: 'rgba(59, 124, 255, 0.15)',  label: 'Left' },
   };
 
   return (
-    <Modal open={open} onClose={onClose} size="2xl">
+    <Modal bare open={open} onClose={onClose} size="2xl">
       <Card className="overflow-hidden flex flex-col max-h-[90vh]">
         <AccidentDialogHeader incident={incident} timeString={timeString} />
 
         {/* Body - Scrollable */}
-        <div className="flex-1 overflow-y-auto px-[20px] py-[16px] space-y-[16px] bg-gray-50">
+        <div className="flex-1 overflow-y-auto px-[20px] py-[16px] space-y-[16px] bg-safe-gray">
           
           {/* Top Row: Image + Override */}
           <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-[16px]">
@@ -260,11 +260,11 @@ function AccidentDialog({ open, onClose, incident, onDecision }) {
         </div>
 
         {/* Footer */}
-        <Modal.Footer className="flex-shrink-0 border-t-2 border-safe-border bg-white px-[20px] py-[16px] gap-[12px]">
-          <Button 
-            variant="secondary" 
+        <Modal.Footer>
+          <Button
+            variant="secondary"
             onClick={handleCancel}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-md font-bold text-[13px] border-safe-border hover:bg-gray-50"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-md font-bold text-[13px] border-safe-border hover:bg-safe-gray-light/50"
           >
             <FontAwesomeIcon icon="ban" className="w-3.5 h-3.5" />
             Reject

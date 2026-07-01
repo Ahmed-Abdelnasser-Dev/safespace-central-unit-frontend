@@ -67,7 +67,7 @@ export default function AddNodeModal({ isOpen, onClose, onSubmit, existingNodeId
   };
 
   return (
-    <Modal open={isOpen} onClose={handleClose} size="md">
+    <Modal bare open={isOpen} onClose={handleClose} size="md">
       <div className="bg-safe-gray border border-safe-gray-light rounded-2xl overflow-hidden">
         <div className="px-8 py-6">
           <h3 className="text-safe-text-primary font-bold text-xl">Add New Node</h3>

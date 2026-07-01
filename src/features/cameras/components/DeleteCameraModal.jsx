@@ -21,7 +21,7 @@ export default function DeleteCameraModal({ isOpen, onClose, camera }) {
   if (!camera) return null;
 
   return (
-    <Modal open={isOpen} onClose={onClose} size="md">
+    <Modal bare open={isOpen} onClose={onClose} size="md">
       <div className="bg-safe-gray border border-safe-gray-light rounded-2xl overflow-hidden">
         <div className="px-6 py-5 border-b border-safe-gray-light">
           <h3 className="text-safe-text-primary font-bold text-lg">Delete Camera</h3>

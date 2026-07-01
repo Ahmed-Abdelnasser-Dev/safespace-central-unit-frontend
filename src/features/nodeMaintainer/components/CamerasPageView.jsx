@@ -68,27 +68,13 @@ export default function CamerasPageView({ searchQuery = '', onEdit, onDelete }) 
     <div className="flex-1 overflow-y-auto p-5">
       <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">
         {filtered.map((cam) => (
-          <div key={cam.id} className="relative group">
-            <CameraFeed camera={cam} />
-            {canManage && (
-              <div className="absolute top-10 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={() => onEdit(cam)}
-                  className="p-1.5 bg-black/60 rounded text-white hover:text-safe-blue"
-                  aria-label="Edit camera"
-                >
-                  <FontAwesomeIcon icon="pen-to-square" className="text-xs" />
-                </button>
-                <button
-                  onClick={() => onDelete(cam)}
-                  className="p-1.5 bg-black/60 rounded text-white hover:text-red-400"
-                  aria-label="Delete camera"
-                >
-                  <FontAwesomeIcon icon="trash" className="text-xs" />
-                </button>
-              </div>
-            )}
-          </div>
+          <CameraFeed
+            key={cam.id}
+            camera={cam}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            canManage={canManage}
+          />
         ))}
       </div>
     </div>

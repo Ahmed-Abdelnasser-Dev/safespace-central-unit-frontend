@@ -2,12 +2,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { streamApi } from '../../services/streamApi';
 import api from '../../services/api';
 
-// Camera list comes from the stream-service (live in-memory state)
+// Camera list comes from the main backend (which syncs with stream-service for health)
 export const fetchCameras = createAsyncThunk(
   'cameras/fetchCameras',
   async (_, { rejectWithValue }) => {
     try {
-      return await streamApi.getCameras();
+      const res = await api.get('/cameras');
+      return res.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }

@@ -20,7 +20,7 @@ export default function AccidentMediaArea({ incident }) {
         nodePolygons={incident?.nodePolygons || []}
       />
       <button
-        className="absolute top-2 right-2 z-20 bg-white/80 hover:bg-white text-safe-blue border border-safe-border rounded px-3 py-1 text-xs font-semibold shadow transition"
+        className="absolute top-2 right-2 z-20 bg-safe-sidebar/80 hover:bg-safe-sidebar text-safe-blue border border-safe-border rounded px-3 py-1 text-xs font-semibold shadow transition"
         onClick={() => setPolygonDialogOpen(true)}
         title="View Polygons"
       >

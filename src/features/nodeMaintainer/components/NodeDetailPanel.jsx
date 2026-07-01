@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@/components/ui/Button.jsx';
-import VideoFeedPlayer from './VideoFeedPlayer.jsx';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: 'eye' },
@@ -21,8 +20,8 @@ export default function NodeDetailPanel({
   renderTabContent,
 }) {
   return (
-    <div className="flex-1 flex flex-col gap-3 lg:gap-4 overflow-hidden min-w-0">
-      {/* Node Header */}
+    <div className="flex-1 flex flex-col gap-3 lg:gap-4 min-h-0 min-w-0 overflow-hidden">
+      {/* Node Header — compact, no video here */}
       <div className="bg-safe-sidebar border border-safe-gray-light rounded-xl px-4 py-3 flex-shrink-0">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2 min-w-0 flex-wrap">
@@ -45,11 +44,25 @@ export default function NodeDetailPanel({
             </span>
           </div>
 
-          <div className="flex gap-2">
-            <Button variant="primary" size="sm" onClick={onEdit} className="!px-3 !py-1.5" title="Edit node settings" disabled={isEditing}>
+          <div className="flex gap-2 flex-shrink-0">
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={onEdit}
+              className="!px-3 !py-1.5"
+              title="Edit node settings"
+              disabled={isEditing}
+            >
               Edit
             </Button>
-            <Button variant="danger" size="sm" onClick={onDelete} className="!px-3 !py-1.5" title="Delete node" disabled={isDeleting}>
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={onDelete}
+              className="!px-3 !py-1.5"
+              title="Delete node"
+              disabled={isDeleting}
+            >
               Delete
             </Button>
           </div>
@@ -59,17 +72,8 @@ export default function NodeDetailPanel({
           {selectedNode.location.address}
         </p>
 
-        <div className="mb-3">
-          <p className="text-xs font-semibold text-safe-text-muted uppercase tracking-wide mb-2">Live Video Feed</p>
-          <VideoFeedPlayer
-            nodeId={selectedNode.id}
-            streamUrl={selectedNode.streamUrl ?? null}
-            status={selectedNode.status}
-          />
-        </div>
-
         {/* Tabs */}
-        <div className="flex gap-1.5 overflow-x-auto -mx-4 px-4 pb-1">
+        <div className="flex gap-1.5 overflow-x-auto -mx-4 px-4 pb-1 scrollbar-none">
           {TABS.map((tab) => (
             <button
               key={tab.id}
@@ -87,8 +91,8 @@ export default function NodeDetailPanel({
         </div>
       </div>
 
-      {/* Tab Content */}
-      <div className="flex-1 bg-safe-sidebar border border-safe-gray-light rounded-xl overflow-y-auto min-h-0">
+      {/* Tab Content — fills remaining height, scrolls internally */}
+      <div className="flex-1 min-h-0 bg-safe-sidebar border border-safe-gray-light rounded-xl overflow-hidden">
         {renderTabContent()}
       </div>
     </div>
